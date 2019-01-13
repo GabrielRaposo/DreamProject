@@ -4,9 +4,8 @@
 public class PlayerController : MonoBehaviour {
 
     private PlayerMovement movement;
-    private bool inputLock;
 
-    void Start ()
+    void OnEnable ()
     {
         movement = GetComponent<PlayerMovement>();
     }
@@ -15,21 +14,21 @@ public class PlayerController : MonoBehaviour {
     {
         if (movement.stunned) return;
 
-        movement.SetHorizontalMovement(Input.GetAxisRaw("Horizontal"));
+        movement.SetHorizontalInput(Input.GetAxisRaw("Horizontal"));
         movement.SetVerticalInput(Input.GetAxisRaw("Vertical"));
 
         if (Input.GetButtonDown("Jump"))
         {
-            movement.SetJump(true);
+            movement.SetJumpInput(true);
         }
         else if (Input.GetButtonUp("Jump"))
         {
-            movement.ReleaseJump();
+            movement.SetJumpInput(false);
         }
 
         if (Input.GetButtonDown("Attack"))
         {
-            movement.SetAttack();
+            movement.SetAttackInput();
         }
     }
 }

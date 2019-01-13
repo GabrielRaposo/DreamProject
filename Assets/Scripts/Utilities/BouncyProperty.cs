@@ -30,13 +30,9 @@ public class BouncyProperty : MonoBehaviour
             PlayerMovement player = collision.transform.GetComponent<PlayerMovement>();
             if (player)
             {
-                if (super)
+                player.SetJump(super);
+                if (!super)
                 {
-                    player.SetJump(false, true, true);
-                }
-                else
-                {
-                    player.SetJump(false, true, false);
                     OnBounceEvent.Invoke();
                 }
             }
@@ -46,7 +42,7 @@ public class BouncyProperty : MonoBehaviour
             Enemy enemy = collision.transform.GetComponent<Enemy>();
             if (enemy)
             {
-                if(collision.transform.position.y > transform.position.y - .2f)
+                if(collision.transform.position.y > transform.position.y + .1f)
                 {
                     OnBounceEvent.Invoke();
                     enemy.OnBouncyTopEvent(collision.contacts[0].point, super);

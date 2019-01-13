@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            player.transform.position = Vector3.up * 6;
+            player.transform.position = player.startingPosition;
         }
     }
 }

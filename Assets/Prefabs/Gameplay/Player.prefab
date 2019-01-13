@@ -67,11 +67,12 @@ MonoBehaviour:
   horizontalSpeed: 200
   breakSpeed: 1
   highCollider: {fileID: 5058175845546596018}
+  crouchSpeedModifier: 0.7
   groundLayer:
     serializedVersion: 2
-    m_Bits: 256
-  jumpForce: 500
-  superJumpForce: 0
+    m_Bits: 4352
+  jumpInitialSpeed: 11
+  superJumpInitialSpeed: 20
   customGravity: 2
   maxFallSpeed: -10
   hammerHitbox: {fileID: 8023559019626132440}

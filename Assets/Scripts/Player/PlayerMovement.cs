@@ -19,8 +19,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump")]
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float jumpForce;
-    [SerializeField] private float superJumpForce;
+    [SerializeField] private float jumpInitialSpeed;
+    [SerializeField] private float superJumpInitialSpeed;
     [SerializeField] private float customGravity;
     [SerializeField] private float maxFallSpeed;
 
@@ -30,31 +30,44 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float gustSpeed;
     [SerializeField] private float airdashSpeed;
 
+    public Vector2 startingPosition { get; private set; }
+    public bool facingRight { get; private set; }
+    public bool stunned { get; private set; }
+    public bool onGround { get; private set; }
+
     private float horizontalMovement;
     private float horizontalInput;
     private bool breaking;
     private float verticalInput;
     private bool crouching;
+    private bool fallingThroughPlatform;
     private float externalForce;
-    private float gravityModifier;
-    private bool inputLock;
-    private Coroutine attackCoroutine;
 
-    public bool facingRight { get; private set; }
-    public bool stunned { get; private set; }
-    public bool onGround { get; private set; }
+    private const float BASE_GRAVITY = 2f;
+    private const float LIGHT_GRAVITY = 1f;
+    private float gravityModifier = BASE_GRAVITY;
+    private float gravity;
+    private bool gravityLock;
+    private Vector2 currentGroundNormal;
+
+    private bool inputLock;
+    private bool invincible;
+    private Vector3 lastPlatformPosition;
+    private Transform currentPlatform;
+    private Coroutine attackCoroutine;
 
     private Gust leftGust;
     private Gust rightGust;
+
+    private LayerMask playerLayer;
+    private LayerMask enemyPlayer;
+    private LayerMask platformLayer;
 
     private ID id;
     private Animator animator;
     private new Rigidbody2D rigidbody;
     private new SpriteRenderer renderer;
     private PlayerController controller;
-
-    private const float BASE_GRAVITY = 2f;
-    private const float LIGHT_GRAVITY = 1f;
 
     public static GameManager gameManager;
     public static PlayerMovement instance; 
@@ -72,13 +85,16 @@ public class PlayerMovement : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         renderer = GetComponent<SpriteRenderer>();
 
+        playerLayer = LayerMask.NameToLayer("Player");
+        enemyPlayer = LayerMask.NameToLayer("Enemy");
+        platformLayer = LayerMask.NameToLayer("Platform");
+
         id = ID.Player;
+        startingPosition = transform.position;
     }
 
     private void Start ()
     {
-        gravityModifier = BASE_GRAVITY;
-
         if (healthDisplay)
         {
             healthDisplay.Init(maxHealth);
@@ -98,10 +114,12 @@ public class PlayerMovement : MonoBehaviour
         GameObject rGust = Instantiate(gustPrefab, transform.position, Quaternion.identity);
         rightGust = rGust.GetComponent<Gust>();
         rGust.SetActive(false);
+
     }
 
     private void ResetValues()
     {
+        gravityLock = false;
         controller.enabled = true;
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         breaking = false;
@@ -110,7 +128,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update ()
     {
-        CheckGround();
+        if (Mathf.Abs(horizontalInput) > 0.9f)
+        {
+            horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
+            breaking = false;
+            UpdateFacingDirection(horizontalMovement > 0 ? true : false);
+        }
+        else if (Mathf.Abs(horizontalMovement) > 0)
+        {
+            breaking = true;
+        }
 
         animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
         if (!onGround)
@@ -124,12 +151,19 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        CheckGround();
+
+        if (currentPlatform != null)
+        {
+            MoveWithPlatform();
+        }
+
         Vector2 velocity = rigidbody.velocity;
         if (breaking)
         {
             if (Mathf.Abs(velocity.x) > breakSpeed)
             {
-                horizontalMovement -= velocity.normalized.x * breakSpeed * (!crouching ? 1f : .1f);
+                horizontalMovement -= velocity.normalized.x * breakSpeed;
             }
             else
             {
@@ -145,18 +179,24 @@ public class PlayerMovement : MonoBehaviour
                 externalForce = 0;
             }
         }
-        velocity.x = horizontalMovement + externalForce;
+
+        velocity.x = (horizontalMovement * (crouching ? crouchSpeedModifier : 1)) + externalForce;
 
         if (!onGround)
         {
-            float y = velocity.y + (customGravity * gravityModifier * Physics2D.gravity.y * Time.fixedDeltaTime);
+            if (!gravityLock)
+            {
+                gravity = gravityModifier;
+            }
+
+            float y = velocity.y + (customGravity * gravity * Physics2D.gravity.y * Time.fixedDeltaTime);
             if (y < maxFallSpeed) y = maxFallSpeed;
             velocity.y = y;
         }
         else
         {
             //gambiarra temporária
-            if(velocity.y > 0 && velocity.y < 1)
+            if (velocity.y > 0 && velocity.y < 1)
             {
                 velocity.y = 0;
             }
@@ -165,39 +205,50 @@ public class PlayerMovement : MonoBehaviour
         rigidbody.velocity = velocity;
     }
 
+    private void MoveWithPlatform()
+    {
+        if (lastPlatformPosition != currentPlatform.position)
+        {
+            Vector3 diff = currentPlatform.position - lastPlatformPosition;
+            transform.position += diff;
+
+            lastPlatformPosition = currentPlatform.position;
+        }
+    } 
+
     public void CheckGround()
     {
-        Vector2 axis = transform.position + (Vector3.down * .5f * transform.localScale.x);
-        Vector2 border = new Vector2(.1f, .1f) * transform.localScale.x;
+        if (fallingThroughPlatform) return;
 
-        if(rigidbody.velocity.y < .01f)
+        Vector2 axis = transform.position + (Vector3.down * .4f * transform.localScale.x);
+        Vector2 border = new Vector2(.2f, .2f) * transform.localScale.x;
+
+        if (rigidbody.velocity.y < .1f)
         {
             onGround = Physics2D.OverlapArea(axis - border, axis + border, groundLayer);
         }
-        else onGround = false;            
+        else onGround = false;
 
-        if (onGround)
-        {
-            gravityModifier = BASE_GRAVITY;
-            animator.SetBool("Airborne", false);
-        }
-        else
-        {
-            animator.SetBool("Airborne", true);
-        }
+        animator.SetBool("Airborne", !onGround);
     }
 
     private void CheckCrouch()
     {
-        if(verticalInput < 0 && onGround)
+        if(onGround)
         {
-            crouching = true;
-            highCollider.enabled = false;
+            if (verticalInput < 0)
+            {
+                crouching = true;
+                highCollider.enabled = false;
+            } 
+            else if (!Physics2D.OverlapCircle(transform.position, .25f, 1 << LayerMask.NameToLayer("Ground")))
+            {
+                crouching = false;
+                highCollider.enabled = true;
+            }
         }
         else
         {
-            //check ceilling
-            breaking = true;
             crouching = false;
             highCollider.enabled = true;
         }
@@ -216,19 +267,10 @@ public class PlayerMovement : MonoBehaviour
         if(gameManager) gameManager.RespawnPlayer();
     }
 
-    public void SetHorizontalMovement(float horizontalInput)
+    public void SetHorizontalInput(float horizontalInput)
     {
         //if (crouching) return;
-        if (Mathf.Abs(horizontalInput) > 0.9f)
-        {
-            horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
-            breaking = false;
-            UpdateFacingDirection(horizontalMovement > 0 ? true : false);
-        }
-        else if (Mathf.Abs(horizontalMovement) > 0)
-        {
-            breaking = true;
-        }
+        this.horizontalInput = horizontalInput;
     }
 
     private void UpdateFacingDirection(bool facingRight)
@@ -242,37 +284,64 @@ public class PlayerMovement : MonoBehaviour
         this.verticalInput = verticalInput;
     }
 
-    public void SetJump(bool resetGravity, bool externalForce = false, bool super = false)
+    public void SetJumpInput(bool value)
     {
+        if (value)
+        {
+            gravityModifier = LIGHT_GRAVITY;
+
+            if (inputLock) return;
+
+            if (!crouching)
+            {
+                if (onGround)
+                {
+                    SetJump();
+                    StartCoroutine(LockInputs());
+                }
+            }
+            else if (currentPlatform != null)
+            {
+                if (currentPlatform.CompareTag("OneWay"))
+                {
+                    StartCoroutine(FallThroughPlatform());
+                    StartCoroutine(LockInputs());
+                }
+            }
+        } else
+        {
+            gravityModifier = BASE_GRAVITY;
+        }
+    }
+
+    int count = 0;
+    public void SetJump(bool super = false)
+    {
+        Debug.Log("j: " + count++);
         if (attackCoroutine != null)
         {
             animator.SetTrigger("Reset");
             ResetValues();
         }
 
-        if (resetGravity)
-        {
-            gravityModifier = LIGHT_GRAVITY;
-        }
-
-        if (externalForce || onGround)
-        {
-            if (inputLock) return;
-            StartCoroutine(LockInputs());
-
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
-            rigidbody.AddForce(Vector2.up * jumpForce * (super ? 2 : 1));
-        }
+        rigidbody.velocity = new Vector2(rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
+        //rigidbody.AddForce(Vector2.up * jumpInitialSpeed * (super ? 2 : 1));
     }
 
-    public void ReleaseJump()
+    //Para funcionar, o Use Collider Mask da plataforma deve estar desligado
+    private IEnumerator FallThroughPlatform()
     {
-        gravityModifier = BASE_GRAVITY;
+        fallingThroughPlatform = true;
+        onGround = false;
+        Physics2D.IgnoreLayerCollision(playerLayer, platformLayer, true);
+        for (int i = 0; i < 20; i++) yield return new WaitForEndOfFrame();
+        Physics2D.IgnoreLayerCollision(playerLayer, platformLayer, false);
+        fallingThroughPlatform = false;
     }
 
-    public void SetAttack()
+    public void SetAttackInput()
     {
-        if (inputLock) return;
+        if (inputLock || crouching) return;
         StartCoroutine(LockInputs());
 
         hammerHitbox.direction = facingRight ? Vector2.right : Vector2.left;
@@ -293,6 +362,7 @@ public class PlayerMovement : MonoBehaviour
     {
         controller.enabled = false;
         horizontalMovement = 0;
+        horizontalInput = 0;
 
         Vector3 spawnOffset = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
         hammerHitbox.transform.localPosition = spawnOffset;
@@ -307,9 +377,9 @@ public class PlayerMovement : MonoBehaviour
     //Chamado durante a animação "heroHammerGround"
     private void GenerateWindBoxes()
     {
-        Vector3 spawnOffset = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
-        LaunchGust(spawnOffset, rightGust, gustSpeed);
-        LaunchGust(spawnOffset, leftGust, -gustSpeed);
+        //Vector3 spawnOffset = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
+        //LaunchGust(spawnOffset, rightGust, gustSpeed);
+        //LaunchGust(spawnOffset, leftGust, -gustSpeed);
     }
 
     private void LaunchGust(Vector3 spawnOffset, Gust gust, float speed)
@@ -323,9 +393,11 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator AerialAttackSequence()
     {
         controller.enabled = false;
-        gravityModifier = 0;
+        gravity = 0;
+        gravityLock = true;
         rigidbody.velocity = Vector3.zero;
         horizontalMovement = (facingRight ? 1 : -1) * airdashSpeed;
+        horizontalInput = 0;
         breaking = false;
 
         Vector3 spawnOffset = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
@@ -334,7 +406,7 @@ public class PlayerMovement : MonoBehaviour
 
         yield return WaitForFrames(10);
         rigidbody.velocity = Vector3.zero;
-        gravityModifier = BASE_GRAVITY;
+        gravityLock = false;
         horizontalMovement = 0;
         yield return WaitForFrames(10);
 
@@ -350,6 +422,59 @@ public class PlayerMovement : MonoBehaviour
         inputLock = false;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == platformLayer && onGround)
+        {
+            currentPlatform = collision.transform;
+            lastPlatformPosition = currentPlatform.position;
+
+            Collider2D coll = collision.transform.GetComponent<Collider2D>();
+            if (coll)
+            {
+                Vector2 position = transform.position;
+                position.y = collision.transform.position.y + coll.bounds.extents.y + .5f;
+                if (Mathf.Abs(transform.position.y - position.y) < .3f)
+                {
+                    transform.position = position;
+                }
+            }
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (onGround)
+        {
+            int layer = collision.gameObject.layer;
+            if (layer == platformLayer)
+            {
+                currentPlatform = collision.transform;
+                lastPlatformPosition = currentPlatform.position;
+
+                Collider2D coll = collision.transform.GetComponent<Collider2D>();
+                if (coll)
+                {
+                    Vector2 position = transform.position;
+                    position.y = collision.transform.position.y + coll.bounds.extents.y + .5f;
+                    if(Mathf.Abs(transform.position.y - position.y) < .2f)
+                    {
+                        transform.position = position;
+                    }
+                }
+            }
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform == currentPlatform)
+        {
+            currentPlatform = null;
+        }
+        int layer = collision.gameObject.layer;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Blastzone"))
@@ -360,6 +485,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetDamage(Vector3 contactPoint, int damage)
     {
+        if (invincible) return;
+
         if (healthDisplay)
         {
             healthDisplay.ChangeValue(-damage);
@@ -387,7 +514,7 @@ public class PlayerMovement : MonoBehaviour
         rigidbody.velocity = Vector2.zero;
         rigidbody.velocity += Vector2.up * knockback.y;
         externalForce = knockback.x;
-        horizontalMovement = 0;
+        horizontalInput = 0;
         breaking = true;
 
         stunned = true;
@@ -396,12 +523,36 @@ public class PlayerMovement : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
         }
+
+        StartCoroutine(InvencibilityTime());
         stunned = false;
         animator.SetBool("Stunned", false);
     }
 
-    public void SetKnockback(Vector2 knockback)
+    public void SetExternalForce(Vector2 externalForce)
     {
-        externalForce = knockback.x;
+        this.externalForce = externalForce.x;
+        //horizontalInput = 0;
+        //horizontalMovement = 0;
+    }
+
+    private IEnumerator InvencibilityTime()
+    {
+        //Physics2D.IgnoreLayerCollision(playerLayer, enemyPlayer, true);
+        invincible = true;
+
+        int blinkCount = 18;
+        for(int i = 0; i < blinkCount; i++)
+        {
+            yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
+
+            renderer.enabled = !renderer.enabled;
+        }
+        renderer.enabled = true;
+
+        //Physics2D.IgnoreLayerCollision(playerLayer, enemyPlayer, false);
+        invincible = false;
     }
 }

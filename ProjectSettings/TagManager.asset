@@ -9,6 +9,7 @@ TagManager:
   - Collectable
   - Blastzone
   - Enemy
+  - OneWay
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Player
   - Enemy
   - Bouncy
-  - 
+  - Platform
   - 
   - 
   - 

@@ -5,22 +5,22 @@ using UnityEngine;
 public class EnemyGoomba : Enemy
 {
     [Header("Goomba")]
-    public Patroller patroller;
-    public float stunTime;
-    public float jumpForce;
-    public ParticleSystem stompFX;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Patroller patroller;
+    [SerializeField] private float stunTime;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private ParticleSystem stompFX;
 
     private bool onGround;
     private bool stunned;
     private Coroutine stunCoroutine;
-    private Coroutine spinCoroutine;
+    private Coroutine attackCoroutine;
 
     private enum State { Idle, Squished, Vulnerable}
     private State state;
 
     private void ResetValues()
     {
-        if (spinCoroutine != null) StopCoroutine(spinCoroutine);
         transform.rotation = Quaternion.Euler(Vector3.zero);
         if (rb2D) rb2D.gravityScale = 1;
         patroller.enabled = true;
@@ -44,7 +44,7 @@ public class EnemyGoomba : Enemy
             knockback = 0;
         }
 
-        player.SetJump(false, true, false);
+        player.SetJump(false);
         TakeDamage(1);
         stompFX.Play();
 
@@ -59,11 +59,13 @@ public class EnemyGoomba : Enemy
         {
             case State.Idle:
                 player.SetDamage(contactPosition, 1);
+                if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+                attackCoroutine = StartCoroutine(AttackState());
                 break;
 
             case State.Vulnerable:
                 Vector2 knockback = (transform.position.x < contactPosition.x ? Vector3.right : Vector3.left) * 20;
-                player.SetKnockback(knockback);
+                player.SetExternalForce(knockback);
                 ResetValues();
                 if (stunCoroutine != null) StopCoroutine(stunCoroutine);
                 stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), transform.position.x > contactPosition.x ? true : false));
@@ -76,6 +78,11 @@ public class EnemyGoomba : Enemy
         base.OnHammerEvent(contactPosition, direction);
         if(state == State.Idle && onGround)
         {
+            if (attackCoroutine != null)
+            {
+                StopCoroutine(attackCoroutine);
+                animator.SetTrigger("Reset");
+            }
             TakeDamage(1);
             StartCoroutine(SquishAndLaunch());
         }
@@ -85,6 +92,19 @@ public class EnemyGoomba : Enemy
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
             stunCoroutine = StartCoroutine(StunState(12, (int)(stunTime * 60), direction.x > 0 ? true : false));
         }
+    }
+
+    private IEnumerator AttackState()
+    {
+        rb2D.velocity = Vector2.zero;
+        animator.SetTrigger("Attack");
+        patroller.enabled = false;
+        for (int i = 0; i < 60; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        patroller.enabled = true;
+        animator.SetTrigger("Reset");
     }
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)
@@ -136,45 +156,22 @@ public class EnemyGoomba : Enemy
             yield return new WaitForFixedUpdate();
         }
 
-        if (coll) coll.enabled = false;
+        state = State.Vulnerable;
+        //if (coll) coll.enabled = false;
         float targetY = transform.position.y + 3;
         animator.SetTrigger("Launch");
         if (rb2D)
         {
             rb2D.gravityScale = 0;
-            rb2D.velocity = Vector2.up * 6;
+            rb2D.velocity = Vector2.up * 1;
         }
 
-        for (int i = 0; i < 120 && transform.position.y < targetY; i++)
+        while(transform.position.y < targetY)
         {
             yield return new WaitForFixedUpdate();
         }
 
-        spinCoroutine = StartCoroutine(SpinAndFall());
-    }
-
-    private IEnumerator SpinAndFall()
-    {
-        state = State.Vulnerable;
-        if (coll) coll.enabled = true;
-        animator.SetTrigger("Spin");
-        if (rb2D)
-        {
-            rb2D.velocity = Vector2.down * 1;
-        }
-
-        while (true)
-        {
-
-            transform.Rotate(Vector3.back * 16);
-            yield return new WaitForFixedUpdate();
-
-            if (onGround)
-            {
-                ResetValues();
-                break;
-            }
-        }
+        Destroy(gameObject);
     }
 
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
@@ -184,18 +181,9 @@ public class EnemyGoomba : Enemy
 
     private void CheckGround()
     {
-        //Vector2 axis = transform.position + (Vector3.down * .5f * transform.localScale.x);
-        //Vector2 border = new Vector2(.1f, .1f) * transform.localScale.x;
+        Vector2 axis = transform.position + (Vector3.down * .5f * transform.localScale.x);
+        Vector2 border = new Vector2(.1f, .1f) * transform.localScale.x;
 
-        //onGround = Physics2D.OverlapArea(axis - border, axis + border, LayerMask.NameToLayer("Ground"));
-
-        onGround = Physics2D.BoxCast(
-            transform.position + (Vector3.down * .5f),
-            Vector3.one * .1f,
-            0,
-            Vector3.one,
-            1,
-            1 << LayerMask.NameToLayer("Ground")
-        );
+        onGround = Physics2D.OverlapArea(axis - border, axis + border, groundLayer);
     }
 }

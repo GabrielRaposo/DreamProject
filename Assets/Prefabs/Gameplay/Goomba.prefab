@@ -4853,10 +4853,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14361e3ca50fa3047aace38a7060eeda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 5
+  health: 2
   mininumTopY: 0.2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 4352
   patroller: {fileID: 4847668989030398433}
   stunTime: 0.5
+  jumpForce: 6
   stompFX: {fileID: 1733063919}
 --- !u!114 &4847668989030398433
 MonoBehaviour:
@@ -4871,7 +4875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
-  aimAtPlayerOnStart: 1
+  aimAtPlayerOnStart: 0
   turnAroundOnWall: 1
   reverseOnLayer:
     serializedVersion: 2
