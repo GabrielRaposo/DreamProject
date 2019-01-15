@@ -14,8 +14,6 @@ public class FollowTrail : MonoBehaviour
         aim_modifier = 1,
         marks_quantity;
 
-    public Vector3 movement;
-
     private void Start()
     {
         if ((marks_quantity = transform.childCount) == 0)
@@ -33,8 +31,7 @@ public class FollowTrail : MonoBehaviour
 
     private void FixedUpdate()
     {
-        movement = Vector3.MoveTowards(transform.position, global_reachmarks[current_aim], moveSpeed / 50);
-        transform.position = movement;
+        transform.position = Vector3.MoveTowards(transform.position, global_reachmarks[current_aim], moveSpeed / 50);
         if (transform.position == global_reachmarks[current_aim])
         {
             if (loop)

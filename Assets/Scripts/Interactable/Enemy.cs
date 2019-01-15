@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Hitbox"))
+        if (collision.CompareTag("Hammer"))
         {
             Vector2 direction = Vector2.zero;
             Hitbox hitbox = collision.GetComponent<Hitbox>();
@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
             {
                 OnTouchEvent(player, contactPoint);
             }
-        } 
+        }  
     }
 
     protected virtual void OnHammerEvent(Vector2 contactPosition, Vector2 direction)    { StartCoroutine(InteractionDelay(3)); }

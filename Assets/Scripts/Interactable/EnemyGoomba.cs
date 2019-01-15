@@ -12,7 +12,6 @@ public class EnemyGoomba : Enemy
     [SerializeField] private ParticleSystem stompFX;
 
     private bool onGround;
-    private bool stunned;
     private Coroutine stunCoroutine;
     private Coroutine attackCoroutine;
 
@@ -109,7 +108,6 @@ public class EnemyGoomba : Enemy
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)
     {
-        stunned = true;
         animator.SetBool("Stunned", true);
 
         patroller.SetFacingSide(!goRight);
@@ -126,7 +124,6 @@ public class EnemyGoomba : Enemy
         }
         if(health > 0)
         {
-            stunned = false;
             animator.SetBool("Stunned", false);
             patroller.enabled = true;
         }

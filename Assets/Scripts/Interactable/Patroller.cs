@@ -10,10 +10,6 @@ public class Patroller : MonoBehaviour
 
     public LayerMask reverseOnLayer;
 
-    private ContactFilter2D contactFilter;
-    private RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
-    private List<RaycastHit2D> hitBufferList = new List<RaycastHit2D>(16);
-
     private bool facingRight;
     private new Rigidbody2D rigidbody;
     private new SpriteRenderer renderer;
@@ -26,10 +22,6 @@ public class Patroller : MonoBehaviour
 
     void Start()
     {
-        contactFilter.useTriggers = false;
-        contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
-        contactFilter.useLayerMask = true;
-
         if (aimAtPlayerOnStart)
         {
             PlayerMovement player = PlayerMovement.instance;

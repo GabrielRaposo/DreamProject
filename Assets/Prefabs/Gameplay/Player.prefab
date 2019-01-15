@@ -75,6 +75,7 @@ MonoBehaviour:
   superJumpInitialSpeed: 20
   customGravity: 2
   maxFallSpeed: -10
+  maxCoyoteTime: 4
   hammerHitbox: {fileID: 8023559019626132440}
   gustPrefab: {fileID: 1993493405577990, guid: 71e0f2f7bcdef5747b428efe741a0c28, type: 3}
   gustSpeed: 6
@@ -222,9 +223,9 @@ GameObject:
   - component: {fileID: 61680534209064830}
   - component: {fileID: 50153889736724952}
   - component: {fileID: 8023559019626132440}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HammerHitbox
-  m_TagString: Hitbox
+  m_TagString: Hammer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -277,9 +278,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 793100975
+  m_SortingLayer: 5
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 9150b10557d91cb4f9761eb15aedb25c, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 0.26666668}
   m_FlipX: 0

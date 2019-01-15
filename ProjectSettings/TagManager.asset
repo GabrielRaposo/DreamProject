@@ -10,6 +10,7 @@ TagManager:
   - Blastzone
   - Enemy
   - OneWay
+  - Hammer
   layers:
   - Default
   - TransparentFX

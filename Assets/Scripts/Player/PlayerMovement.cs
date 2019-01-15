@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float superJumpInitialSpeed;
     [SerializeField] private float customGravity;
     [SerializeField] private float maxFallSpeed;
+    [SerializeField] private int maxCoyoteTime;
 
     [Header("Attack")]
     [SerializeField] private Hitbox hammerHitbox;
@@ -49,21 +50,19 @@ public class PlayerMovement : MonoBehaviour
     private float gravity;
     private bool gravityLock;
     private Vector2 currentGroundNormal;
+    private int coyoteTime;
 
     private bool inputLock;
     private bool invincible;
     private Vector3 lastPlatformPosition;
     private Transform currentPlatform;
     private Coroutine attackCoroutine;
-
-    private Gust leftGust;
-    private Gust rightGust;
+    private float lastGroundY;
 
     private LayerMask playerLayer;
-    private LayerMask enemyPlayer;
     private LayerMask platformLayer;
 
-    private ID id;
+    //private ID id;
     private Animator animator;
     private new Rigidbody2D rigidbody;
     private new SpriteRenderer renderer;
@@ -86,10 +85,9 @@ public class PlayerMovement : MonoBehaviour
         renderer = GetComponent<SpriteRenderer>();
 
         playerLayer = LayerMask.NameToLayer("Player");
-        enemyPlayer = LayerMask.NameToLayer("Enemy");
         platformLayer = LayerMask.NameToLayer("Platform");
 
-        id = ID.Player;
+        //id = ID.Player;
         startingPosition = transform.position;
     }
 
@@ -100,21 +98,8 @@ public class PlayerMovement : MonoBehaviour
             healthDisplay.Init(maxHealth);
         }
 
-        CreateGusts();
         UpdateFacingDirection(true);
         ResetValues();
-    }
-	
-    private void CreateGusts()
-    {
-        GameObject lGust = Instantiate(gustPrefab, transform.position, Quaternion.identity);
-        leftGust = lGust.GetComponent<Gust>();
-        lGust.SetActive(false);
-
-        GameObject rGust = Instantiate(gustPrefab, transform.position, Quaternion.identity);
-        rightGust = rGust.GetComponent<Gust>();
-        rGust.SetActive(false);
-
     }
 
     private void ResetValues()
@@ -140,8 +125,19 @@ public class PlayerMovement : MonoBehaviour
         }
 
         animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
-        if (!onGround)
+        if (onGround)
         {
+            animator.SetBool("Airborne", false);
+            lastGroundY = transform.position.y;
+        }
+        else
+        {
+            //lidando com ghost vertices
+            if (Mathf.Abs(lastGroundY - transform.position.y) > .1f)
+            {
+                animator.SetBool("Airborne", true);
+            }
+
             animator.SetFloat("VerticalSpeed", rigidbody.velocity.y);
         }
 
@@ -151,7 +147,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        CheckGround();
+        if(coyoteTime > 0)
+        {
+            coyoteTime--;
+        }
 
         if (currentPlatform != null)
         {
@@ -159,6 +158,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
         Vector2 velocity = rigidbody.velocity;
+
+        if (!fallingThroughPlatform)
+        {
+            Physics2D.IgnoreLayerCollision(playerLayer, platformLayer, velocity.y > 0);
+        }
+
         if (breaking)
         {
             if (Mathf.Abs(velocity.x) > breakSpeed)
@@ -214,22 +219,6 @@ public class PlayerMovement : MonoBehaviour
 
             lastPlatformPosition = currentPlatform.position;
         }
-    } 
-
-    public void CheckGround()
-    {
-        if (fallingThroughPlatform) return;
-
-        Vector2 axis = transform.position + (Vector3.down * .4f * transform.localScale.x);
-        Vector2 border = new Vector2(.2f, .2f) * transform.localScale.x;
-
-        if (rigidbody.velocity.y < .1f)
-        {
-            onGround = Physics2D.OverlapArea(axis - border, axis + border, groundLayer);
-        }
-        else onGround = false;
-
-        animator.SetBool("Airborne", !onGround);
     }
 
     private void CheckCrouch()
@@ -294,7 +283,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (!crouching)
             {
-                if (onGround)
+                if (onGround || coyoteTime > 0)
                 {
                     SetJump();
                     StartCoroutine(LockInputs());
@@ -314,10 +303,8 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    int count = 0;
     public void SetJump(bool super = false)
     {
-        Debug.Log("j: " + count++);
         if (attackCoroutine != null)
         {
             animator.SetTrigger("Reset");
@@ -325,7 +312,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         rigidbody.velocity = new Vector2(rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
-        //rigidbody.AddForce(Vector2.up * jumpInitialSpeed * (super ? 2 : 1));
     }
 
     //Para funcionar, o Use Collider Mask da plataforma deve estar desligado
@@ -364,7 +350,7 @@ public class PlayerMovement : MonoBehaviour
         horizontalMovement = 0;
         horizontalInput = 0;
 
-        Vector3 spawnOffset = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
+        Vector3 spawnOffset = new Vector3(1.1f * ((facingRight) ? 1 : -1), -.2f);
         hammerHitbox.transform.localPosition = spawnOffset;
         animator.SetTrigger("Attack");
 
@@ -372,14 +358,6 @@ public class PlayerMovement : MonoBehaviour
 
         animator.SetTrigger("Reset");
         controller.enabled = true;
-    }
-
-    //Chamado durante a animação "heroHammerGround"
-    private void GenerateWindBoxes()
-    {
-        //Vector3 spawnOffset = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
-        //LaunchGust(spawnOffset, rightGust, gustSpeed);
-        //LaunchGust(spawnOffset, leftGust, -gustSpeed);
     }
 
     private void LaunchGust(Vector3 spawnOffset, Gust gust, float speed)
@@ -400,7 +378,6 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = 0;
         breaking = false;
 
-        Vector3 spawnOffset = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
         hammerHitbox.transform.localPosition = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
         animator.SetTrigger("Attack");
 
@@ -424,43 +401,49 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == platformLayer && onGround)
-        {
-            currentPlatform = collision.transform;
-            lastPlatformPosition = currentPlatform.position;
-
-            Collider2D coll = collision.transform.GetComponent<Collider2D>();
-            if (coll)
-            {
-                Vector2 position = transform.position;
-                position.y = collision.transform.position.y + coll.bounds.extents.y + .5f;
-                if (Mathf.Abs(transform.position.y - position.y) < .3f)
-                {
-                    transform.position = position;
-                }
-            }
-        }
+        CollisionCheck(collision, true);
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (onGround)
-        {
-            int layer = collision.gameObject.layer;
-            if (layer == platformLayer)
-            {
-                currentPlatform = collision.transform;
-                lastPlatformPosition = currentPlatform.position;
+        CollisionCheck(collision, false);
+    }
 
-                Collider2D coll = collision.transform.GetComponent<Collider2D>();
-                if (coll)
+
+    private void CollisionCheck(Collision2D collision, bool firstFrame)
+    {
+        int layer = collision.gameObject.layer;
+
+        if(groundLayer == (groundLayer | (1 << layer)))
+        {
+            foreach(ContactPoint2D cp in collision.contacts)
+            {
+                Vector2 contactPoint = cp.point - (Vector2) transform.position;
+                Vector2 limit = new Vector2(.1f, -.45f);
+
+                if (contactPoint.y < limit.y && Mathf.Abs(contactPoint.x) < limit.x)
                 {
-                    Vector2 position = transform.position;
-                    position.y = collision.transform.position.y + coll.bounds.extents.y + .5f;
-                    if(Mathf.Abs(transform.position.y - position.y) < .2f)
+                    onGround = true;
+
+                    if (layer == platformLayer)
                     {
-                        transform.position = position;
+                        currentPlatform = collision.transform;
+                        //transform.parent = collision.transform;
+                        lastPlatformPosition = currentPlatform.position;
+
+                        Collider2D coll = collision.transform.GetComponent<Collider2D>();
+                        if (firstFrame && coll)
+                        {
+                            Vector2 position = transform.position;
+                            position.y = collision.transform.position.y + coll.bounds.extents.y + .5f;
+                            if (Mathf.Abs(transform.position.y - position.y) < .2f)
+                            {
+                                transform.position = position;
+                            }
+                        }
                     }
+
+                    break;
                 }
             }
         }
@@ -468,9 +451,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
+        if (groundLayer == (groundLayer | (1 << collision.gameObject.layer)))
+        {
+            onGround = false;
+            coyoteTime = maxCoyoteTime;
+        }
+
         if (collision.transform == currentPlatform)
         {
             currentPlatform = null;
+            //transform.parent = null;
         }
         int layer = collision.gameObject.layer;
     }
@@ -532,8 +522,6 @@ public class PlayerMovement : MonoBehaviour
     public void SetExternalForce(Vector2 externalForce)
     {
         this.externalForce = externalForce.x;
-        //horizontalInput = 0;
-        //horizontalMovement = 0;
     }
 
     private IEnumerator InvencibilityTime()

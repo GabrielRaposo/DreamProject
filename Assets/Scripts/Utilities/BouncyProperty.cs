@@ -5,8 +5,8 @@ using UnityEngine.Events;
 
 public class BouncyProperty : MonoBehaviour
 {
-    public UnityEvent OnBounceEvent;
-    public UnityEvent OnHammerEvent;
+    [SerializeField] private UnityEvent OnBounceEvent;
+    [SerializeField] private UnityEvent OnHammerEvent;
 
     [HideInInspector] public bool super; 
 
@@ -53,7 +53,7 @@ public class BouncyProperty : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Hitbox"))
+        if (collision.CompareTag("Hammer"))
         {
             OnHammerEvent.Invoke();
         }
