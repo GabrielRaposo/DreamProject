@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1733063920}
   - component: {fileID: 1733063919}
   - component: {fileID: 1733063918}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: StompFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4772,7 +4772,7 @@ GameObject:
   - component: {fileID: 4847668989030398438}
   - component: {fileID: 4847668989030398432}
   - component: {fileID: 212390024}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Goomba
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -4875,8 +4875,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c32d7320293f194695a3ad35a8c255f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  aimAtPlayerOnStart: 0
+  moveSpeed: 0
+  aimAtPlayerOnStart: 1
   turnAroundOnWall: 1
   reverseOnLayer:
     serializedVersion: 2
@@ -4893,7 +4893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b82dd904c6c675d4eab204a433b13953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundPosition: 0.5
 --- !u!50 &4847668989030398438
 Rigidbody2D:
   serializedVersion: 4

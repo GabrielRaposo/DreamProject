@@ -1,34 +1,34 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(PlayerMovement))]
+[RequireComponent(typeof(PlayerGroundMovement))]
 public class PlayerController : MonoBehaviour {
 
-    private PlayerMovement movement;
+    private IPlayerMovement currentMovement;
 
     void OnEnable ()
     {
-        movement = GetComponent<PlayerMovement>();
+        currentMovement = GetComponent<PlayerGroundMovement>();
     }
 
 	void Update ()
     {
-        if (movement.stunned) return;
+        if (currentMovement.Stunned()) return;
 
-        movement.SetHorizontalInput(Input.GetAxisRaw("Horizontal"));
-        movement.SetVerticalInput(Input.GetAxisRaw("Vertical"));
+        currentMovement.SetHorizontalInput(Input.GetAxisRaw("Horizontal"));
+        currentMovement.SetVerticalInput(Input.GetAxisRaw("Vertical"));
 
         if (Input.GetButtonDown("Jump"))
         {
-            movement.SetJumpInput(true);
+            currentMovement.SetJumpInput(true);
         }
         else if (Input.GetButtonUp("Jump"))
         {
-            movement.SetJumpInput(false);
+            currentMovement.SetJumpInput(false);
         }
 
         if (Input.GetButtonDown("Attack"))
         {
-            movement.SetAttackInput();
+            currentMovement.SetAttackInput();
         }
     }
 }

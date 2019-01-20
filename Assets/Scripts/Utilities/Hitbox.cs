@@ -12,5 +12,6 @@ public class Hitbox : MonoBehaviour
     public enum Type { Hammer, Simple }
 
     public ID id;
-    public Vector2 direction;
+    public int damage = 1;
+    [HideInInspector] public Vector2 direction;
 }

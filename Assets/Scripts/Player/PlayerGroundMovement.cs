@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerGroundMovement : MonoBehaviour, IPlayerMovement
 {
     #region Variables
+    [SerializeField] private CinemachineVirtualCamera cvc;
+
     [Header("Health")]
     [SerializeField] private HealthDisplay healthDisplay;
     [SerializeField] private int maxHealth;
@@ -33,8 +36,10 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector2 startingPosition { get; private set; }
     public bool facingRight { get; private set; }
-    public bool stunned { get; private set; }
     public bool onGround { get; private set; }
+
+    private bool stunned;
+    public bool Stunned() { return stunned; }
 
     private float horizontalMovement;
     private float horizontalInput;
@@ -63,13 +68,13 @@ public class PlayerMovement : MonoBehaviour
     private LayerMask platformLayer;
 
     //private ID id;
-    private Animator animator;
-    private new Rigidbody2D rigidbody;
-    private new SpriteRenderer renderer;
+    private Animator m_animator;
+    private Rigidbody2D m_rigidbody;
+    private SpriteRenderer m_renderer;
     private PlayerController controller;
 
     public static GameManager gameManager;
-    public static PlayerMovement instance; 
+    public static PlayerGroundMovement instance; 
     #endregion
 
     private void Awake()
@@ -79,10 +84,10 @@ public class PlayerMovement : MonoBehaviour
             instance = this;
         }
 
-        animator = GetComponent<Animator>();
+        m_animator = GetComponent<Animator>();
         controller = GetComponent<PlayerController>();
-        rigidbody = GetComponent<Rigidbody2D>();
-        renderer = GetComponent<SpriteRenderer>();
+        m_rigidbody = GetComponent<Rigidbody2D>();
+        m_renderer = GetComponent<SpriteRenderer>();
 
         playerLayer = LayerMask.NameToLayer("Player");
         platformLayer = LayerMask.NameToLayer("Platform");
@@ -124,10 +129,10 @@ public class PlayerMovement : MonoBehaviour
             breaking = true;
         }
 
-        animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
+        m_animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
         if (onGround)
         {
-            animator.SetBool("Airborne", false);
+            m_animator.SetBool("Airborne", false);
             lastGroundY = transform.position.y;
         }
         else
@@ -135,14 +140,14 @@ public class PlayerMovement : MonoBehaviour
             //lidando com ghost vertices
             if (Mathf.Abs(lastGroundY - transform.position.y) > .1f)
             {
-                animator.SetBool("Airborne", true);
+                m_animator.SetBool("Airborne", true);
             }
 
-            animator.SetFloat("VerticalSpeed", rigidbody.velocity.y);
+            m_animator.SetFloat("VerticalSpeed", m_rigidbody.velocity.y);
         }
 
         CheckCrouch();
-        animator.SetBool("Crouching", crouching);
+        m_animator.SetBool("Crouching", crouching);
     }
 
     private void FixedUpdate()
@@ -157,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
             MoveWithPlatform();
         }
 
-        Vector2 velocity = rigidbody.velocity;
+        Vector2 velocity = m_rigidbody.velocity;
 
         if (!fallingThroughPlatform)
         {
@@ -207,7 +212,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        rigidbody.velocity = velocity;
+        m_rigidbody.velocity = velocity;
     }
 
     private void MoveWithPlatform()
@@ -265,7 +270,7 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateFacingDirection(bool facingRight)
     {
         this.facingRight = facingRight;
-        renderer.flipX = !facingRight;
+        m_renderer.flipX = !facingRight;
     }
 
     public void SetVerticalInput(float verticalInput)
@@ -307,11 +312,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (attackCoroutine != null)
         {
-            animator.SetTrigger("Reset");
+            m_animator.SetTrigger("Reset");
             ResetValues();
         }
 
-        rigidbody.velocity = new Vector2(rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
+        m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
+        onGround = false;
     }
 
     //Para funcionar, o Use Collider Mask da plataforma deve estar desligado
@@ -352,11 +358,11 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 spawnOffset = new Vector3(1.1f * ((facingRight) ? 1 : -1), -.2f);
         hammerHitbox.transform.localPosition = spawnOffset;
-        animator.SetTrigger("Attack");
+        m_animator.SetTrigger("Attack");
 
         yield return WaitForFrames(20);
 
-        animator.SetTrigger("Reset");
+        m_animator.SetTrigger("Reset");
         controller.enabled = true;
     }
 
@@ -373,21 +379,21 @@ public class PlayerMovement : MonoBehaviour
         controller.enabled = false;
         gravity = 0;
         gravityLock = true;
-        rigidbody.velocity = Vector3.zero;
+        m_rigidbody.velocity = Vector3.zero;
         horizontalMovement = (facingRight ? 1 : -1) * airdashSpeed;
         horizontalInput = 0;
         breaking = false;
 
         hammerHitbox.transform.localPosition = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
-        animator.SetTrigger("Attack");
+        m_animator.SetTrigger("Attack");
 
         yield return WaitForFrames(10);
-        rigidbody.velocity = Vector3.zero;
+        m_rigidbody.velocity = Vector3.zero;
         gravityLock = false;
         horizontalMovement = 0;
         yield return WaitForFrames(10);
 
-        animator.SetTrigger("Reset");
+        m_animator.SetTrigger("Reset");
         controller.enabled = true;
     }
 
@@ -423,12 +429,13 @@ public class PlayerMovement : MonoBehaviour
 
                 if (contactPoint.y < limit.y && Mathf.Abs(contactPoint.x) < limit.x)
                 {
-                    onGround = true;
+                    if(m_rigidbody.velocity.y < 1)
+                        onGround = true;
 
                     if (layer == platformLayer)
                     {
-                        currentPlatform = collision.transform;
                         //transform.parent = collision.transform;
+                        currentPlatform = collision.transform;
                         lastPlatformPosition = currentPlatform.position;
 
                         Collider2D coll = collision.transform.GetComponent<Collider2D>();
@@ -454,7 +461,11 @@ public class PlayerMovement : MonoBehaviour
         if (groundLayer == (groundLayer | (1 << collision.gameObject.layer)))
         {
             onGround = false;
-            coyoteTime = maxCoyoteTime;
+            if(transform.position.y > collision.transform.position.y)
+            {
+                //para lidar com bug de coyote extendido plataformas OneWay com colisão estranha
+                coyoteTime = maxCoyoteTime;
+            }
         }
 
         if (collision.transform == currentPlatform)
@@ -467,9 +478,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Blastzone"))
+        if (collision.CompareTag("Blastzone"))
         {
             Die();
+        }
+        else if (collision.CompareTag("Zipline"))
+        {
+            Zipline zipline = collision.GetComponent<Zipline>();
+            if (zipline)
+            {
+
+            }
         }
     }
 
@@ -501,14 +520,14 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator StunnedState(Vector3 knockback)
     {
-        rigidbody.velocity = Vector2.zero;
-        rigidbody.velocity += Vector2.up * knockback.y;
+        m_rigidbody.velocity = Vector2.zero;
+        m_rigidbody.velocity += Vector2.up * knockback.y;
         externalForce = knockback.x;
         horizontalInput = 0;
         breaking = true;
 
         stunned = true;
-        animator.SetBool("Stunned", true);
+        m_animator.SetBool("Stunned", true);
         for (int i = 0; i < 30; i++)
         {
             yield return new WaitForFixedUpdate();
@@ -516,7 +535,7 @@ public class PlayerMovement : MonoBehaviour
 
         StartCoroutine(InvencibilityTime());
         stunned = false;
-        animator.SetBool("Stunned", false);
+        m_animator.SetBool("Stunned", false);
     }
 
     public void SetExternalForce(Vector2 externalForce)
@@ -526,7 +545,6 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator InvencibilityTime()
     {
-        //Physics2D.IgnoreLayerCollision(playerLayer, enemyPlayer, true);
         invincible = true;
 
         int blinkCount = 18;
@@ -536,11 +554,10 @@ public class PlayerMovement : MonoBehaviour
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
 
-            renderer.enabled = !renderer.enabled;
+            m_renderer.enabled = !m_renderer.enabled;
         }
-        renderer.enabled = true;
+        m_renderer.enabled = true;
 
-        //Physics2D.IgnoreLayerCollision(playerLayer, enemyPlayer, false);
         invincible = false;
     }
 }

@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public PlayerMovement player;
+    public PlayerGroundMovement player;
 
     void Start()
     {
-        PlayerMovement.gameManager = this;
+        PlayerGroundMovement.gameManager = this;
     }
 
     public void RespawnPlayer()

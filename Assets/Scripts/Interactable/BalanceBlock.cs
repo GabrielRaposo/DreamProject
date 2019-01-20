@@ -36,6 +36,7 @@ public class BalanceBlock : MonoBehaviour
 
         coll = GetComponent<BoxCollider2D>();
         moveSpeed *= .01f;
+
         movement = Movement.None;
     }
 

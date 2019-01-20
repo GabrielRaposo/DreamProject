@@ -21,9 +21,9 @@ public class EnemyGoomba : Enemy
     private void ResetValues()
     {
         transform.rotation = Quaternion.Euler(Vector3.zero);
-        if (rb2D) rb2D.gravityScale = 1;
+        if (m_rigidbody) m_rigidbody.gravityScale = 1;
         patroller.enabled = true;
-        animator.SetTrigger("Reset");
+        m_animator.SetTrigger("Reset");
         state = State.Idle;
     }
 
@@ -32,7 +32,7 @@ public class EnemyGoomba : Enemy
         CheckGround();
     }
 
-    protected override void OnStompEvent(PlayerMovement player, Vector2 contactPosition)
+    protected override void OnStompEvent(PlayerGroundMovement player, Vector2 contactPosition)
     {
         base.OnStompEvent(player, contactPosition);
 
@@ -51,7 +51,7 @@ public class EnemyGoomba : Enemy
         stunCoroutine = StartCoroutine(StunState(knockback, (int)(stunTime * 60), player.facingRight));
     }
 
-    protected override void OnTouchEvent(PlayerMovement player, Vector2 contactPosition)
+    protected override void OnTouchEvent(PlayerGroundMovement player, Vector2 contactPosition)
     {
         base.OnTouchEvent(player, contactPosition);
         switch (state)
@@ -72,59 +72,70 @@ public class EnemyGoomba : Enemy
         }
     }
 
-    protected override void OnHammerEvent(Vector2 contactPosition, Vector2 direction)
+    protected override void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox)
     {
-        base.OnHammerEvent(contactPosition, direction);
+        base.OnHammerEvent(contactPosition, hitbox);
         if(state == State.Idle && onGround)
         {
             if (attackCoroutine != null)
             {
                 StopCoroutine(attackCoroutine);
-                animator.SetTrigger("Reset");
+                m_animator.SetTrigger("Reset");
             }
-            TakeDamage(1);
+            TakeDamage(hitbox.damage);
             StartCoroutine(SquishAndLaunch());
         }
         else if (state != State.Squished) {
             ResetValues();
-            TakeDamage(1);
+            TakeDamage(hitbox.damage);
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-            stunCoroutine = StartCoroutine(StunState(12, (int)(stunTime * 60), direction.x > 0 ? true : false));
+            stunCoroutine = StartCoroutine(StunState(12, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
+        }
+    }
+
+    protected override void OnHitboxEvent(Hitbox hitbox)
+    {
+        base.OnHitboxEvent(hitbox);
+        if (state != State.Squished)
+        {
+            TakeDamage(hitbox.damage);
+            if (stunCoroutine != null) StopCoroutine(stunCoroutine);
+            stunCoroutine = StartCoroutine(StunState(12, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
         }
     }
 
     private IEnumerator AttackState()
     {
-        rb2D.velocity = Vector2.zero;
-        animator.SetTrigger("Attack");
+        m_rigidbody.velocity = Vector2.zero;
+        m_animator.SetTrigger("Attack");
         patroller.enabled = false;
         for (int i = 0; i < 60; i++)
         {
             yield return new WaitForFixedUpdate();
         }
         patroller.enabled = true;
-        animator.SetTrigger("Reset");
+        m_animator.SetTrigger("Reset");
     }
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)
     {
-        animator.SetBool("Stunned", true);
+        m_animator.SetBool("Stunned", true);
 
         patroller.SetFacingSide(!goRight);
-        if (rb2D)
+        if (m_rigidbody)
         {
-            rb2D.velocity = pushForce * (!goRight ? Vector2.left : Vector2.right);
+            m_rigidbody.velocity = pushForce * (!goRight ? Vector2.left : Vector2.right);
         }
 
         patroller.enabled = false;
         for (int i = 0; i < time; i++)
         {
             yield return new WaitForFixedUpdate();
-            rb2D.velocity -= rb2D.velocity * .1f;
+            m_rigidbody.velocity -= m_rigidbody.velocity * .1f;
         }
         if(health > 0)
         {
-            animator.SetBool("Stunned", false);
+            m_animator.SetBool("Stunned", false);
             patroller.enabled = true;
         }
         else
@@ -142,11 +153,11 @@ public class EnemyGoomba : Enemy
     {
         state = State.Squished;
         patroller.enabled = false;
-        if (rb2D)
+        if (m_rigidbody)
         {
-            rb2D.velocity = Vector2.zero;
+            m_rigidbody.velocity = Vector2.zero;
         }
-        animator.SetTrigger("Hammer");
+        m_animator.SetTrigger("Hammer");
 
         for (int i = 0; i < 20; i++)
         {
@@ -156,11 +167,11 @@ public class EnemyGoomba : Enemy
         state = State.Vulnerable;
         //if (coll) coll.enabled = false;
         float targetY = transform.position.y + 3;
-        animator.SetTrigger("Launch");
-        if (rb2D)
+        m_animator.SetTrigger("Launch");
+        if (m_rigidbody)
         {
-            rb2D.gravityScale = 0;
-            rb2D.velocity = Vector2.up * 1;
+            m_rigidbody.gravityScale = 0;
+            m_rigidbody.velocity = Vector2.up * 1;
         }
 
         while(transform.position.y < targetY)
@@ -173,7 +184,7 @@ public class EnemyGoomba : Enemy
 
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
     {
-        rb2D.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+        m_rigidbody.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
     }
 
     private void CheckGround()

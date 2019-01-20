@@ -11,6 +11,7 @@ TagManager:
   - Enemy
   - OneWay
   - Hammer
+  - Zipline
   layers:
   - Default
   - TransparentFX

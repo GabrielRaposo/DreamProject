@@ -9,16 +9,18 @@ public class Enemy : MonoBehaviour
 
     protected bool interactable = true;
 
-    protected Animator animator;
-    protected Rigidbody2D rb2D;
-    protected Collider2D coll;
+    protected Animator m_animator;
+    protected SpriteRenderer m_renderer;
+    protected Rigidbody2D m_rigidbody;
+    protected Collider2D m_collider;
     protected ID id;
 
     private void OnEnable()
     {
-        animator = GetComponent<Animator>();
-        rb2D = GetComponent<Rigidbody2D>();
-        coll = GetComponent<Collider2D>();
+        m_animator = GetComponent<Animator>();
+        m_renderer = GetComponent<SpriteRenderer>();
+        m_rigidbody = GetComponent<Rigidbody2D>();
+        m_collider = GetComponent<Collider2D>();
 
         id = ID.Enemy;
     }
@@ -47,13 +49,19 @@ public class Enemy : MonoBehaviour
     {
         if (collision.CompareTag("Hammer"))
         {
-            Vector2 direction = Vector2.zero;
             Hitbox hitbox = collision.GetComponent<Hitbox>();
             if (hitbox != null)
             {
-                direction = hitbox.direction;
+                OnHammerEvent(collision.transform.position, hitbox);
             }
-            OnHammerEvent(collision.transform.position, direction);
+        } else 
+        if (collision.CompareTag("Hitbox"))
+        {
+            Hitbox hitbox = collision.GetComponent<Hitbox>();
+            if (hitbox != null && hitbox.id != id)
+            {
+                OnHitboxEvent(hitbox);
+            }
         }
     }
 
@@ -66,10 +74,10 @@ public class Enemy : MonoBehaviour
             Vector3 contactPoint = collision.transform.position;
             if (collision.contactCount > 0) contactPoint = collision.contacts[0].point;
 
-            PlayerMovement player = collision.transform.GetComponent<PlayerMovement>();
+            PlayerGroundMovement player = collision.transform.GetComponent<PlayerGroundMovement>();
             if (player == null)
             {
-                player = new PlayerMovement();
+                player = new PlayerGroundMovement();
             }
 
             if ((collision.transform.position - transform.position).y > mininumTopY)
@@ -80,13 +88,18 @@ public class Enemy : MonoBehaviour
             {
                 OnTouchEvent(player, contactPoint);
             }
-        }  
+        }
     }
 
-    protected virtual void OnHammerEvent(Vector2 contactPosition, Vector2 direction)    { StartCoroutine(InteractionDelay(3)); }
-    protected virtual void OnStompEvent(PlayerMovement player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
-    protected virtual void OnTouchEvent(PlayerMovement player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
+
+    protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
+    protected virtual void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
+    protected virtual void OnStompEvent(PlayerGroundMovement player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
+    protected virtual void OnTouchEvent(PlayerGroundMovement player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
 
     public virtual void OnBouncyTopEvent(Vector2 contactPosition, bool super) { }
     public virtual void OnBouncySideEvent(Vector2 contactPosition) { }
+
+    public virtual void ChildHitboxEnterEvent(Collider2D collision) { }
+    public virtual void ChildHitboxExitEvent(Collider2D collision) { }
 }
