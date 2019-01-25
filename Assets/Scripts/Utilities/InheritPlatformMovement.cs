@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InheritPlatformMovement : MonoBehaviour
@@ -49,6 +48,7 @@ public class InheritPlatformMovement : MonoBehaviour
                 {
                     currentPlatform = collision.transform;
                     lastPlatformPosition = currentPlatform.position;
+
                     break;
                 }
             }

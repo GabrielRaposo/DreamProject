@@ -74,10 +74,10 @@ public class Enemy : MonoBehaviour
             Vector3 contactPoint = collision.transform.position;
             if (collision.contactCount > 0) contactPoint = collision.contacts[0].point;
 
-            PlayerGroundMovement player = collision.transform.GetComponent<PlayerGroundMovement>();
+            PlayerController player = collision.transform.GetComponent<PlayerController>();
             if (player == null)
             {
-                player = new PlayerGroundMovement();
+                player = new PlayerController();
             }
 
             if ((collision.transform.position - transform.position).y > mininumTopY)
@@ -94,8 +94,8 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
     protected virtual void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
-    protected virtual void OnStompEvent(PlayerGroundMovement player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
-    protected virtual void OnTouchEvent(PlayerGroundMovement player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
+    protected virtual void OnStompEvent(PlayerController player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
+    protected virtual void OnTouchEvent(PlayerController player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
 
     public virtual void OnBouncyTopEvent(Vector2 contactPosition, bool super) { }
     public virtual void OnBouncySideEvent(Vector2 contactPosition) { }

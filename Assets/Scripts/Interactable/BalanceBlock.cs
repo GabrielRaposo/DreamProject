@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BalanceBlock : MonoBehaviour
+public class BalanceBlock : MonoBehaviour, IPlatformEvent
 {
     [SerializeField] private Transform target;
     [SerializeField] private float moveSpeed;
@@ -72,7 +72,7 @@ public class BalanceBlock : MonoBehaviour
                 }
                 else
                 {
-                    transform.position += Vector3.up * moveSpeed;
+                    transform.position += Vector3.up * moveSpeed * .3f;
                 }
                 if (connectedBlocks.Length > 0) UpdatePosition();
                 break;
@@ -81,33 +81,20 @@ public class BalanceBlock : MonoBehaviour
         if (hammerPush > 0) hammerPush--;
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    public void OnLandEvent()
     {
-        if (collision.transform.CompareTag("Player"))
-        {
-            foreach(ContactPoint2D cp in collision.contacts)
-            {
-                if(cp.point.y > transform.position.y + coll.bounds.extents.y - .1f)
-                {
-                    movement = Movement.Down;
-                    break;
-                }
-            }
-        }
+        movement = Movement.Down;
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    public void OnLeaveEvent()
     {
-        if (collision.transform.CompareTag("Player"))
+        if (originalPosition.y > min.y)
         {
-            if(originalPosition.y > min.y)
-            {
-                movement = Movement.Up;
-            }
-            else
-            {
-                movement = Movement.None;
-            }
+            movement = Movement.Up;
+        }
+        else
+        {
+            movement = Movement.None;
         }
     }
 
@@ -132,6 +119,6 @@ public class BalanceBlock : MonoBehaviour
     {
         float yPosition = (target.position.y - originalPosition.y) * percent;
         transform.position = new Vector2(transform.position.x, yPosition + originalPosition.y);
-        movement = Movement.None;
     }
+
 }

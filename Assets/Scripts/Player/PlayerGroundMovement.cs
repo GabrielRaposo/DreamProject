@@ -1,17 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
-public class PlayerGroundMovement : MonoBehaviour, IPlayerMovement
+public class PlayerGroundMovement : MonoBehaviour
 {
-    #region Variables
-    [SerializeField] private CinemachineVirtualCamera cvc;
-
-    [Header("Health")]
-    [SerializeField] private HealthDisplay healthDisplay;
-    [SerializeField] private int maxHealth;
-
     [Header("Horizontal Movement")]
     [SerializeField] private float horizontalSpeed;
     [SerializeField] private float breakSpeed;
@@ -20,131 +11,37 @@ public class PlayerGroundMovement : MonoBehaviour, IPlayerMovement
     [SerializeField] private BoxCollider2D highCollider;
     [SerializeField] private float crouchSpeedModifier;
 
-    [Header("Jump")]
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float jumpInitialSpeed;
-    [SerializeField] private float superJumpInitialSpeed;
-    [SerializeField] private float customGravity;
-    [SerializeField] private float maxFallSpeed;
-    [SerializeField] private int maxCoyoteTime;
-
     [Header("Attack")]
     [SerializeField] private Hitbox hammerHitbox;
-    [SerializeField] private GameObject gustPrefab;
-    [SerializeField] private float gustSpeed;
-    [SerializeField] private float airdashSpeed;
-
-    public Vector2 startingPosition { get; private set; }
-    public bool facingRight { get; private set; }
-    public bool onGround { get; private set; }
-
-    private bool stunned;
-    public bool Stunned() { return stunned; }
 
     private float horizontalMovement;
-    private float horizontalInput;
     private bool breaking;
-    private float verticalInput;
-    private bool crouching;
-    private bool fallingThroughPlatform;
-    private float externalForce;
 
-    private const float BASE_GRAVITY = 2f;
-    private const float LIGHT_GRAVITY = 1f;
-    private float gravityModifier = BASE_GRAVITY;
-    private float gravity;
-    private bool gravityLock;
-    private Vector2 currentGroundNormal;
-    private int coyoteTime;
-
-    private bool inputLock;
-    private bool invincible;
-    private Vector3 lastPlatformPosition;
-    private Transform currentPlatform;
-    private Coroutine attackCoroutine;
-    private float lastGroundY;
-
-    private LayerMask playerLayer;
-    private LayerMask platformLayer;
-
-    //private ID id;
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
-    private SpriteRenderer m_renderer;
     private PlayerController controller;
 
-    public static GameManager gameManager;
-    public static PlayerGroundMovement instance; 
-    #endregion
+    [HideInInspector] public float horizontalInput;
+    [HideInInspector] public float verticalInput;
+    [HideInInspector] public bool crouching;
 
     private void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
+        controller = GetComponent<PlayerController>();
 
         m_animator = GetComponent<Animator>();
-        controller = GetComponent<PlayerController>();
         m_rigidbody = GetComponent<Rigidbody2D>();
-        m_renderer = GetComponent<SpriteRenderer>();
-
-        playerLayer = LayerMask.NameToLayer("Player");
-        platformLayer = LayerMask.NameToLayer("Platform");
-
-        //id = ID.Player;
-        startingPosition = transform.position;
     }
 
-    private void Start ()
+    private void OnEnable()
     {
-        if (healthDisplay)
-        {
-            healthDisplay.Init(maxHealth);
-        }
-
-        UpdateFacingDirection(true);
-        ResetValues();
-    }
-
-    private void ResetValues()
-    {
-        gravityLock = false;
-        controller.enabled = true;
-        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         breaking = false;
-        hammerHitbox.gameObject.SetActive(false);
+        m_animator.SetBool("Airborne", false);
     }
 
-    private void Update ()
+    private void Update()
     {
-        if (Mathf.Abs(horizontalInput) > 0.9f)
-        {
-            horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
-            breaking = false;
-            UpdateFacingDirection(horizontalMovement > 0 ? true : false);
-        }
-        else if (Mathf.Abs(horizontalMovement) > 0)
-        {
-            breaking = true;
-        }
-
         m_animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
-        if (onGround)
-        {
-            m_animator.SetBool("Airborne", false);
-            lastGroundY = transform.position.y;
-        }
-        else
-        {
-            //lidando com ghost vertices
-            if (Mathf.Abs(lastGroundY - transform.position.y) > .1f)
-            {
-                m_animator.SetBool("Airborne", true);
-            }
-
-            m_animator.SetFloat("VerticalSpeed", m_rigidbody.velocity.y);
-        }
 
         CheckCrouch();
         m_animator.SetBool("Crouching", crouching);
@@ -152,21 +49,17 @@ public class PlayerGroundMovement : MonoBehaviour, IPlayerMovement
 
     private void FixedUpdate()
     {
-        if(coyoteTime > 0)
-        {
-            coyoteTime--;
-        }
-
-        if (currentPlatform != null)
-        {
-            MoveWithPlatform();
-        }
-
         Vector2 velocity = m_rigidbody.velocity;
 
-        if (!fallingThroughPlatform)
+        if (Mathf.Abs(horizontalInput) > 0.9f)
         {
-            Physics2D.IgnoreLayerCollision(playerLayer, platformLayer, velocity.y > 0);
+            horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
+            breaking = false;
+            controller.UpdateFacingDirection(horizontalMovement > 0 ? true : false);
+        }
+        else if (Mathf.Abs(horizontalMovement) > 0)
+        {
+            breaking = true;
         }
 
         if (breaking)
@@ -181,383 +74,68 @@ public class PlayerGroundMovement : MonoBehaviour, IPlayerMovement
                 breaking = false;
             }
         }
-        if (Mathf.Abs(externalForce) > 0)
-        {
-            externalForce -= (externalForce * .2f);
-            if(Mathf.Abs(externalForce) < .01f)
-            {
-                externalForce = 0;
-            }
-        }
 
-        velocity.x = (horizontalMovement * (crouching ? crouchSpeedModifier : 1)) + externalForce;
+        velocity.x = horizontalMovement * (crouching ? crouchSpeedModifier : 1);
 
-        if (!onGround)
+        //gambiarra temporária
+        if (velocity.y > 0 && velocity.y < 1)
         {
-            if (!gravityLock)
-            {
-                gravity = gravityModifier;
-            }
-
-            float y = velocity.y + (customGravity * gravity * Physics2D.gravity.y * Time.fixedDeltaTime);
-            if (y < maxFallSpeed) y = maxFallSpeed;
-            velocity.y = y;
-        }
-        else
-        {
-            //gambiarra temporária
-            if (velocity.y > 0 && velocity.y < 1)
-            {
-                velocity.y = 0;
-            }
+            velocity.y = 0;
         }
 
         m_rigidbody.velocity = velocity;
     }
 
-    private void MoveWithPlatform()
-    {
-        if (lastPlatformPosition != currentPlatform.position)
-        {
-            Vector3 diff = currentPlatform.position - lastPlatformPosition;
-            transform.position += diff;
-
-            lastPlatformPosition = currentPlatform.position;
-        }
-    }
-
     private void CheckCrouch()
     {
-        if(onGround)
+        if (verticalInput < 0)
         {
-            if (verticalInput < 0)
-            {
-                crouching = true;
-                highCollider.enabled = false;
-            } 
-            else if (!Physics2D.OverlapCircle(transform.position, .25f, 1 << LayerMask.NameToLayer("Ground")))
-            {
-                crouching = false;
-                highCollider.enabled = true;
-            }
+            crouching = true;
+            highCollider.enabled = false;
         }
-        else
+        else if (!Physics2D.OverlapCircle(transform.position, .25f, 1 << LayerMask.NameToLayer("Ground")))
         {
             crouching = false;
             highCollider.enabled = true;
         }
     }
 
-    private IEnumerator WaitForFrames(int frames)
+    private void OnDisable()
     {
-        for (int i = 0; i < frames; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-    }
-
-    private void Die()
-    {
-        if(gameManager) gameManager.RespawnPlayer();
-    }
-
-    public void SetHorizontalInput(float horizontalInput)
-    {
-        //if (crouching) return;
-        this.horizontalInput = horizontalInput;
-    }
-
-    private void UpdateFacingDirection(bool facingRight)
-    {
-        this.facingRight = facingRight;
-        m_renderer.flipX = !facingRight;
-    }
-
-    public void SetVerticalInput(float verticalInput)
-    {
-        this.verticalInput = verticalInput;
-    }
-
-    public void SetJumpInput(bool value)
-    {
-        if (value)
-        {
-            gravityModifier = LIGHT_GRAVITY;
-
-            if (inputLock) return;
-
-            if (!crouching)
-            {
-                if (onGround || coyoteTime > 0)
-                {
-                    SetJump();
-                    StartCoroutine(LockInputs());
-                }
-            }
-            else if (currentPlatform != null)
-            {
-                if (currentPlatform.CompareTag("OneWay"))
-                {
-                    StartCoroutine(FallThroughPlatform());
-                    StartCoroutine(LockInputs());
-                }
-            }
-        } else
-        {
-            gravityModifier = BASE_GRAVITY;
-        }
-    }
-
-    public void SetJump(bool super = false)
-    {
-        if (attackCoroutine != null)
-        {
-            m_animator.SetTrigger("Reset");
-            ResetValues();
-        }
-
-        m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
-        onGround = false;
-    }
-
-    //Para funcionar, o Use Collider Mask da plataforma deve estar desligado
-    private IEnumerator FallThroughPlatform()
-    {
-        fallingThroughPlatform = true;
-        onGround = false;
-        Physics2D.IgnoreLayerCollision(playerLayer, platformLayer, true);
-        for (int i = 0; i < 20; i++) yield return new WaitForEndOfFrame();
-        Physics2D.IgnoreLayerCollision(playerLayer, platformLayer, false);
-        fallingThroughPlatform = false;
+        StopAllCoroutines();
+        if(controller.attacking) m_animator.SetTrigger("Reset");
+        hammerHitbox.gameObject.SetActive(false);
+        controller.attacking = false;
+        horizontalMovement = horizontalInput = verticalInput = 0;
+        m_animator.SetBool("Crouching", crouching = false);
+        highCollider.enabled = true;
     }
 
     public void SetAttackInput()
     {
-        if (inputLock || crouching) return;
-        StartCoroutine(LockInputs());
-
-        hammerHitbox.direction = facingRight ? Vector2.right : Vector2.left;
-
-        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
-
-        if (onGround)
+        if (!crouching)
         {
-            attackCoroutine = StartCoroutine(LandAttackSequence());
-        }
-        else
-        {
-            attackCoroutine = StartCoroutine(AerialAttackSequence());
+            StartCoroutine(AttackSequence());
         }
     }
 
-    private IEnumerator LandAttackSequence()
+    private IEnumerator AttackSequence()
     {
-        controller.enabled = false;
+        controller.attacking = true;
         horizontalMovement = 0;
         horizontalInput = 0;
 
-        Vector3 spawnOffset = new Vector3(1.1f * ((facingRight) ? 1 : -1), -.2f);
+        hammerHitbox.direction = controller.facingRight ? Vector2.right : Vector2.left;
+        Vector3 spawnOffset = new Vector3(1.1f * ((controller.facingRight) ? .8f : -.8f), -.2f);
         hammerHitbox.transform.localPosition = spawnOffset;
         m_animator.SetTrigger("Attack");
 
-        yield return WaitForFrames(20);
+        for(int i = 0; i < 20; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
 
         m_animator.SetTrigger("Reset");
-        controller.enabled = true;
-    }
-
-    private void LaunchGust(Vector3 spawnOffset, Gust gust, float speed)
-    {
-        gust.transform.localPosition = transform.position + spawnOffset + (Vector3.down * .2f);
-        //gust.transform.position += ((speed > 0) ? Vector3.right : Vector3.left) * .5f;
-        gust.gameObject.SetActive(true);
-        gust.Launch(speed);
-    }
-
-    private IEnumerator AerialAttackSequence()
-    {
-        controller.enabled = false;
-        gravity = 0;
-        gravityLock = true;
-        m_rigidbody.velocity = Vector3.zero;
-        horizontalMovement = (facingRight ? 1 : -1) * airdashSpeed;
-        horizontalInput = 0;
-        breaking = false;
-
-        hammerHitbox.transform.localPosition = 1.1f * ((facingRight) ? Vector3.right : Vector3.left);
-        m_animator.SetTrigger("Attack");
-
-        yield return WaitForFrames(10);
-        m_rigidbody.velocity = Vector3.zero;
-        gravityLock = false;
-        horizontalMovement = 0;
-        yield return WaitForFrames(10);
-
-        m_animator.SetTrigger("Reset");
-        controller.enabled = true;
-    }
-
-    //Gambiarra temporária
-    private IEnumerator LockInputs()
-    {
-        inputLock = true;
-        for (int i = 0; i < 3; i++) yield return new WaitForEndOfFrame();
-        inputLock = false;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        CollisionCheck(collision, true);
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        CollisionCheck(collision, false);
-    }
-
-
-    private void CollisionCheck(Collision2D collision, bool firstFrame)
-    {
-        int layer = collision.gameObject.layer;
-
-        if(groundLayer == (groundLayer | (1 << layer)))
-        {
-            foreach(ContactPoint2D cp in collision.contacts)
-            {
-                Vector2 contactPoint = cp.point - (Vector2) transform.position;
-                Vector2 limit = new Vector2(.1f, -.45f);
-
-                if (contactPoint.y < limit.y && Mathf.Abs(contactPoint.x) < limit.x)
-                {
-                    if(m_rigidbody.velocity.y < 1)
-                        onGround = true;
-
-                    if (layer == platformLayer)
-                    {
-                        //transform.parent = collision.transform;
-                        currentPlatform = collision.transform;
-                        lastPlatformPosition = currentPlatform.position;
-
-                        Collider2D coll = collision.transform.GetComponent<Collider2D>();
-                        if (firstFrame && coll)
-                        {
-                            Vector2 position = transform.position;
-                            position.y = collision.transform.position.y + coll.bounds.extents.y + .5f;
-                            if (Mathf.Abs(transform.position.y - position.y) < .2f)
-                            {
-                                transform.position = position;
-                            }
-                        }
-                    }
-
-                    break;
-                }
-            }
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (groundLayer == (groundLayer | (1 << collision.gameObject.layer)))
-        {
-            onGround = false;
-            if(transform.position.y > collision.transform.position.y)
-            {
-                //para lidar com bug de coyote extendido plataformas OneWay com colisão estranha
-                coyoteTime = maxCoyoteTime;
-            }
-        }
-
-        if (collision.transform == currentPlatform)
-        {
-            currentPlatform = null;
-            //transform.parent = null;
-        }
-        int layer = collision.gameObject.layer;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Blastzone"))
-        {
-            Die();
-        }
-        else if (collision.CompareTag("Zipline"))
-        {
-            Zipline zipline = collision.GetComponent<Zipline>();
-            if (zipline)
-            {
-
-            }
-        }
-    }
-
-    public void SetDamage(Vector3 contactPoint, int damage)
-    {
-        if (invincible) return;
-
-        if (healthDisplay)
-        {
-            healthDisplay.ChangeValue(-damage);
-        }
-
-        Vector3 knockback;
-        if(transform.position.x < contactPoint.x)
-        {
-            knockback = Vector3.left;
-            UpdateFacingDirection(true);
-        }
-        else
-        {
-            knockback = Vector3.right;
-            UpdateFacingDirection(false);
-        }
-        knockback *= 15;
-        knockback += Vector3.up * 8;
-        ResetValues();
-        StartCoroutine(StunnedState(knockback));
-    }
-
-    private IEnumerator StunnedState(Vector3 knockback)
-    {
-        m_rigidbody.velocity = Vector2.zero;
-        m_rigidbody.velocity += Vector2.up * knockback.y;
-        externalForce = knockback.x;
-        horizontalInput = 0;
-        breaking = true;
-
-        stunned = true;
-        m_animator.SetBool("Stunned", true);
-        for (int i = 0; i < 30; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        StartCoroutine(InvencibilityTime());
-        stunned = false;
-        m_animator.SetBool("Stunned", false);
-    }
-
-    public void SetExternalForce(Vector2 externalForce)
-    {
-        this.externalForce = externalForce.x;
-    }
-
-    private IEnumerator InvencibilityTime()
-    {
-        invincible = true;
-
-        int blinkCount = 18;
-        for(int i = 0; i < blinkCount; i++)
-        {
-            yield return new WaitForFixedUpdate();
-            yield return new WaitForFixedUpdate();
-            yield return new WaitForFixedUpdate();
-
-            m_renderer.enabled = !m_renderer.enabled;
-        }
-        m_renderer.enabled = true;
-
-        invincible = false;
+        controller.attacking = false;
     }
 }

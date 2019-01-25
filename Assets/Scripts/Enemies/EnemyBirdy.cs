@@ -45,7 +45,7 @@ public class EnemyBirdy : Enemy
         m_animator.SetTrigger("Reset");
     }
 
-    protected override void OnStompEvent(PlayerGroundMovement player, Vector2 contactPosition)
+    protected override void OnStompEvent(PlayerController player, Vector2 contactPosition)
     {
         base.OnStompEvent(player, contactPosition);
 
@@ -76,7 +76,7 @@ public class EnemyBirdy : Enemy
         StartCoroutine(StunState());
     }
 
-    protected override void OnTouchEvent(PlayerGroundMovement player, Vector2 contactPosition)
+    protected override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
     { 
         base.OnTouchEvent(player, contactPosition);
 

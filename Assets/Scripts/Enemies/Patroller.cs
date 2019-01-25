@@ -24,7 +24,7 @@ public class Patroller : MonoBehaviour
     {
         if (aimAtPlayerOnStart)
         {
-            PlayerGroundMovement player = PlayerGroundMovement.instance;
+            PlayerController player = PlayerController.instance;
             if (player)
             {
                 SetFacingSide((transform.position.x < player.transform.position.x) ? true : false);
