@@ -47,6 +47,7 @@ public class Cloud : MonoBehaviour, IPlatformEvent
     private IEnumerator RestaurationTimer()
     {
         yield return new WaitForSeconds(3f);
+        transform.position = new Vector3(transform.position.x, yPosition);
         m_animator.SetInteger("State", 0);
     }
 

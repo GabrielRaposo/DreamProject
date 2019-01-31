@@ -4854,13 +4854,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14361e3ca50fa3047aace38a7060eeda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 2
+  health: 1
   mininumTopY: 0.2
+  destructionFX: {fileID: 8146530301406283517, guid: 66b7589ee4f2b0a49a25cccfa07bc07b,
+    type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 4352
   patroller: {fileID: 4847668989030398433}
-  stunTime: 0.5
+  stunTime: 0.2
   jumpForce: 6
   stompFX: {fileID: 1733063919}
 --- !u!114 &4847668989030398433

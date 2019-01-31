@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FollowTrail : MonoBehaviour
 {
+    [SerializeField] private Transform anchors;
     [SerializeField] private float moveSpeed = 1;
     [SerializeField] private bool loop = true;
 
@@ -16,15 +17,15 @@ public class FollowTrail : MonoBehaviour
 
     private void Start()
     {
-        if ((marks_quantity = transform.childCount) == 0)
+        if ((marks_quantity = anchors.childCount) == 0)
             this.enabled = false;
 
         global_reachmarks = new Vector3[marks_quantity + 1];
         global_reachmarks[0] = transform.position;
         for (int i = 0; i < marks_quantity; i++)
         {
-            global_reachmarks[i + 1] = transform.GetChild(i).position;
-            transform.GetChild(i).position = transform.position;
+            global_reachmarks[i + 1] = anchors.GetChild(i).position;
+            anchors.GetChild(i).position = transform.position;
         }
         marks_quantity++;
     }

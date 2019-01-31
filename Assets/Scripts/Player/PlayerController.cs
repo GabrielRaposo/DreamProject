@@ -10,10 +10,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private HealthDisplay healthDisplay;
     [SerializeField] private int maxHealth;
 
-    [Header("Gravity")]
+    [Header("Physics")]
     [SerializeField] private float customGravity;
-    [Space(30)]
     [SerializeField] private int maxCoyoteTime;
+
+    [Space(10)]
+
+    [SerializeField] private SpriteRenderer damageFX;
 
     [HideInInspector] public bool attacking;
     private Vector3 pushForce;
@@ -26,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private enum State { Ground, Airborne, Zipping }
     private State state;
     private bool stunned;
+    private bool superJumping;
     private int coyoteTime;
     private bool invincible;
     private bool inputLock;
@@ -83,6 +87,8 @@ public class PlayerController : MonoBehaviour
         airborneMovement.enabled = false;
         zippingMovement.enabled = false;
 
+        superJumping = false;
+
         state = State.Ground;
     }
 
@@ -128,6 +134,15 @@ public class PlayerController : MonoBehaviour
 
             GetInputs();
         }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            gravityModifier = LIGHT_GRAVITY;
+        }
+        else if (Input.GetButtonUp("Jump"))
+        {
+            gravityModifier = BASE_GRAVITY;
+        }
     }
 
     private void GetInputs()
@@ -154,6 +169,8 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case State.Zipping:
+                zippingMovement.horizontalInput = Input.GetAxisRaw("Horizontal");
+
                 if (Input.GetButtonDown("Attack"))
                 {
                     zippingMovement.SetAttackInput();
@@ -165,10 +182,6 @@ public class PlayerController : MonoBehaviour
         {
             gravityModifier = LIGHT_GRAVITY;
             SetJumpInput(true);
-        }
-        else if (Input.GetButtonUp("Jump"))
-        {
-            gravityModifier = BASE_GRAVITY;
         }
     }
 
@@ -183,7 +196,9 @@ public class PlayerController : MonoBehaviour
 
         if (!gravityLock)
         {
-            float y = velocity.y + (customGravity * gravityModifier * Physics2D.gravity.y * Time.fixedDeltaTime);
+            float y;
+            if (!superJumping) y = velocity.y + (customGravity * gravityModifier * Physics2D.gravity.y * Time.fixedDeltaTime);
+            else               y = velocity.y + (customGravity * LIGHT_GRAVITY * Physics2D.gravity.y * Time.fixedDeltaTime);
             velocity.y = y;
         }
 
@@ -220,7 +235,6 @@ public class PlayerController : MonoBehaviour
                     StartCoroutine(LockInputs());
                 }
             }
-
         }
     }
 
@@ -228,6 +242,7 @@ public class PlayerController : MonoBehaviour
     {
         SetAirborneState();
         airborneMovement.Jump(super);
+        superJumping = super;
     }
 
     public void SetAttackInput()
@@ -265,15 +280,29 @@ public class PlayerController : MonoBehaviour
         groundMovement.enabled = false;
         airborneMovement.enabled = false;
         stunned = true;
-        m_rigidbody.velocity = knockback;
+        invincible = true;
+
         m_animator.SetBool("Stunned", true);
+        m_rigidbody.velocity = knockback;
+
+        damageFX.enabled = true;
+        Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(.2f);
+        Time.timeScale = 1;
+        damageFX.enabled = false;
+
         for (int i = 0; i < 20; i++)
         {
             yield return new WaitForFixedUpdate();
         }
 
-        StartCoroutine(InvencibilityTime());
+        if (healthDisplay.value < 1)
+        {
+            Die();
+        }
+
         stunned = false;
+        StartCoroutine(InvencibilityTime());
         if (onGround)
         {
             SetGroundState();
@@ -340,11 +369,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Blastzone"))
-        {
-            Die();
-        }
-        else if (collision.CompareTag("Zipline"))
+        if (collision.CompareTag("Zipline"))
         {
             Zipline zipline = collision.GetComponent<Zipline>();
             if (zipline && !zipline.Disabled)
@@ -358,6 +383,14 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+        else if (collision.CompareTag("Blastzone"))
+        {
+            Die();
+        }
+        else if (collision.CompareTag("Exit"))
+        {
+            gameManager.CallNextStage();
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -367,12 +400,20 @@ public class PlayerController : MonoBehaviour
             Windbox windbox = collision.GetComponent<Windbox>();
             if (windbox)
             {
-                SetWindForce(windbox.force);
+                SetPushForce(windbox.force);
             }
         }
     }
 
-    private void SetWindForce(Vector3 force)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Damage"))
+        {
+            SetDamage(collision.contacts[0].point, 1);
+        }
+    }
+
+    public void SetPushForce(Vector3 force)
     {
         if(state != State.Zipping)
         {
@@ -382,6 +423,7 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
-        if (gameManager) gameManager.RespawnPlayer();
+        if (gameManager) gameManager.RestartScene();
+        Destroy (gameObject);
     }
 }

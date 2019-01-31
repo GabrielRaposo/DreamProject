@@ -11,6 +11,7 @@ public class PlayerZippingMovement : MonoBehaviour
     private Rigidbody2D m_rigidbody;
     private PlayerController controller;
 
+    [HideInInspector] public float horizontalInput;
     [HideInInspector] public Zipline zipline;
 
     private void Awake()
@@ -24,7 +25,6 @@ public class PlayerZippingMovement : MonoBehaviour
     private void OnEnable()
     {
         controller.gravityLock = true;
-        controller.UpdateFacingDirection(zipline.Movement().x > 0? true : false);
 
         slideFX.gameObject.SetActive(true);
         slideFX.startColor = zipline.GetComponent<SpriteRenderer>().color;
@@ -35,6 +35,11 @@ public class PlayerZippingMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (Mathf.Abs(horizontalInput) > 0.9f)
+        {
+            controller.UpdateFacingDirection(horizontalInput > 0 ? true : false);
+        }
+
         if (zipline)
         {
             m_rigidbody.velocity = zipline.Movement();

@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyBirdy : Enemy
 {
     [Header("Birdy")]
+    [SerializeField] private InheritPlatformMovement inheritPlatformMovement;
     [SerializeField] private bool aimBelow;
     [SerializeField] private Hitbox hitbox;
     [SerializeField] private LinearFlightCicle flightCicle;
@@ -18,15 +19,16 @@ public class EnemyBirdy : Enemy
 
     private Coroutine angryCoroutine;
     private Vector2 direction;
+    private bool stunned;
     private bool attacking;
 
     private void FixedUpdate()
     {
-        if(state == State.Attacking)
+        if(state != State.Idle)
         {
             m_rigidbody.velocity = direction * 6;
         }
-        else if (aimBelow)
+        else if (aimBelow && !stunned)
         {
             m_renderer.color = Color.blue;
             if (Physics2D.Linecast(transform.position, transform.position + (Vector3.down * 10), 1 << LayerMask.NameToLayer("Player")))
@@ -90,7 +92,7 @@ public class EnemyBirdy : Enemy
                 break;
 
             case State.Attacking:
-                TakeDamage();
+                //TakeDamage();
                 break;
         }
     }
@@ -98,8 +100,9 @@ public class EnemyBirdy : Enemy
     private IEnumerator StunState()
     {
         m_animator.SetTrigger("Stunned");
+        stunned = true;
         yield return new WaitForSeconds(1);
-        Destroy(gameObject);
+        Die();
     }
 
     private IEnumerator AngryState()
@@ -127,7 +130,6 @@ public class EnemyBirdy : Enemy
                 break;
 
             case State.Stuck:
-                ResetValues();
                 TakeDamage();
                 break;
         }
@@ -172,12 +174,17 @@ public class EnemyBirdy : Enemy
             {
                 hitbox.GetComponent<Collider2D>().enabled = false;
                 m_rigidbody.velocity = Vector2.zero;
-                //m_animator.SetTrigger("Reset");
                 m_animator.SetTrigger("Stuck");
                 flightFX.Stop();
 
                 //snap position
                 transform.position += (collision.transform.position.y > transform.position.y ? Vector3.up : Vector3.down) * .1f;  
+
+                if (collision.gameObject.layer == LayerMask.NameToLayer("Platform"))
+                {
+                    inheritPlatformMovement.enabled = true;
+                    inheritPlatformMovement.SetPlatform(collision.transform);
+                }
 
                 state = State.Stuck;
             }

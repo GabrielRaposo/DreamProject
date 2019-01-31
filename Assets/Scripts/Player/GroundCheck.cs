@@ -8,8 +8,8 @@ public class GroundCheck : MonoBehaviour
     [SerializeField] private Rigidbody2D playerRB;
     [SerializeField] private LayerMask groundLayer;
 
-    public Transform currentPlatform{ get; private set; }
-    private Vector3 lastPlatformPosition;
+    //private Transform currentPlatform;
+    //private Vector3 lastPlatformPosition;
 
     private LayerMask playerLayer;
     private LayerMask platformLayer;
@@ -20,16 +20,16 @@ public class GroundCheck : MonoBehaviour
         platformLayer = LayerMask.NameToLayer("Platform");
     }
 
-    private void MoveWithPlatform()
-    {
-        if (lastPlatformPosition != currentPlatform.position)
-        {
-            Vector3 diff = currentPlatform.position - lastPlatformPosition;
-            controller.transform.position += diff;
+    //private void MoveWithPlatform()
+    //{
+    //    if (lastPlatformPosition != currentPlatform.position)
+    //    {
+    //        Vector3 diff = currentPlatform.position - lastPlatformPosition;
+    //        controller.transform.position += diff;
 
-            lastPlatformPosition = currentPlatform.position;
-        }
-    }
+    //        lastPlatformPosition = currentPlatform.position;
+    //    }
+    //}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -77,14 +77,14 @@ public class GroundCheck : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        IPlatformEvent platformEvent = collision.GetComponent<IPlatformEvent>();
+        if (platformEvent != null)
+        {
+            platformEvent.OnLeaveEvent();
+        }
+
         if (collision.transform == controller.transform.parent)
         {
-            IPlatformEvent platformEvent = collision.GetComponent<IPlatformEvent>();
-            if (platformEvent != null)
-            {
-                platformEvent.OnLeaveEvent();
-            }
-
             controller.transform.parent = null;
         }
 

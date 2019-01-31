@@ -15,7 +15,7 @@ public class EnemyGoomba : Enemy
     private Coroutine stunCoroutine;
     private Coroutine attackCoroutine;
 
-    private enum State { Idle, Squished, Vulnerable}
+    private enum State { Idle, Squished, Vulnerable }
     private State state;
 
     private void ResetValues()
@@ -23,8 +23,10 @@ public class EnemyGoomba : Enemy
         transform.rotation = Quaternion.Euler(Vector3.zero);
         if (m_rigidbody) m_rigidbody.gravityScale = 1;
         patroller.enabled = true;
+        m_animator.SetBool("Attack", false);
         m_animator.SetTrigger("Reset");
         state = State.Idle;
+        Debug.Log("reset");
     }
 
     private void Update()
@@ -36,7 +38,7 @@ public class EnemyGoomba : Enemy
     {
         base.OnStompEvent(player, contactPosition);
 
-        float knockback = 12;
+        float knockback = 8;
         if(state == State.Vulnerable)
         {
             ResetValues();
@@ -47,6 +49,7 @@ public class EnemyGoomba : Enemy
         TakeDamage(1);
         stompFX.Play();
 
+        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         if (stunCoroutine != null) StopCoroutine(stunCoroutine);
         stunCoroutine = StartCoroutine(StunState(knockback, (int)(stunTime * 60), player.facingRight));
     }
@@ -65,7 +68,8 @@ public class EnemyGoomba : Enemy
             case State.Vulnerable:
                 Vector2 knockback = (transform.position.x < contactPosition.x ? Vector3.right : Vector3.left) * 20;
                 //player.SetPush(knockback);
-                ResetValues();
+                //ResetValues();
+                if (attackCoroutine != null) StopCoroutine(attackCoroutine);
                 if (stunCoroutine != null) StopCoroutine(stunCoroutine);
                 stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), transform.position.x > contactPosition.x ? true : false));
                 break;
@@ -89,7 +93,7 @@ public class EnemyGoomba : Enemy
             ResetValues();
             TakeDamage(hitbox.damage);
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-            stunCoroutine = StartCoroutine(StunState(12, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
+            stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
         }
     }
 
@@ -100,25 +104,27 @@ public class EnemyGoomba : Enemy
         {
             TakeDamage(hitbox.damage);
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-            stunCoroutine = StartCoroutine(StunState(12, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
+            stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
         }
     }
 
     private IEnumerator AttackState()
     {
         m_rigidbody.velocity = Vector2.zero;
-        m_animator.SetTrigger("Attack");
+        m_animator.SetBool("Attack", true);
         patroller.enabled = false;
         for (int i = 0; i < 60; i++)
         {
             yield return new WaitForFixedUpdate();
         }
         patroller.enabled = true;
-        m_animator.SetTrigger("Reset");
+        m_animator.SetBool("Attack", false);
+        Debug.Log("out");
     }
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)
     {
+        m_animator.SetTrigger("Reset");
         m_animator.SetBool("Stunned", true);
 
         patroller.SetFacingSide(!goRight);
@@ -128,10 +134,11 @@ public class EnemyGoomba : Enemy
         }
 
         patroller.enabled = false;
+        Vector2 startingVelocity = m_rigidbody.velocity;
         for (int i = 0; i < time; i++)
         {
             yield return new WaitForFixedUpdate();
-            m_rigidbody.velocity -= m_rigidbody.velocity * .1f;
+            m_rigidbody.velocity -= (startingVelocity / (time + 1));
         }
         if(health > 0)
         {
@@ -140,7 +147,7 @@ public class EnemyGoomba : Enemy
         }
         else
         {
-            Destroy(gameObject);
+            Die();
         }
     }
 
@@ -179,7 +186,7 @@ public class EnemyGoomba : Enemy
             yield return new WaitForFixedUpdate();
         }
 
-        Destroy(gameObject);
+        Die();
     }
 
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)

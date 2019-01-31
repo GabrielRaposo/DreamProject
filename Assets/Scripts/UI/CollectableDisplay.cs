@@ -8,6 +8,8 @@ public class CollectableDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI label;
     [SerializeField] private TextMeshProUGUI display;
 
+    private static int savedScore = 0;
+
     private int score;
     public int Score
     {
@@ -31,7 +33,7 @@ public class CollectableDisplay : MonoBehaviour
         {
             instance = this;
         }
-        Score = 0;
+        Score = savedScore;
     }
 
     private void UpdateDisplay()
@@ -45,5 +47,10 @@ public class CollectableDisplay : MonoBehaviour
     public void AddScore(int quant)
     {
         Score += quant;
+    }
+
+    public void SaveScore()
+    {
+        savedScore = score;
     }
 }

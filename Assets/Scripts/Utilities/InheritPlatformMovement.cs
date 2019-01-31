@@ -46,13 +46,17 @@ public class InheritPlatformMovement : MonoBehaviour
             {
                 if(cp.point.y < transform.position.y - colliderExtents.y + .01f)
                 {
-                    currentPlatform = collision.transform;
-                    lastPlatformPosition = currentPlatform.position;
-
+                    SetPlatform(collision.transform);
                     break;
                 }
             }
         }
+    }
+
+    public void SetPlatform(Transform t)
+    {
+        currentPlatform = t;
+        lastPlatformPosition = currentPlatform.position;
     }
 
     private void OnCollisionExit2D(Collision2D collision)

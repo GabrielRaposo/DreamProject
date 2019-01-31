@@ -421,6 +421,6 @@ public class PlayerControllerOld : MonoBehaviour
 
     private void Die()
     {
-        if (gameManager) gameManager.RespawnPlayer();
+        if (gameManager) gameManager.RestartScene();
     }
 }

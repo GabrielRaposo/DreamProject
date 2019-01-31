@@ -12,16 +12,36 @@ public class GameManager : MonoBehaviour
         PlayerController.gameManager = this;
     }
 
-    public void RespawnPlayer()
+    private void Update()
     {
-        Checkpoint checkpoint = CheckpointSystem.currentCheckpoint;
-        if (checkpoint)
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            player.transform.position = checkpoint.transform.position;
+            RestartScene();
         }
         else
+        if (Input.GetKeyDown(KeyCode.P))
         {
-            player.transform.position = player.startingPosition;
+            CallNextStage();
         }
+    }
+
+    public void RestartScene()
+    {
+        ScreenTransition screenTransition = ScreenTransition.instance;
+        string sceneName = SceneManager.GetActiveScene().path;
+        if (screenTransition) screenTransition.Call(sceneName);
+        else                  ScreenTransition.LoadScene(sceneName);
+    }
+
+    public void CallNextStage()
+    {
+        CollectableDisplay.instance.SaveScore();
+
+        ScreenTransition screenTransition = ScreenTransition.instance;
+        string sceneName = SceneManager.GetActiveScene().path;
+        int currentIndex = int.Parse(sceneName.Substring(sceneName.Length - 7, 1));
+        sceneName = sceneName.Substring(0, sceneName.Length - 7) + (currentIndex + 1) + ".unity";
+        if (screenTransition) screenTransition.Call(sceneName);
+        else                  ScreenTransition.LoadScene(sceneName);
     }
 }

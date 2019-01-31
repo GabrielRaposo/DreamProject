@@ -12,6 +12,8 @@ TagManager:
   - OneWay
   - Hammer
   - Zipline
+  - Damage
+  - Exit
   layers:
   - Default
   - TransparentFX

@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
 {
     public int health;
     [SerializeField] protected float mininumTopY;
+    [SerializeField] protected GameObject destructionFX;
 
     protected bool interactable = true;
 
@@ -91,6 +92,14 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    protected void Die()
+    {
+        if (destructionFX != null)
+        {
+            Instantiate(destructionFX, transform.position, Quaternion.identity);
+        }
+        Destroy(gameObject);
+    }
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
     protected virtual void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
