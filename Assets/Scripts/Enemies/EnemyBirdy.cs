@@ -14,7 +14,7 @@ public class EnemyBirdy : Enemy
     [SerializeField] private float stunTime;
     [SerializeField] private ParticleSystem stompFX;
 
-    private enum State { Idle, Attacking, Stuck }
+    private enum State { Idle, Attacking, Dizzy }
     private State state;
 
     private Coroutine angryCoroutine;
@@ -22,19 +22,28 @@ public class EnemyBirdy : Enemy
     private bool stunned;
     private bool attacking;
 
+    private void Start()
+    {
+        if(aimBelow) m_renderer.color = new Color(236f / 255, 162f / 255, 227f / 255);
+    }
+
     private void FixedUpdate()
     {
-        if(state != State.Idle)
+        switch (state)
         {
-            m_rigidbody.velocity = direction * 6;
-        }
-        else if (aimBelow && !stunned)
-        {
-            m_renderer.color = Color.blue;
-            if (Physics2D.Linecast(transform.position, transform.position + (Vector3.down * 10), 1 << LayerMask.NameToLayer("Player")))
-            {
-                AttackIntoDirection(Vector2.down);
-            }
+            case State.Idle:
+                if (aimBelow && !stunned)
+                {
+                    if (Physics2D.Linecast(transform.position, transform.position + (Vector3.down * 10), 1 << LayerMask.NameToLayer("Player")))
+                    {
+                        AttackIntoDirection(Vector2.down);
+                    }
+                }
+                break;
+
+            case State.Attacking:
+                m_rigidbody.velocity = direction * 6;
+                break;
         }
     }
 
@@ -47,7 +56,7 @@ public class EnemyBirdy : Enemy
         m_animator.SetTrigger("Reset");
     }
 
-    protected override void OnStompEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnStompEvent(PlayerController player, Vector2 contactPosition)
     {
         base.OnStompEvent(player, contactPosition);
 
@@ -55,7 +64,7 @@ public class EnemyBirdy : Enemy
         switch (state)
         {
             case State.Idle:
-            case State.Stuck:
+            case State.Dizzy:
                 player.SetJump(false);
                 stompFX.Play();
                 break;
@@ -78,7 +87,7 @@ public class EnemyBirdy : Enemy
         StartCoroutine(StunState());
     }
 
-    protected override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
     { 
         base.OnTouchEvent(player, contactPosition);
 
@@ -101,6 +110,7 @@ public class EnemyBirdy : Enemy
     {
         m_animator.SetTrigger("Stunned");
         stunned = true;
+        m_collider.enabled = false;
         yield return new WaitForSeconds(1);
         Die();
     }
@@ -129,7 +139,7 @@ public class EnemyBirdy : Enemy
                 AttackIntoDirection(hitbox.direction);
                 break;
 
-            case State.Stuck:
+            case State.Dizzy:
                 TakeDamage();
                 break;
         }
@@ -173,39 +183,29 @@ public class EnemyBirdy : Enemy
             if (groundLayer == (groundLayer | 1 << layer))
             {
                 hitbox.GetComponent<Collider2D>().enabled = false;
-                m_rigidbody.velocity = Vector2.zero;
-                m_animator.SetTrigger("Stuck");
+                StartCoroutine(BounceOnHit());
+                m_animator.SetTrigger("Dizzy");
                 flightFX.Stop();
+                transform.rotation = Quaternion.Euler(Vector3.zero);
+                m_renderer.flipY = m_renderer.flipX = false;
 
-                //snap position
-                transform.position += (collision.transform.position.y > transform.position.y ? Vector3.up : Vector3.down) * .1f;  
-
-                if (collision.gameObject.layer == LayerMask.NameToLayer("Platform"))
-                {
-                    inheritPlatformMovement.enabled = true;
-                    inheritPlatformMovement.SetPlatform(collision.transform);
-                }
-
-                state = State.Stuck;
+                state = State.Dizzy;
             }
         }
     }
 
-    public override void ChildHitboxExitEvent(Collider2D collision)
+    private IEnumerator BounceOnHit()
     {
-        if (state == State.Attacking)
+        Vector2 movement = (m_rigidbody.velocity / 3);
+        m_rigidbody.velocity = -movement;
+        int iterations = 20;
+        for (int i = 0; i < iterations; i++)
         {
-            int layer = collision.gameObject.layer;
-            if (groundLayer == (groundLayer | 1 << layer))
-            {
-                ResetValues();
-
-                m_collider.enabled = false;
-                m_rigidbody.velocity = (Vector2.up * .5f);
-                flightCicle.enabled = false;
-                StartCoroutine(StunState());
-            }
+            yield return new WaitForFixedUpdate();
+            Debug.Log("movement / iterations: " + movement / iterations);
+            m_rigidbody.velocity += (movement / iterations);
         }
+        m_rigidbody.velocity = Vector2.zero;
     }
 
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)

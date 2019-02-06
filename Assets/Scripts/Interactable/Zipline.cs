@@ -32,7 +32,7 @@ public class Zipline : MonoBehaviour
 
     private IEnumerator DisableTimer()
     {
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 15; i++)
             yield return new WaitForFixedUpdate();
         disabled = false;
     }

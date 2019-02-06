@@ -128,6 +128,7 @@ public class PlayerGroundMovement : MonoBehaviour
         hammerHitbox.direction = controller.facingRight ? Vector2.right : Vector2.left;
         Vector3 spawnOffset = new Vector3(1.1f * ((controller.facingRight) ? .8f : -.8f), -.2f);
         hammerHitbox.transform.localPosition = spawnOffset;
+        hammerHitbox.transform.rotation = Quaternion.Euler(Vector3.up * (controller.facingRight ? 0 : 180));
         m_animator.SetTrigger("Attack");
 
         for(int i = 0; i < 20; i++)

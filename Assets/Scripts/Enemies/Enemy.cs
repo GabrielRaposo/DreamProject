@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public int health;
-    [SerializeField] protected float mininumTopY;
+    [SerializeField] public float mininumTopY;
     [SerializeField] protected GameObject destructionFX;
 
     protected bool interactable = true;
@@ -66,31 +66,31 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (!interactable) return;
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (!interactable) return;
 
-        if (collision.transform.CompareTag("Player"))
-        {
-            Vector3 contactPoint = collision.transform.position;
-            if (collision.contactCount > 0) contactPoint = collision.contacts[0].point;
+    //    if (collision.transform.CompareTag("Player"))
+    //    {
+    //        Vector3 contactPoint = collision.transform.position;
+    //        if (collision.contactCount > 0) contactPoint = collision.contacts[0].point;
 
-            PlayerController player = collision.transform.GetComponent<PlayerController>();
-            if (player == null)
-            {
-                player = new PlayerController();
-            }
+    //        PlayerController player = collision.transform.GetComponent<PlayerController>();
+    //        if (player == null)
+    //        {
+    //            player = new PlayerController();
+    //        }
 
-            if ((collision.transform.position - transform.position).y > mininumTopY)
-            {
-                OnStompEvent(player, contactPoint);
-            }
-            else
-            {
-                OnTouchEvent(player, contactPoint);
-            }
-        }
-    }
+    //        if ((collision.transform.position - transform.position).y > mininumTopY)
+    //        {
+    //            OnStompEvent(player, contactPoint);
+    //        }
+    //        else
+    //        {
+    //            OnTouchEvent(player, contactPoint);
+    //        }
+    //    }
+    //}
 
     protected void Die()
     {
@@ -103,8 +103,9 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
     protected virtual void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
-    protected virtual void OnStompEvent(PlayerController player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
-    protected virtual void OnTouchEvent(PlayerController player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
+
+    public virtual void OnStompEvent(PlayerController player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
+    public virtual void OnTouchEvent(PlayerController player, Vector2 contactPosition) { StartCoroutine(InteractionDelay(3)); }
 
     public virtual void OnBouncyTopEvent(Vector2 contactPosition, bool super) { }
     public virtual void OnBouncySideEvent(Vector2 contactPosition) { }

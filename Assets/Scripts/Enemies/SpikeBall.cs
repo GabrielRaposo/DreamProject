@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpikeBall : Enemy
 {
-    protected override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
     {
         base.OnTouchEvent(player, contactPosition);
 

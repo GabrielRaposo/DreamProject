@@ -207,8 +207,8 @@ public class PlayerController : MonoBehaviour
             velocity.y += pushForce.y;
             transform.position += Vector3.right * pushForce.x * .01f;
 
-            pushForce -= pushForce.normalized * .1f;
-            if (pushForce.magnitude < .1f) pushForce = Vector3.zero;
+            pushForce -= pushForce.normalized * .3f;
+            if (pushForce.magnitude < .3f) pushForce = Vector3.zero;
         }
 
         if (Mathf.Abs(velocity.y) > MAX_Y) velocity.y = (velocity.y > 0) ? MAX_Y : -MAX_Y;
@@ -243,12 +243,6 @@ public class PlayerController : MonoBehaviour
         SetAirborneState();
         airborneMovement.Jump(super);
         superJumping = super;
-    }
-
-    public void SetAttackInput()
-    {
-        //if (inputLock) return;
-        //StartCoroutine(LockInputs());
     }
 
     public void SetDamage(Vector3 contactPoint, int damage)
@@ -291,7 +285,7 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 1;
         damageFX.enabled = false;
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 3; i++)
         {
             yield return new WaitForFixedUpdate();
         }
@@ -305,10 +299,12 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(InvencibilityTime());
         if (onGround)
         {
+            Debug.Log("a");
             SetGroundState();
         }
         else
         {
+            Debug.Log("b");
             SetAirborneState();
         }
         m_animator.SetBool("Stunned", false);
@@ -348,7 +344,6 @@ public class PlayerController : MonoBehaviour
 
     public void OnGround(bool value, Collider2D collision)
     {
-        //onGround = value;
         if (value)
         {
             if (m_rigidbody.velocity.y < 1)
@@ -369,7 +364,28 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Zipline"))
+        //if (!interactable) return;
+
+        //somente o filho "Ghost" consegue entrar em contato com "Enemy"s
+        if (collision.transform.CompareTag("Enemy"))
+        {
+            Vector3 contactPoint = collision.transform.position;
+            //if (collision.contactCount > 0) contactPoint = collision.contacts[0].point;
+
+            Enemy enemy = collision.transform.GetComponent<Enemy>();
+            if(enemy != null)
+            {
+                if ((transform.position - collision.transform.position).y > enemy.mininumTopY)
+                {
+                    enemy.OnStompEvent(this, contactPoint);
+                }
+                else
+                {
+                    enemy.OnTouchEvent(this, contactPoint);
+                }
+            }
+        }
+        else if (collision.CompareTag("Zipline"))
         {
             Zipline zipline = collision.GetComponent<Zipline>();
             if (zipline && !zipline.Disabled)
@@ -390,18 +406,6 @@ public class PlayerController : MonoBehaviour
         else if (collision.CompareTag("Exit"))
         {
             gameManager.CallNextStage();
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Windbox"))
-        {
-            Windbox windbox = collision.GetComponent<Windbox>();
-            if (windbox)
-            {
-                SetPushForce(windbox.force);
-            }
         }
     }
 

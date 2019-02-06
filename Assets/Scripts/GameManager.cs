@@ -21,12 +21,15 @@ public class GameManager : MonoBehaviour
         else
         if (Input.GetKeyDown(KeyCode.P))
         {
+            PlaytimeData.finishedStages--;
             CallNextStage();
         }
     }
 
     public void RestartScene()
     {
+        PlaytimeData.numberOfDeaths++;
+
         ScreenTransition screenTransition = ScreenTransition.instance;
         string sceneName = SceneManager.GetActiveScene().path;
         if (screenTransition) screenTransition.Call(sceneName);
@@ -35,13 +38,22 @@ public class GameManager : MonoBehaviour
 
     public void CallNextStage()
     {
+        PlaytimeData.finishedStages++;
         CollectableDisplay.instance.SaveScore();
 
         ScreenTransition screenTransition = ScreenTransition.instance;
-        string sceneName = SceneManager.GetActiveScene().path;
-        int currentIndex = int.Parse(sceneName.Substring(sceneName.Length - 7, 1));
-        sceneName = sceneName.Substring(0, sceneName.Length - 7) + (currentIndex + 1) + ".unity";
-        if (screenTransition) screenTransition.Call(sceneName);
-        else                  ScreenTransition.LoadScene(sceneName);
+        string scenePath = SceneManager.GetActiveScene().path;
+        Debug.Log("scenePath: " + scenePath);
+        int currentIndex = int.Parse(scenePath.Substring(scenePath.Length - 7, 1));
+        if(currentIndex + 1 < 4)
+        {
+            scenePath = scenePath.Substring(0, scenePath.Length - 7) + (currentIndex + 1) + ".unity";
+        }
+        else
+        {
+            scenePath = "Assets/Scenes/OutroScene.unity";
+        }
+        if (screenTransition) screenTransition.Call(scenePath);
+        else                  ScreenTransition.LoadScene(scenePath);
     }
 }

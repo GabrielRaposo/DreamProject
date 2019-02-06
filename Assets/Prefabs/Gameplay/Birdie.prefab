@@ -9583,7 +9583,6 @@ GameObject:
   - component: {fileID: 1673909054167494393}
   - component: {fileID: 4323256479357601800}
   - component: {fileID: 4987719620239314325}
-  - component: {fileID: 4959763641545211859}
   - component: {fileID: 4137706331033221086}
   - component: {fileID: 1026650070695838356}
   - component: {fileID: 8075730232641604360}
@@ -9676,7 +9675,7 @@ MonoBehaviour:
   mininumTopY: 0.2
   destructionFX: {fileID: 8146530301406283517, guid: 66b7589ee4f2b0a49a25cccfa07bc07b,
     type: 3}
-  inheritPlatformMovement: {fileID: 4959763641545211859}
+  inheritPlatformMovement: {fileID: 0}
   aimBelow: 0
   hitbox: {fileID: 603301470}
   flightCicle: {fileID: 4987719620239314325}
@@ -9701,18 +9700,6 @@ MonoBehaviour:
   target: {fileID: 3315264761155505887}
   maxSpeed: 1
   acceleration: 0.1
---- !u!114 &4959763641545211859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8075730232641604359}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b82dd904c6c675d4eab204a433b13953, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &4137706331033221086
 Rigidbody2D:
   serializedVersion: 4

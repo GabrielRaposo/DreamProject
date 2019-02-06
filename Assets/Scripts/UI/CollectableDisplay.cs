@@ -8,7 +8,7 @@ public class CollectableDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI label;
     [SerializeField] private TextMeshProUGUI display;
 
-    private static int savedScore = 0;
+    public static int savedScore = 0;
 
     private int score;
     public int Score
@@ -52,5 +52,6 @@ public class CollectableDisplay : MonoBehaviour
     public void SaveScore()
     {
         savedScore = score;
+        PlaytimeData.starsCount = score;
     }
 }

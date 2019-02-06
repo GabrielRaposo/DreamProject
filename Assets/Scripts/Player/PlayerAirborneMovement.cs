@@ -66,16 +66,19 @@ public class PlayerAirborneMovement : MonoBehaviour
     {
         Vector2 velocity = m_rigidbody.velocity;
 
-        if (Mathf.Abs(horizontalInput) > 0.9f)
-        {
-            horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
-            breaking = false;
-            controller.UpdateFacingDirection(horizontalMovement > 0 ? true : false);
-        }
-        else if (Mathf.Abs(horizontalMovement) > 0)
-        {
-            breaking = true;
-        }
+        //if (Mathf.Abs(horizontalInput) > 0.9f)
+        //{
+        //    horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
+        //    breaking = false;
+        //    controller.UpdateFacingDirection(horizontalMovement > 0 ? true : false);
+        //}
+        //else if (Mathf.Abs(horizontalMovement) > 0)
+        //{
+        //    breaking = true;
+        //}
+
+        horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
+        if (Mathf.Abs(horizontalInput) > 0.9f) controller.UpdateFacingDirection(horizontalMovement > 0 ? true : false);
 
         if (!fallingThroughPlatform)
         {

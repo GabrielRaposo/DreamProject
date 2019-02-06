@@ -34,7 +34,7 @@ public class EnemyGoomba : Enemy
         CheckGround();
     }
 
-    protected override void OnStompEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnStompEvent(PlayerController player, Vector2 contactPosition)
     {
         base.OnStompEvent(player, contactPosition);
 
@@ -54,7 +54,7 @@ public class EnemyGoomba : Enemy
         stunCoroutine = StartCoroutine(StunState(knockback, (int)(stunTime * 60), player.facingRight));
     }
 
-    protected override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
     {
         base.OnTouchEvent(player, contactPosition);
         switch (state)

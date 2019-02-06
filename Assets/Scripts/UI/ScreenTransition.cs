@@ -25,7 +25,6 @@ public class ScreenTransition : MonoBehaviour
 
     public static void LoadScene(string scene)
     {
-        //if (!scene.Contains("Scene")) scene += "Scene";
         SceneManager.LoadScene(scene);
     }
 
@@ -33,7 +32,7 @@ public class ScreenTransition : MonoBehaviour
     {
         Time.timeScale = 1;
         StopAllCoroutines();
-        //if (!scene.Contains("Scene")) scene += "Scene";
+
         StartCoroutine(TransitionToScene(scene));
     }
 
