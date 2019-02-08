@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyBirdy : Enemy
+public class DenemyBirdy : Denemy
 {
     [Header("Birdy")]
     [SerializeField] private InheritPlatformMovement inheritPlatformMovement;
@@ -56,9 +56,9 @@ public class EnemyBirdy : Enemy
         m_animator.SetTrigger("Reset");
     }
 
-    public override void OnStompEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnStompEvent(PlayerDreamPhase player)
     {
-        base.OnStompEvent(player, contactPosition);
+        base.OnStompEvent(player);
 
         ResetValues();
         switch (state)
@@ -70,7 +70,7 @@ public class EnemyBirdy : Enemy
                 break;
 
             case State.Attacking:
-                player.SetDamage(contactPosition, 1);
+                player.SetDamage(transform.position, 1);
                 break;
         }
 
@@ -87,11 +87,11 @@ public class EnemyBirdy : Enemy
         StartCoroutine(StunState());
     }
 
-    public override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnTouchEvent(PlayerDreamPhase player)
     { 
-        base.OnTouchEvent(player, contactPosition);
+        base.OnTouchEvent(player);
 
-        player.SetDamage(contactPosition, 1);
+        player.SetDamage(transform.position, 1);
 
         switch (state)
         {
@@ -175,7 +175,49 @@ public class EnemyBirdy : Enemy
         state = State.Attacking;
     }
 
-    public override void ChildHitboxEnterEvent(Collider2D collision)
+    //public override void ChildHitboxEnterEvent(Collider2D collision)
+    //{
+    //    if (state == State.Attacking)
+    //    {
+    //        int layer = collision.gameObject.layer;
+    //        if (groundLayer == (groundLayer | 1 << layer))
+    //        {
+    //            hitbox.GetComponent<Collider2D>().enabled = false;
+    //            StartCoroutine(BounceOnHit());
+    //            m_animator.SetTrigger("Dizzy");
+    //            flightFX.Stop();
+    //            transform.rotation = Quaternion.Euler(Vector3.zero);
+    //            m_renderer.flipY = m_renderer.flipX = false;
+
+    //            state = State.Dizzy;
+    //        }
+    //    }
+    //}
+
+    private IEnumerator BounceOnHit()
+    {
+        Vector2 movement = (direction * 2);
+        m_rigidbody.velocity = -movement;
+        int iterations = 20;
+        for (int i = 0; i < iterations; i++)
+        {
+            yield return new WaitForFixedUpdate();
+            m_rigidbody.velocity += (movement / iterations);
+        }
+        m_rigidbody.velocity = Vector2.zero;
+    }
+
+    public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
+    {
+        AttackIntoDirection(Vector2.up);
+    }
+
+    public override void OnBouncySideEvent(Vector2 contactPosition)
+    {
+        AttackIntoDirection(Vector2.up);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (state == State.Attacking)
         {
@@ -192,29 +234,5 @@ public class EnemyBirdy : Enemy
                 state = State.Dizzy;
             }
         }
-    }
-
-    private IEnumerator BounceOnHit()
-    {
-        Vector2 movement = (m_rigidbody.velocity / 3);
-        m_rigidbody.velocity = -movement;
-        int iterations = 20;
-        for (int i = 0; i < iterations; i++)
-        {
-            yield return new WaitForFixedUpdate();
-            Debug.Log("movement / iterations: " + movement / iterations);
-            m_rigidbody.velocity += (movement / iterations);
-        }
-        m_rigidbody.velocity = Vector2.zero;
-    }
-
-    public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
-    {
-        AttackIntoDirection(Vector2.up);
-    }
-
-    public override void OnBouncySideEvent(Vector2 contactPosition)
-    {
-        AttackIntoDirection(Vector2.up);
     }
 }

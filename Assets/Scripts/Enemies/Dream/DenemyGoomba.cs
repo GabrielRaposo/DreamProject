@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyGoomba : Enemy
+public class DenemyGoomba : Denemy
 {
     [Header("Goomba")]
     [SerializeField] private LayerMask groundLayer;
@@ -26,7 +26,6 @@ public class EnemyGoomba : Enemy
         m_animator.SetBool("Attack", false);
         m_animator.SetTrigger("Reset");
         state = State.Idle;
-        Debug.Log("reset");
     }
 
     private void Update()
@@ -34,9 +33,9 @@ public class EnemyGoomba : Enemy
         CheckGround();
     }
 
-    public override void OnStompEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnStompEvent(PlayerDreamPhase player)
     {
-        base.OnStompEvent(player, contactPosition);
+        base.OnStompEvent(player);
 
         float knockback = 8;
         if(state == State.Vulnerable)
@@ -54,24 +53,24 @@ public class EnemyGoomba : Enemy
         stunCoroutine = StartCoroutine(StunState(knockback, (int)(stunTime * 60), player.facingRight));
     }
 
-    public override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnTouchEvent(PlayerDreamPhase player)
     {
-        base.OnTouchEvent(player, contactPosition);
+        base.OnTouchEvent(player);
         switch (state)
         {
             case State.Idle:
-                player.SetDamage(contactPosition, 1);
+                player.SetDamage(transform.position, 1);
                 if (attackCoroutine != null) StopCoroutine(attackCoroutine);
                 attackCoroutine = StartCoroutine(AttackState());
                 break;
 
             case State.Vulnerable:
-                Vector2 knockback = (transform.position.x < contactPosition.x ? Vector3.right : Vector3.left) * 20;
+                //Vector2 knockback = (transform.position.x < player.transform.position.x ? Vector3.left : Vector3.right) * 20;
                 //player.SetPush(knockback);
                 //ResetValues();
-                if (attackCoroutine != null) StopCoroutine(attackCoroutine);
-                if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-                stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), transform.position.x > contactPosition.x ? true : false));
+                //if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+                //if (stunCoroutine != null) StopCoroutine(stunCoroutine);
+                //stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), transform.position.x > player.transform.position.x ? false : true));
                 break;
         }
     }
@@ -119,7 +118,6 @@ public class EnemyGoomba : Enemy
         }
         patroller.enabled = true;
         m_animator.SetBool("Attack", false);
-        Debug.Log("out");
     }
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)

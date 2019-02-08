@@ -5,11 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public PlayerController player;
-
     void Start()
     {
-        PlayerController.gameManager = this;
+        PlayerPhaseManager.gameManager = this;
     }
 
     private void Update()
@@ -43,7 +41,6 @@ public class GameManager : MonoBehaviour
 
         ScreenTransition screenTransition = ScreenTransition.instance;
         string scenePath = SceneManager.GetActiveScene().path;
-        Debug.Log("scenePath: " + scenePath);
         int currentIndex = int.Parse(scenePath.Substring(scenePath.Length - 7, 1));
         if(currentIndex + 1 < 4)
         {

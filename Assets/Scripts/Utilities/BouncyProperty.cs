@@ -27,7 +27,7 @@ public class BouncyProperty : MonoBehaviour
     {
         if (collision.transform.CompareTag("Player"))
         {
-            PlayerController player = collision.transform.GetComponent<PlayerController>();
+            PlayerDreamPhase player = collision.transform.GetComponent<PlayerDreamPhase>();
             if (player)
             {
                 player.SetJump(super);
@@ -39,7 +39,7 @@ public class BouncyProperty : MonoBehaviour
         } 
         else if (collision.transform.CompareTag("Enemy"))
         {
-            Enemy enemy = collision.transform.GetComponent<Enemy>();
+            Denemy enemy = collision.transform.GetComponent<Denemy>();
             if (enemy)
             {
                 if(collision.transform.position.y > transform.position.y + .1f)

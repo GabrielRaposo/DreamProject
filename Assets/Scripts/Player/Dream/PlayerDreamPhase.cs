@@ -2,20 +2,13 @@
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerGroundMovement))]
-public class PlayerController : MonoBehaviour
+public class PlayerDreamPhase : MonoBehaviour
 {
     private const float MAX_Y = 15;
 
-    [Header("Health")]
-    [SerializeField] private HealthDisplay healthDisplay;
-    [SerializeField] private int maxHealth;
-
-    [Header("Physics")]
     [SerializeField] private float customGravity;
     [SerializeField] private int maxCoyoteTime;
-
     [Space(10)]
-
     [SerializeField] private SpriteRenderer damageFX;
 
     [HideInInspector] public bool attacking;
@@ -28,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private enum State { Ground, Airborne, Zipping }
     private State state;
+
     private bool stunned;
     private bool superJumping;
     private int coyoteTime;
@@ -45,10 +39,14 @@ public class PlayerController : MonoBehaviour
     private PlayerAirborneMovement airborneMovement;
     private PlayerZippingMovement zippingMovement;
 
-    public static GameManager gameManager;
-    public static PlayerController instance;
+    private PlayerPhaseManager controller; 
 
-    void OnEnable()
+    public void Init(PlayerPhaseManager controller)
+    {
+        this.controller = controller;
+    }
+
+    private void Awake()
     {
         m_animator = GetComponent<Animator>();
         m_rigidbody = GetComponent<Rigidbody2D>();
@@ -59,26 +57,32 @@ public class PlayerController : MonoBehaviour
         zippingMovement = GetComponent<PlayerZippingMovement>();
     }
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-    }
-
     private void Start()
     {
-        if (healthDisplay)
-        {
-            healthDisplay.Init(maxHealth);
-        }
-
         gravityModifier = BASE_GRAVITY;
 
         startingPosition = transform.position;
         UpdateFacingDirection(true);
         SetAirborneState();
+    }
+
+    private void HardReset()
+    {
+        StopAllCoroutines();
+        m_renderer.enabled = true;
+        onGround = invincible = stunned = gravityLock = attacking = false;
+    }
+
+    public void SwitchIn()
+    {
+        HardReset();
+
+        SetAirborneState();
+
+        if(Physics2D.OverlapCircle(transform.position + (Vector3.down * .5f), .4f, 1 << LayerMask.NameToLayer("Nightmatrix")))
+        {
+            SetJump();
+        }
     }
 
     private void SetGroundState()
@@ -135,14 +139,7 @@ public class PlayerController : MonoBehaviour
             GetInputs();
         }
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            gravityModifier = LIGHT_GRAVITY;
-        }
-        else if (Input.GetButtonUp("Jump"))
-        {
-            gravityModifier = BASE_GRAVITY;
-        }
+        gravityModifier = Input.GetButton("Jump") ? LIGHT_GRAVITY : BASE_GRAVITY;
     }
 
     private void GetInputs()
@@ -249,27 +246,20 @@ public class PlayerController : MonoBehaviour
     {
         if (invincible) return;
 
-        if (healthDisplay)
-        {
-            healthDisplay.ChangeValue(-damage);
-        }
+        controller.ChangeHealth(damage);
 
-        Vector3 knockback;
         if (transform.position.x < contactPoint.x)
         {
-            knockback = Vector3.left;
             UpdateFacingDirection(true);
         }
         else
         {
-            knockback = Vector3.right;
             UpdateFacingDirection(false);
         }
-        knockback *= 5;
-        StartCoroutine(StunnedState(knockback));
+        StartCoroutine(StunnedState());
     }
 
-    private IEnumerator StunnedState(Vector3 knockback)
+    private IEnumerator StunnedState()
     {
         groundMovement.enabled = false;
         airborneMovement.enabled = false;
@@ -277,7 +267,7 @@ public class PlayerController : MonoBehaviour
         invincible = true;
 
         m_animator.SetBool("Stunned", true);
-        m_rigidbody.velocity = knockback;
+        m_rigidbody.velocity = Vector2.zero;
 
         damageFX.enabled = true;
         Time.timeScale = 0;
@@ -290,21 +280,16 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        if (healthDisplay.value < 1)
-        {
-            Die();
-        }
+        controller.CheckHealth();
 
         stunned = false;
         StartCoroutine(InvencibilityTime());
         if (onGround)
         {
-            Debug.Log("a");
             SetGroundState();
         }
         else
         {
-            Debug.Log("b");
             SetAirborneState();
         }
         m_animator.SetBool("Stunned", false);
@@ -369,19 +354,16 @@ public class PlayerController : MonoBehaviour
         //somente o filho "Ghost" consegue entrar em contato com "Enemy"s
         if (collision.transform.CompareTag("Enemy"))
         {
-            Vector3 contactPoint = collision.transform.position;
-            //if (collision.contactCount > 0) contactPoint = collision.contacts[0].point;
-
-            Enemy enemy = collision.transform.GetComponent<Enemy>();
+            Denemy enemy = collision.transform.GetComponent<Denemy>();
             if(enemy != null)
             {
                 if ((transform.position - collision.transform.position).y > enemy.mininumTopY)
                 {
-                    enemy.OnStompEvent(this, contactPoint);
+                    enemy.OnStompEvent(this);
                 }
                 else
                 {
-                    enemy.OnTouchEvent(this, contactPoint);
+                    enemy.OnTouchEvent(this);
                 }
             }
         }
@@ -401,11 +383,19 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.CompareTag("Blastzone"))
         {
-            Die();
+            controller.Die();
         }
         else if (collision.CompareTag("Exit"))
         {
-            gameManager.CallNextStage();
+            PlayerPhaseManager.gameManager.CallNextStage();
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Nightmatrix"))
+        {
+            controller.SetNightmarePhase(collision.gameObject);
         }
     }
 
@@ -423,11 +413,5 @@ public class PlayerController : MonoBehaviour
         {
             pushForce = force;
         }
-    }
-
-    private void Die()
-    {
-        if (gameManager) gameManager.RestartScene();
-        Destroy (gameObject);
     }
 }

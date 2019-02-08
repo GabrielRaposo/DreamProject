@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GroundCheck : MonoBehaviour
 {
-    [SerializeField] private PlayerController controller;
+    [SerializeField] private PlayerDreamPhase controller;
     [SerializeField] private Rigidbody2D playerRB;
     [SerializeField] private LayerMask groundLayer;
 

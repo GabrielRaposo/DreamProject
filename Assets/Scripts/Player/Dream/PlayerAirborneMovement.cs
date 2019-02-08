@@ -24,13 +24,13 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
-    private PlayerController controller;
+    private PlayerDreamPhase controller;
 
     [HideInInspector] public float horizontalInput;
 
     private void Awake()
     {
-        controller = GetComponent<PlayerController>();
+        controller = GetComponent<PlayerDreamPhase>();
 
         m_animator = GetComponent<Animator>();
         m_rigidbody = GetComponent<Rigidbody2D>();

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpikeBall : Enemy
+public class SpikeBall : Denemy
 {
-    public override void OnTouchEvent(PlayerController player, Vector2 contactPosition)
+    public override void OnTouchEvent(PlayerDreamPhase player)
     {
-        base.OnTouchEvent(player, contactPosition);
+        base.OnTouchEvent(player);
 
-        player.SetDamage(contactPosition, 1);
+        player.SetDamage(transform.position, 1);
     }
 
 }
