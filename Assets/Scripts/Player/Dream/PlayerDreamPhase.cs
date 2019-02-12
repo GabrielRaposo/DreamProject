@@ -19,8 +19,8 @@ public class PlayerDreamPhase : MonoBehaviour
     private float gravityModifier = BASE_GRAVITY;
     [HideInInspector] public bool gravityLock;
 
-    private enum State { Ground, Airborne, Zipping }
-    private State state;
+    private enum MovementState { Ground, Airborne, Zipping }
+    private MovementState movementState;
 
     private bool stunned;
     private bool superJumping;
@@ -73,13 +73,13 @@ public class PlayerDreamPhase : MonoBehaviour
         onGround = invincible = stunned = gravityLock = attacking = false;
     }
 
-    public void SwitchIn()
+    public void SwitchIn(Vector3 targetCenter, bool jumpOnExit)
     {
         HardReset();
 
         SetAirborneState();
 
-        if(Physics2D.OverlapCircle(transform.position + (Vector3.down * .5f), .4f, 1 << LayerMask.NameToLayer("Nightmatrix")))
+        if(jumpOnExit)
         {
             SetJump();
         }
@@ -93,7 +93,7 @@ public class PlayerDreamPhase : MonoBehaviour
 
         superJumping = false;
 
-        state = State.Ground;
+        movementState = MovementState.Ground;
     }
 
     private void SetAirborneState()
@@ -102,7 +102,7 @@ public class PlayerDreamPhase : MonoBehaviour
         airborneMovement.enabled = true;
         zippingMovement.enabled = false;
 
-        state = State.Airborne;
+        movementState = MovementState.Airborne;
     }
 
     private void SetZippingState(Zipline zipline)
@@ -113,22 +113,22 @@ public class PlayerDreamPhase : MonoBehaviour
         airborneMovement.enabled = false;
         zippingMovement.enabled = true;
 
-        state = State.Zipping;
+        movementState = MovementState.Zipping;
     }
 
     void Update()
     {
         if (!stunned && !attacking)
         {
-            if(state != State.Zipping)
+            if(movementState != MovementState.Zipping)
             {
                 if (onGround)
                 {
-                    if (state != State.Ground) SetGroundState();
+                    if (movementState != MovementState.Ground) SetGroundState();
                 }
                 else
                 {
-                    if (state != State.Airborne)
+                    if (movementState != MovementState.Airborne)
                     {
                         SetAirborneState();
                         coyoteTime = maxCoyoteTime;
@@ -144,9 +144,9 @@ public class PlayerDreamPhase : MonoBehaviour
 
     private void GetInputs()
     {
-        switch (state)
+        switch (movementState)
         {
-            case State.Ground:
+            case MovementState.Ground:
                 groundMovement.horizontalInput = Input.GetAxisRaw("Horizontal");
                 groundMovement.verticalInput = Input.GetAxisRaw("Vertical");
 
@@ -156,7 +156,7 @@ public class PlayerDreamPhase : MonoBehaviour
                 }
                 break;
 
-            case State.Airborne:
+            case MovementState.Airborne:
                 airborneMovement.horizontalInput = Input.GetAxisRaw("Horizontal");
 
                 if (Input.GetButtonDown("Attack"))
@@ -165,7 +165,7 @@ public class PlayerDreamPhase : MonoBehaviour
                 }
                 break;
 
-            case State.Zipping:
+            case MovementState.Zipping:
                 zippingMovement.horizontalInput = Input.GetAxisRaw("Horizontal");
 
                 if (Input.GetButtonDown("Attack"))
@@ -217,7 +217,7 @@ public class PlayerDreamPhase : MonoBehaviour
     {
         if (inputLock) return;
 
-        if(state != State.Airborne || coyoteTime > 0)
+        if(movementState != MovementState.Airborne || coyoteTime > 0)
         {
             if (!groundMovement.crouching)
             {
@@ -246,7 +246,7 @@ public class PlayerDreamPhase : MonoBehaviour
     {
         if (invincible) return;
 
-        controller.ChangeHealth(damage);
+        controller.TakeDamage(damage);
 
         if (transform.position.x < contactPoint.x)
         {
@@ -338,7 +338,7 @@ public class PlayerDreamPhase : MonoBehaviour
         }
         else
         {
-            if (state == State.Ground && transform.position.y > collision.transform.position.y)
+            if (movementState == MovementState.Ground && transform.position.y > collision.transform.position.y)
             {
                 //para lidar com bug de coyote extendido plataformas OneWay com colisão estranha
                 coyoteTime = maxCoyoteTime;
@@ -354,7 +354,7 @@ public class PlayerDreamPhase : MonoBehaviour
         //somente o filho "Ghost" consegue entrar em contato com "Enemy"s
         if (collision.transform.CompareTag("Enemy"))
         {
-            Denemy enemy = collision.transform.GetComponent<Denemy>();
+            Yume enemy = collision.transform.GetComponent<Yume>();
             if(enemy != null)
             {
                 if ((transform.position - collision.transform.position).y > enemy.mininumTopY)
@@ -409,7 +409,7 @@ public class PlayerDreamPhase : MonoBehaviour
 
     public void SetPushForce(Vector3 force)
     {
-        if(state != State.Zipping)
+        if(movementState != MovementState.Zipping)
         {
             pushForce = force;
         }

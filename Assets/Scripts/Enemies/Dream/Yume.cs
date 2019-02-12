@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Denemy : MonoBehaviour
+public class Yume : MonoBehaviour
 {
-    public int health;
+    //public int health;
     [SerializeField] public float mininumTopY;
-    [SerializeField] protected GameObject destructionFX;
 
     protected bool interactable = true;
 
@@ -26,14 +25,14 @@ public class Denemy : MonoBehaviour
         id = ID.Enemy;
     }
 
-    protected virtual void TakeDamage(int damage)
-    {
-        health -= damage;
-        if (health < 1)
-        {
-            Destroy(gameObject);
-        }
-    }
+    //protected virtual void TakeDamage(int damage)
+    //{
+    //    health -= damage;
+    //    if (health < 1)
+    //    {
+    //        Destroy(gameObject);
+    //    }
+    //}
 
     protected IEnumerator InteractionDelay(int frames)
     {
@@ -66,14 +65,14 @@ public class Denemy : MonoBehaviour
         }
     }
 
-    protected void Die()
-    {
-        if (destructionFX != null)
-        {
-            Instantiate(destructionFX, transform.position, Quaternion.identity);
-        }
-        Destroy(gameObject);
-    }
+    //protected void Die()
+    //{
+    //    if (destructionFX != null)
+    //    {
+    //        Instantiate(destructionFX, transform.position, Quaternion.identity);
+    //    }
+    //    Destroy(gameObject);
+    //}
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
     protected virtual void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }

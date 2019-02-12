@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DenemyBirdy : Denemy
+public class YumeBirdy : Yume
 {
     [Header("Birdy")]
     [SerializeField] private InheritPlatformMovement inheritPlatformMovement;
@@ -112,7 +112,7 @@ public class DenemyBirdy : Denemy
         stunned = true;
         m_collider.enabled = false;
         yield return new WaitForSeconds(1);
-        Die();
+        //Die();
     }
 
     private IEnumerator AngryState()

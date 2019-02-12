@@ -2,7 +2,7 @@
 
 public class HitboxTrigger : MonoBehaviour
 {
-    [SerializeField] private Denemy enemy;
+    [SerializeField] private Yume enemy;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

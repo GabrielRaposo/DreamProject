@@ -26,6 +26,7 @@ public class PlayerNightmarePhase : MonoBehaviour
     public bool facingRight { get; private set; }
 
     private Coroutine shootCicle;
+    private Nightmatrix currentNightmatrix;
 
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
@@ -61,24 +62,12 @@ public class PlayerNightmarePhase : MonoBehaviour
         invincible = stunned = false;
     }
 
-    public void SwitchIn(Vector3 targetCenter)
+    public void SwitchIn(Vector3 targetCenter, Nightmatrix nightmatrix)
     {
         HardReset();
 
-        StartCoroutine(MoveTowardsCenter(targetCenter));
-    }
-
-    private IEnumerator MoveTowardsCenter(Vector3 targetCenter)
-    {
-        locked = true;
-
-        m_rigidbody.velocity = (targetCenter - transform.position).normalized * movementSpeed;
-        for (int i = 0; i < 5; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        locked = false;
+        currentNightmatrix = nightmatrix;
+        currentNightmatrix.Activate();
     }
 
     private void Update()
@@ -150,18 +139,36 @@ public class PlayerNightmarePhase : MonoBehaviour
         {
             Vector3 contactPoint = collision.transform.position;
 
-            Nenemy enemy = collision.transform.GetComponent<Nenemy>();
+            Akumu enemy = collision.transform.GetComponent<Akumu>();
             if (enemy != null)
             {
                 enemy.OnTouchEvent(this);
             }
+        }
+        else if (collision.transform.CompareTag("Hitbox"))
+        {
+            Hitbox hitbox = collision.GetComponent<Hitbox>();
+            if (hitbox && hitbox.id != ID.Player)
+            {
+                SetDamage(hitbox.damage);
+
+                Bullet bullet = collision.GetComponent<Bullet>();
+                if (bullet)
+                {
+                    bullet.Vanish();
+                }
+            }
+        }
+        else if (!locked && collision.CompareTag("Nightmatrix"))
+        {
+            controller.SetDreamPhase(collision.gameObject);
         }
     }
 
     public void SetDamage(int damage)
     {
         if (invincible) return;
-        controller.ChangeHealth(damage);
+        controller.TakeDamage(damage);
         StartCoroutine(StunnedState());
     }
 
@@ -209,11 +216,12 @@ public class PlayerNightmarePhase : MonoBehaviour
         invincible = false;
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnDisable()
     {
-        if (collision.CompareTag("Nightmatrix"))
+        if (currentNightmatrix)
         {
-            controller.SetDreamPhase(collision.gameObject);
+            currentNightmatrix.Deactivate();
+            currentNightmatrix = null;
         }
     }
 }

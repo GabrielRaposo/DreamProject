@@ -16,6 +16,7 @@ public class BulletPool : MonoBehaviour
         {
             pool[i] = Instantiate(bulletPrefab, transform.position, Quaternion.identity, transform);
             pool[i].GetComponent<Hitbox>().id = id;
+            pool[i].GetComponent<BulletLine>().pool = this;
             pool[i].SetActive(false);
         }
     }

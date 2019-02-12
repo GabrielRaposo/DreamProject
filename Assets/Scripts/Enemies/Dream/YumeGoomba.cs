@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DenemyGoomba : Denemy
+public class YumeGoomba : Yume
 {
     [Header("Goomba")]
     [SerializeField] private LayerMask groundLayer;
@@ -17,6 +17,13 @@ public class DenemyGoomba : Denemy
 
     private enum State { Idle, Squished, Vulnerable }
     private State state;
+
+    private EGoomba controller;
+
+    public void Init(EGoomba controller)
+    {
+        this.controller = controller;
+    }
 
     private void ResetValues()
     {
@@ -45,7 +52,6 @@ public class DenemyGoomba : Denemy
         }
 
         player.SetJump(false);
-        TakeDamage(1);
         stompFX.Play();
 
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
@@ -63,15 +69,6 @@ public class DenemyGoomba : Denemy
                 if (attackCoroutine != null) StopCoroutine(attackCoroutine);
                 attackCoroutine = StartCoroutine(AttackState());
                 break;
-
-            case State.Vulnerable:
-                //Vector2 knockback = (transform.position.x < player.transform.position.x ? Vector3.left : Vector3.right) * 20;
-                //player.SetPush(knockback);
-                //ResetValues();
-                //if (attackCoroutine != null) StopCoroutine(attackCoroutine);
-                //if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-                //stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), transform.position.x > player.transform.position.x ? false : true));
-                break;
         }
     }
 
@@ -85,12 +82,10 @@ public class DenemyGoomba : Denemy
                 StopCoroutine(attackCoroutine);
                 m_animator.SetTrigger("Reset");
             }
-            TakeDamage(hitbox.damage);
             StartCoroutine(SquishAndLaunch());
         }
         else if (state != State.Squished) {
             ResetValues();
-            TakeDamage(hitbox.damage);
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
             stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
         }
@@ -101,7 +96,6 @@ public class DenemyGoomba : Denemy
         base.OnHitboxEvent(hitbox);
         if (state != State.Squished)
         {
-            TakeDamage(hitbox.damage);
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
             stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
         }
@@ -138,20 +132,8 @@ public class DenemyGoomba : Denemy
             yield return new WaitForFixedUpdate();
             m_rigidbody.velocity -= (startingVelocity / (time + 1));
         }
-        if(health > 0)
-        {
-            m_animator.SetBool("Stunned", false);
-            patroller.enabled = true;
-        }
-        else
-        {
-            Die();
-        }
-    }
 
-    protected override void TakeDamage(int damage)
-    {
-        health -= damage;
+        controller.Die();
     }
 
     private IEnumerator SquishAndLaunch()
@@ -170,7 +152,6 @@ public class DenemyGoomba : Denemy
         }
 
         state = State.Vulnerable;
-        //if (coll) coll.enabled = false;
         float targetY = transform.position.y + 3;
         m_animator.SetTrigger("Launch");
         if (m_rigidbody)
@@ -184,7 +165,7 @@ public class DenemyGoomba : Denemy
             yield return new WaitForFixedUpdate();
         }
 
-        Die();
+        controller.Die();
     }
 
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
@@ -198,5 +179,13 @@ public class DenemyGoomba : Denemy
         Vector2 border = new Vector2(.1f, .1f) * transform.localScale.x;
 
         onGround = Physics2D.OverlapArea(axis - border, axis + border, groundLayer);
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Nightmatrix"))
+        {
+            controller.SetNightmarePhase(collision.gameObject);
+        }
     }
 }
