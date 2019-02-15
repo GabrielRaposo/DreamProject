@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class YumeBirdy : Yume
+public class YumeBirdie : Yume
 {
     [Header("Birdy")]
-    [SerializeField] private InheritPlatformMovement inheritPlatformMovement;
     [SerializeField] private bool aimBelow;
     [SerializeField] private Hitbox hitbox;
     [SerializeField] private LinearFlightCicle flightCicle;
@@ -14,17 +13,16 @@ public class YumeBirdy : Yume
     [SerializeField] private float stunTime;
     [SerializeField] private ParticleSystem stompFX;
 
-    private enum State { Idle, Attacking, Dizzy }
-    private State state;
+    public enum State { Idle, Attacking, Dizzy }
+    public State state { get; private set; }
 
     private Coroutine angryCoroutine;
     private Vector2 direction;
     private bool stunned;
-    private bool attacking;
 
     private void Start()
     {
-        if(aimBelow) m_renderer.color = new Color(236f / 255, 162f / 255, 227f / 255);
+        if (aimBelow) m_renderer.color = new Color(236f / 255, 162f / 255, 227f / 255);
     }
 
     private void FixedUpdate()
@@ -99,10 +97,6 @@ public class YumeBirdy : Yume
                 if (angryCoroutine != null) StopCoroutine(angryCoroutine);
                 angryCoroutine = StartCoroutine(AngryState());
                 break;
-
-            case State.Attacking:
-                //TakeDamage();
-                break;
         }
     }
 
@@ -112,7 +106,7 @@ public class YumeBirdy : Yume
         stunned = true;
         m_collider.enabled = false;
         yield return new WaitForSeconds(1);
-        //Die();
+        controller.Die();
     }
 
     private IEnumerator AngryState()
@@ -155,7 +149,7 @@ public class YumeBirdy : Yume
         StartCoroutine(StunState());
     }
 
-    private void AttackIntoDirection(Vector2 direction)
+    public void AttackIntoDirection(Vector2 direction)
     {
         this.direction = direction;
         flightCicle.enabled = false;
@@ -174,25 +168,6 @@ public class YumeBirdy : Yume
 
         state = State.Attacking;
     }
-
-    //public override void ChildHitboxEnterEvent(Collider2D collision)
-    //{
-    //    if (state == State.Attacking)
-    //    {
-    //        int layer = collision.gameObject.layer;
-    //        if (groundLayer == (groundLayer | 1 << layer))
-    //        {
-    //            hitbox.GetComponent<Collider2D>().enabled = false;
-    //            StartCoroutine(BounceOnHit());
-    //            m_animator.SetTrigger("Dizzy");
-    //            flightFX.Stop();
-    //            transform.rotation = Quaternion.Euler(Vector3.zero);
-    //            m_renderer.flipY = m_renderer.flipX = false;
-
-    //            state = State.Dizzy;
-    //        }
-    //    }
-    //}
 
     private IEnumerator BounceOnHit()
     {

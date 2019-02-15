@@ -15,15 +15,8 @@ public class YumeGoomba : Yume
     private Coroutine stunCoroutine;
     private Coroutine attackCoroutine;
 
-    private enum State { Idle, Squished, Vulnerable }
-    private State state;
-
-    private EGoomba controller;
-
-    public void Init(EGoomba controller)
-    {
-        this.controller = controller;
-    }
+    public enum State { Idle, Squished, Vulnerable }
+    public State state { get; private set; }
 
     private void ResetValues()
     {
@@ -77,12 +70,7 @@ public class YumeGoomba : Yume
         base.OnHammerEvent(contactPosition, hitbox);
         if(state == State.Idle && onGround)
         {
-            if (attackCoroutine != null)
-            {
-                StopCoroutine(attackCoroutine);
-                m_animator.SetTrigger("Reset");
-            }
-            StartCoroutine(SquishAndLaunch());
+            SetVulnerableState();
         }
         else if (state != State.Squished) {
             ResetValues();
@@ -136,7 +124,17 @@ public class YumeGoomba : Yume
         controller.Die();
     }
 
-    private IEnumerator SquishAndLaunch()
+    public void SetVulnerableState()
+    {
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine);
+            m_animator.SetTrigger("Reset");
+        }
+        StartCoroutine(GhostState());
+    }
+
+    private IEnumerator GhostState()
     {
         state = State.Squished;
         patroller.enabled = false;
@@ -179,13 +177,5 @@ public class YumeGoomba : Yume
         Vector2 border = new Vector2(.1f, .1f) * transform.localScale.x;
 
         onGround = Physics2D.OverlapArea(axis - border, axis + border, groundLayer);
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Nightmatrix"))
-        {
-            controller.SetNightmarePhase(collision.gameObject);
-        }
     }
 }

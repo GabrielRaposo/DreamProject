@@ -1,86 +1,47 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
-public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
+public class EBirdie : MonoBehaviour, IPhaseManager
 {
-    [SerializeField] private Transform followTarget;
-    [SerializeField] private GameObject transitionEffect;
+    [SerializeField] private int health;
 
     [Header("Phases")]
-    [SerializeField] PlayerDreamPhase dreamPhase;
-    [SerializeField] PlayerNightmarePhase nightmarePhase;
+    [SerializeField] private YumeBirdie dreamPhase;
+    [SerializeField] private AkumuBirdie nightmarePhase;
 
-    [Header("Health")]
-    [SerializeField] private HealthDisplay healthDisplay;
-    [SerializeField] private int maxHealth;
+    [Header("Effects")]
+    [SerializeField] private GameObject transitionEffect;
+    [SerializeField] private GameObject destructionFX;
 
+    private Transform currentPhase;
     private bool switchLock;
-    private Transform targetTransform;
 
-    public static GameManager gameManager;
-    public static PlayerPhaseManager instance;
-
-    private void Awake()
-    {
-        if (!instance)
-        {
-            instance = this;
-        }
-
-        targetTransform = dreamPhase.transform;
-        transitionEffect.SetActive(false);
-    }
-
-    private void OnEnable()
+    void Start()
     {
         dreamPhase.Init(this);
         nightmarePhase.Init(this);
+
+        currentPhase = dreamPhase.transform;
     }
 
-    private void Start()
+    public int Health()
     {
-        if (healthDisplay)
-        {
-            healthDisplay.Init(maxHealth);
-        }
-
-        dreamPhase.transform.position = nightmarePhase.transform.position;
-
-        nightmarePhase.gameObject.SetActive(false);
-        dreamPhase.gameObject.SetActive(true);
+        return health;
     }
 
-    private void FixedUpdate()
+    public void TakeDamage(int damage)
     {
-        if (targetTransform != null)
-        {
-            followTarget.position = targetTransform.position;
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("targetTransform.pos: " + targetTransform.position);
-            Debug.Log("followTarget.pos: " + followTarget.position);
-        }
+        health -= damage;
     }
 
-    public Transform GetTarget()
+    public void Die()
     {
-        if (targetTransform != null)
+        if (destructionFX != null)
         {
-            return targetTransform;
+            Instantiate(destructionFX, currentPhase.transform.position, Quaternion.identity);
         }
-        Debug.Log("out");
-        return transform;
-    }
-
-    private IEnumerator SwitchLockTimer()
-    {
-        switchLock = true;
-        yield return new WaitForSeconds(.1f);
-        switchLock = false;
+        Destroy(gameObject);
     }
 
     public void SetDreamPhase(GameObject nightmatrix)
@@ -94,6 +55,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private IEnumerator TransitionToDream(GameObject nightmatrix)
     {
+        nightmarePhase.SwitchOut();
         nightmarePhase.gameObject.SetActive(false);
 
         Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix.transform);
@@ -101,10 +63,14 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         yield return MoveTransitionEffect(nightmarePhase.transform, movement, true, nightmatrix.transform);
 
         dreamPhase.transform.position = transitionEffect.transform.position;
+        currentPhase = dreamPhase.transform;
         dreamPhase.gameObject.SetActive(true);
-        targetTransform = dreamPhase.transform;
 
-        dreamPhase.SwitchIn(nightmatrix.transform.position, movement.y > -.1f);
+        ChaserMovement cm = nightmarePhase.GetComponent<ChaserMovement>();
+        if(cm && cm.enabled)
+        {
+            dreamPhase.AttackIntoDirection(movement.normalized);
+        }
     }
 
     public void SetNightmarePhase(GameObject nightmatrix)
@@ -125,10 +91,20 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         yield return MoveTransitionEffect(dreamPhase.transform, movement, false, nightmatrix.transform);
 
         nightmarePhase.transform.position = transitionEffect.transform.position;
+        currentPhase = nightmarePhase.transform;
         nightmarePhase.gameObject.SetActive(true);
-        targetTransform = nightmarePhase.transform;
 
-        nightmarePhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
+        nightmarePhase.SwitchIn(nightmatrix.GetComponent<Nightmatrix>());
+
+        if (dreamPhase.state == YumeBirdie.State.Attacking)
+        {
+            ChaserMovement cm = nightmarePhase.GetComponent<ChaserMovement>();
+            if (cm)
+            {
+                nightmarePhase.SetAttack();
+                nightmarePhase.transform.rotation = Quaternion.Euler(Vector3.forward * (dreamPhase.transform.rotation.eulerAngles.z + 180));
+            }
+        }
     }
 
     private Vector3 GetMovement(Vector3 body, Transform matrix)
@@ -138,12 +114,12 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
         if (body.y > matrix.position.y + (matrix.localScale.y / 2) - extraOffset)
             direction += Vector3.up;
-        else if (body.y < matrix.position.y - (matrix.localScale.y / 2) + extraOffset)
+        if (body.y < matrix.position.y - (matrix.localScale.y / 2) + extraOffset)
             direction += Vector3.down;
-        
+
         if (body.x > matrix.position.x + (matrix.localScale.x / 2) - extraOffset)
             direction += Vector3.right;
-        else if (body.x < matrix.position.x - (matrix.localScale.x / 2) + extraOffset)
+        if (body.x < matrix.position.x - (matrix.localScale.x / 2) + extraOffset)
             direction += Vector3.left;
 
         return direction * .8f;
@@ -153,7 +129,6 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     {
         transitionEffect.transform.position = startingPosition.position;
         transitionEffect.SetActive(true);
-        targetTransform = transitionEffect.transform;
 
         if (!moveIn) movement *= -1;
 
@@ -171,27 +146,20 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         transitionEffect.SetActive(false);
     }
 
-    public void TakeDamage(int damage)
+    private IEnumerator SwitchLockTimer()
     {
-        if (healthDisplay)
-        {
-            healthDisplay.ChangeValue(-damage);
-        }
+        switchLock = true;
+        yield return new WaitForSeconds(.1f);
+        switchLock = false;
     }
 
     public int GetHealth()
     {
-        return healthDisplay.value;
+        return health;
     }
 
     public void SetHealth(int value)
     {
-        //
-    }
-
-    public void Die()
-    {
-        if (gameManager) gameManager.RestartScene();
-        Destroy(gameObject);
+        health = value;
     }
 }

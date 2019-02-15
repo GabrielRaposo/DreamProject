@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EGoomba : MonoBehaviour, IPhaseManager
 {
-    public int health;
+    [SerializeField] private int health;
 
     [Header("Phases")]
     [SerializeField] private YumeGoomba dreamPhase;
@@ -60,12 +60,17 @@ public class EGoomba : MonoBehaviour, IPhaseManager
 
         Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix.transform);
 
-        yield return MoveTransitionEffect(nightmarePhase.transform, movement, true);
+        yield return MoveTransitionEffect(nightmarePhase.transform, movement, true, nightmatrix.transform);
 
         dreamPhase.transform.position = transitionEffect.transform.position;
         dreamPhase.gameObject.SetActive(true);
 
         currentPhase = dreamPhase.transform;
+
+        if (nightmarePhase.vulnerable)
+        {
+            dreamPhase.SetVulnerableState();
+        }
     }
 
     public void SetNightmarePhase(GameObject nightmatrix)
@@ -83,13 +88,18 @@ public class EGoomba : MonoBehaviour, IPhaseManager
 
         Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix.transform);
 
-        yield return MoveTransitionEffect(dreamPhase.transform, movement, false);
+        yield return MoveTransitionEffect(dreamPhase.transform, movement, false, nightmatrix.transform);
 
         nightmarePhase.transform.position = transitionEffect.transform.position;
         nightmarePhase.gameObject.SetActive(true);
 
         currentPhase = nightmarePhase.transform;
         nightmarePhase.SwitchIn(nightmatrix.GetComponent<Nightmatrix>());
+
+        if(dreamPhase.state == YumeGoomba.State.Vulnerable)
+        {
+            nightmarePhase.SetVulnerableState();
+        }
     }
 
     private Vector3 GetMovement(Vector3 body, Transform matrix)
@@ -110,20 +120,23 @@ public class EGoomba : MonoBehaviour, IPhaseManager
         return direction * .8f;
     }
 
-    private IEnumerator MoveTransitionEffect(Transform startingPosition, Vector3 movement, bool moveIn)
+    private IEnumerator MoveTransitionEffect(Transform startingPosition, Vector3 movement, bool moveIn, Transform matrix)
     {
         transitionEffect.transform.position = startingPosition.position;
         transitionEffect.SetActive(true);
 
         if (!moveIn) movement *= -1;
 
+        Vector3 matrixPos = matrix.position;
+
         int iterations = 8;
         for (int i = 0; i < iterations; i++)
         {
             yield return new WaitForFixedUpdate();
             transitionEffect.transform.position += (movement / iterations);
+            if (matrixPos != matrix.position) transitionEffect.transform.position += (matrix.position - matrixPos);
+            matrixPos = matrix.position;
         }
-        transitionEffect.transform.position = startingPosition.position + movement;
 
         transitionEffect.SetActive(false);
     }
@@ -135,11 +148,13 @@ public class EGoomba : MonoBehaviour, IPhaseManager
         switchLock = false;
     }
 
-    public void CheckHealth()
+    public int GetHealth()
     {
-        if (health < 0)
-        {
-            Die();
-        }
+        return health;
+    }
+
+    public void SetHealth(int value)
+    {
+        health = value;
     }
 }

@@ -280,7 +280,7 @@ public class PlayerDreamPhase : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        controller.CheckHealth();
+        if (controller.GetHealth() < 1) controller.Die();
 
         stunned = false;
         StartCoroutine(InvencibilityTime());

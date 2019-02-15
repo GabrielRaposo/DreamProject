@@ -59,7 +59,7 @@ public class PlayerNightmarePhase : MonoBehaviour
     {
         StopAllCoroutines();
         m_renderer.enabled = true;
-        invincible = stunned = false;
+        invincible = stunned = shooting = false;
     }
 
     public void SwitchIn(Vector3 targetCenter, Nightmatrix nightmatrix)
@@ -191,7 +191,7 @@ public class PlayerNightmarePhase : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        controller.CheckHealth();
+        if (controller.GetHealth() < 1) controller.Die();
 
         stunned = false;
         StartCoroutine(InvencibilityTime());

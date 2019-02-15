@@ -6,7 +6,9 @@ public class AkumuGoomba : Akumu
 {
     [Header("Goomba")]
     [SerializeField] private float bulletSpeed;
+    [SerializeField] private int bloatedHealth;
 
+    public bool vulnerable { get; private set; }
     private bool locked;
     private PlayerPhaseManager player;
     private BulletPool pool;
@@ -22,10 +24,11 @@ public class AkumuGoomba : Akumu
     {
         base.SwitchIn(nightmatrix);
 
+        if (vulnerable) SetVulnerableState(); 
+
         if (nightmatrix.active)
         {
-            if (attackCoroutine != null) StopCoroutine(attackCoroutine);
-            attackCoroutine = StartCoroutine(AttackCicle());
+            SetAttackCicle();
         }
     }
 
@@ -44,13 +47,22 @@ public class AkumuGoomba : Akumu
         {
             if (currentNightmatrix.active)
             {
-                if (attackCoroutine != null) StopCoroutine(attackCoroutine);
-                attackCoroutine = StartCoroutine(AttackCicle());
+                SetAttackCicle();
             }
             else
             {
                 if (attackCoroutine != null) StopCoroutine(attackCoroutine);
             }
+        }
+    }
+
+    private void SetAttackCicle()
+    {
+        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+
+        if (!vulnerable)
+        {
+            attackCoroutine = StartCoroutine(AttackCicle());
         }
     }
 
@@ -67,7 +79,53 @@ public class AkumuGoomba : Akumu
         StartCoroutine(BlinkAnimation());
 
         controller.TakeDamage(hitbox.damage);
-        controller.CheckHealth();
+
+        if (controller.GetHealth() < 1)
+        {
+            if (!vulnerable)
+            {
+                SetVulnerableState();
+            }
+            else
+            {
+                SuicideShots();
+                controller.Die();
+            }
+        }
+    }
+
+    private void SuicideShots()
+    {
+        int max = 8;
+        for(int i = 0; i < max; i++)
+        {
+            GameObject bulletObject = pool.Get();
+            BulletLine bullet = bulletObject.GetComponent<BulletLine>();
+            if (bullet)
+            {
+                bulletObject.SetActive(true);
+                Vector2 direction = RaposUtil.RotateVector(Vector2.up, (360/max) * i);
+
+                bullet.Launch(direction * bulletSpeed);
+                bulletObject.transform.position = transform.position;
+            }
+        }
+    }
+
+    public void SetVulnerableState()
+    {
+        m_animator.SetTrigger("Bloat");
+        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+        controller.SetHealth(bloatedHealth);
+        StartCoroutine(DeathTimer());
+
+        vulnerable = true;
+    }
+
+    private IEnumerator DeathTimer()
+    {
+        yield return new WaitForSeconds(3);
+        controller.Die();
     }
 
     public override void OnTouchEvent(PlayerNightmarePhase player)
@@ -91,7 +149,7 @@ public class AkumuGoomba : Akumu
                 Vector2 direction;
                 if (player)
                 {
-                    direction = (player.GetTargetPosition() - transform.position).normalized;
+                    direction = (player.GetTarget().position - transform.position).normalized;
                 }
                 else
                 {

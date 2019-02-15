@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Yume : MonoBehaviour
 {
-    //public int health;
     [SerializeField] public float mininumTopY;
 
     protected bool interactable = true;
@@ -15,6 +14,13 @@ public class Yume : MonoBehaviour
     protected Collider2D m_collider;
     protected ID id;
 
+    protected IPhaseManager controller;
+
+    public void Init(IPhaseManager controller)
+    {
+        this.controller = controller;
+    }
+
     private void OnEnable()
     {
         m_animator = GetComponent<Animator>();
@@ -24,15 +30,6 @@ public class Yume : MonoBehaviour
 
         id = ID.Enemy;
     }
-
-    //protected virtual void TakeDamage(int damage)
-    //{
-    //    health -= damage;
-    //    if (health < 1)
-    //    {
-    //        Destroy(gameObject);
-    //    }
-    //}
 
     protected IEnumerator InteractionDelay(int frames)
     {
@@ -65,14 +62,13 @@ public class Yume : MonoBehaviour
         }
     }
 
-    //protected void Die()
-    //{
-    //    if (destructionFX != null)
-    //    {
-    //        Instantiate(destructionFX, transform.position, Quaternion.identity);
-    //    }
-    //    Destroy(gameObject);
-    //}
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Nightmatrix"))
+        {
+            controller.SetNightmarePhase(collision.gameObject);
+        }
+    }
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
     protected virtual void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }

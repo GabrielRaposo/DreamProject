@@ -6,6 +6,7 @@ public interface IPhaseManager
     void SetNightmarePhase(GameObject nightmatrix);
 
     void TakeDamage(int damage);
-    void CheckHealth();
+    int GetHealth();
+    void SetHealth(int value);
     void Die();
 }

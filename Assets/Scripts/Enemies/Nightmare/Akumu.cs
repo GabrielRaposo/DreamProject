@@ -17,6 +17,11 @@ public class Akumu : MonoBehaviour, IObserver
 
     protected IPhaseManager controller;
 
+    public void Init(IPhaseManager controller)
+    {
+        this.controller = controller;
+    }
+
     private void Awake()
     {
         m_animator = GetComponent<Animator>();
@@ -27,11 +32,6 @@ public class Akumu : MonoBehaviour, IObserver
         blinkShader = Shader.Find("GUI / Text Shader");
 
         id = ID.Enemy;
-    }
-
-    public void Init(IPhaseManager controller)
-    {
-        this.controller = controller;
     }
 
     public virtual void SwitchIn(Nightmatrix nightmatrix)
