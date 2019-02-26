@@ -13,6 +13,7 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     [Header("Attack")]
     [SerializeField] private Hitbox hammerHitbox;
+    [SerializeField] private AudioSource attackSFX;
     [SerializeField] private float airdashSpeed;
 
     private float horizontalMovement;
@@ -49,7 +50,6 @@ public class PlayerAirborneMovement : MonoBehaviour
         m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
     }
 
-    // Update is called once per frame
     private void Update()
     {
         //lidando com ghost vertices
@@ -136,6 +136,7 @@ public class PlayerAirborneMovement : MonoBehaviour
         Vector3 spawnOffset = new Vector3(1.1f * ((controller.facingRight) ? .7f : -.7f), -.5f);
         hammerHitbox.transform.localPosition = spawnOffset;
         m_animator.SetTrigger("Attack");
+        attackSFX.Play();
 
         for (int i = 0; i < 10; i++)
         {

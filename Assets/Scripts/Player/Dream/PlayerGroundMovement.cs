@@ -13,6 +13,7 @@ public class PlayerGroundMovement : MonoBehaviour
 
     [Header("Attack")]
     [SerializeField] private Hitbox hammerHitbox;
+    [SerializeField] private AudioSource attackSFX; 
 
     private float horizontalMovement;
     private bool breaking;
@@ -130,8 +131,9 @@ public class PlayerGroundMovement : MonoBehaviour
         hammerHitbox.transform.localPosition = spawnOffset;
         hammerHitbox.transform.rotation = Quaternion.Euler(Vector3.up * (controller.facingRight ? 0 : 180));
         m_animator.SetTrigger("Attack");
+        attackSFX.Play();
 
-        for(int i = 0; i < 20; i++)
+        for (int i = 0; i < 20; i++)
         {
             yield return new WaitForFixedUpdate();
         }

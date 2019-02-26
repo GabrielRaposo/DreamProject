@@ -8,8 +8,13 @@ public class PlayerDreamPhase : MonoBehaviour
 
     [SerializeField] private float customGravity;
     [SerializeField] private int maxCoyoteTime;
-    [Space(10)]
+
+    [Header("Visual Effects")]
     [SerializeField] private SpriteRenderer damageFX;
+
+    [Header("Audio Effects")]
+    [SerializeField] private AudioSource jumpSFX;
+    [SerializeField] private AudioSource damageSFX;
 
     [HideInInspector] public bool attacking;
     private Vector3 pushForce;
@@ -237,6 +242,8 @@ public class PlayerDreamPhase : MonoBehaviour
 
     public void SetJump(bool super = false)
     {
+        jumpSFX.Play();
+
         SetAirborneState();
         airborneMovement.Jump(super);
         superJumping = super;
@@ -271,6 +278,7 @@ public class PlayerDreamPhase : MonoBehaviour
 
         damageFX.enabled = true;
         Time.timeScale = 0;
+        damageSFX.Play();
         yield return new WaitForSecondsRealtime(.2f);
         Time.timeScale = 1;
         damageFX.enabled = false;
@@ -379,6 +387,14 @@ public class PlayerDreamPhase : MonoBehaviour
                     transform.position += snap;
                     SetZippingState(zipline);
                 }
+            }
+        }
+        else if (collision.transform.CompareTag("Hitbox"))
+        {
+            Hitbox hitbox = collision.GetComponent<Hitbox>();
+            if (hitbox && hitbox.id != ID.Player)
+            {
+                SetDamage(collision.transform.position, hitbox.damage);
             }
         }
         else if (collision.CompareTag("Blastzone"))

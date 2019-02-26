@@ -10,8 +10,9 @@ public class PlayerNightmarePhase : MonoBehaviour
 
     [Header("Shooting")]
     [SerializeField] private float bulletSpeed;
-    //shot delay
+    [SerializeField] private int shotDelay;
     [SerializeField] private GameObject bulletPoolPrefab;
+    [SerializeField] private AudioSource shotSFX;
 
     [Space(10)]
     [SerializeField] private SpriteRenderer damageFX;
@@ -117,7 +118,7 @@ public class PlayerNightmarePhase : MonoBehaviour
 
     private IEnumerator ShotDelay()
     {
-        for (int i = 0; i < 5; i++) yield return new WaitForFixedUpdate();
+        for (int i = 0; i < shotDelay; i++) yield return new WaitForFixedUpdate();
     }
 
     private void Shoot()
@@ -129,6 +130,8 @@ public class PlayerNightmarePhase : MonoBehaviour
             bulletObject.SetActive(true);
             bullet.Launch((facingRight ? Vector2.right : Vector2.left) * bulletSpeed);
             bulletObject.transform.position = transform.position;
+
+            shotSFX.Play();
         }
     }
 
@@ -165,6 +168,14 @@ public class PlayerNightmarePhase : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Damage"))
+        {
+            SetDamage(1);
+        }
+    }
+
     public void SetDamage(int damage)
     {
         if (invincible) return;
@@ -182,6 +193,7 @@ public class PlayerNightmarePhase : MonoBehaviour
 
         damageFX.enabled = true;
         Time.timeScale = 0;
+        damageFX.GetComponent<AudioSource>().Play();
         yield return new WaitForSecondsRealtime(.2f);
         Time.timeScale = 1;
         damageFX.enabled = false;
