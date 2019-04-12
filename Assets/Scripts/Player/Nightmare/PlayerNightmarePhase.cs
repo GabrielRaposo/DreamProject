@@ -162,7 +162,19 @@ public class PlayerNightmarePhase : MonoBehaviour
                 }
             }
         }
-        else if (!locked && collision.CompareTag("Nightmatrix"))
+        else if (!locked && collision.CompareTag("NightmatrixBorder"))
+        {
+            NightmatrixBorder border = collision.GetComponent<NightmatrixBorder>();
+            if (border)
+            {
+                controller.SetDreamPhase(border.mainMatrix);
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (!locked && collision.CompareTag("Nightmatrix"))
         {
             controller.SetDreamPhase(collision.gameObject);
         }
@@ -206,7 +218,7 @@ public class PlayerNightmarePhase : MonoBehaviour
         if (controller.GetHealth() < 1) controller.Die();
 
         stunned = false;
-        StartCoroutine(InvencibilityTime());
+        if (gameObject.activeSelf) StartCoroutine(InvencibilityTime());
         m_animator.SetBool("Stunned", false);
     }
 

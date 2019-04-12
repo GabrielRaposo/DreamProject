@@ -59,6 +59,14 @@ public class Yume : MonoBehaviour
             {
                 OnHitboxEvent(hitbox);
             }
+        } else
+        if (collision.CompareTag("NightmatrixBorder"))
+        {
+            NightmatrixBorder border = collision.GetComponent<NightmatrixBorder>();
+            if (border)
+            {
+                controller.SetNightmarePhase(border.mainMatrix);
+            }
         }
     }
 

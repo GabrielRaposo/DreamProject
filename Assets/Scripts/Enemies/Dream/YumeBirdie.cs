@@ -200,7 +200,7 @@ public class YumeBirdie : Yume
             if (groundLayer == (groundLayer | 1 << layer))
             {
                 hitbox.GetComponent<Collider2D>().enabled = false;
-                StartCoroutine(BounceOnHit());
+                if(gameObject.activeSelf) StartCoroutine(BounceOnHit());
                 m_animator.SetTrigger("Dizzy");
                 flightFX.Stop();
                 transform.rotation = Quaternion.Euler(Vector3.zero);

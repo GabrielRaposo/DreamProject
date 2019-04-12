@@ -263,7 +263,8 @@ public class PlayerDreamPhase : MonoBehaviour
         {
             UpdateFacingDirection(false);
         }
-        StartCoroutine(StunnedState());
+
+        if(gameObject.activeSelf) StartCoroutine(StunnedState());
     }
 
     private IEnumerator StunnedState()

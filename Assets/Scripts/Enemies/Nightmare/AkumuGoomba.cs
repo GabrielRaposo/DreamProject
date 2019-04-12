@@ -76,7 +76,7 @@ public class AkumuGoomba : Akumu
             bullet.Vanish();
         }
 
-        StartCoroutine(BlinkAnimation());
+        if (gameObject.activeSelf) StartCoroutine(BlinkAnimation());
 
         controller.TakeDamage(hitbox.damage);
 

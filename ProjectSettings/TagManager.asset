@@ -15,6 +15,7 @@ TagManager:
   - Damage
   - Exit
   - Nightmatrix
+  - NightmatrixBorder
   layers:
   - Default
   - TransparentFX

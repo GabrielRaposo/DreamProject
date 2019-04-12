@@ -92,19 +92,26 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToDream(GameObject nightmatrix)
+    private IEnumerator TransitionToDream(GameObject nightmatrix, float multiplier = 1f)
     {
         nightmarePhase.gameObject.SetActive(false);
 
         Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix.transform);
 
-        yield return MoveTransitionEffect(nightmarePhase.transform, movement, true, nightmatrix.transform);
+        yield return MoveTransitionEffect(nightmarePhase.transform, movement * multiplier, true, nightmatrix.transform);
 
         dreamPhase.transform.position = transitionEffect.transform.position;
-        dreamPhase.gameObject.SetActive(true);
-        targetTransform = dreamPhase.transform;
+        if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground"))) 
+        {
+            StartCoroutine(TransitionToNightmare(nightmatrix, 1.5f));
+        }
+        else
+        {
+            dreamPhase.gameObject.SetActive(true);
+            targetTransform = dreamPhase.transform;
 
-        dreamPhase.SwitchIn(nightmatrix.transform.position, movement.y > -.1f);
+            dreamPhase.SwitchIn(nightmatrix.transform.position, movement.y > -.1f);
+        }
     }
 
     public void SetNightmarePhase(GameObject nightmatrix)
@@ -116,19 +123,26 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToNightmare(GameObject nightmatrix)
+    private IEnumerator TransitionToNightmare(GameObject nightmatrix, float multiplier = 1f)
     {
         dreamPhase.gameObject.SetActive(false);
 
         Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix.transform);
 
-        yield return MoveTransitionEffect(dreamPhase.transform, movement, false, nightmatrix.transform);
+        yield return MoveTransitionEffect(dreamPhase.transform, movement * multiplier, false, nightmatrix.transform);
 
         nightmarePhase.transform.position = transitionEffect.transform.position;
-        nightmarePhase.gameObject.SetActive(true);
-        targetTransform = nightmarePhase.transform;
+        if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            StartCoroutine(TransitionToDream(nightmatrix, 1.5f));
+        }
+        else
+        {
+            nightmarePhase.gameObject.SetActive(true);
+            targetTransform = nightmarePhase.transform;
 
-        nightmarePhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
+            nightmarePhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
+        }
     }
 
     private Vector3 GetMovement(Vector3 body, Transform matrix)

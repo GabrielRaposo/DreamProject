@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour
     protected Vector2 velocity;
     [HideInInspector] public BulletPool pool;
 
-    public virtual void Launch (Vector2 velocity)
+    public virtual void Launch(Vector2 velocity)
     {
         this.velocity = velocity;
 
@@ -22,6 +22,14 @@ public class Bullet : MonoBehaviour
     }
 
     protected void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("NightmatrixBorder"))
+        {
+            Vanish();
+        }
+    }
+
+    protected void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Nightmatrix"))
         {

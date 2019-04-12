@@ -69,6 +69,18 @@ public class Akumu : MonoBehaviour, IObserver
                 OnHitboxEvent(hitbox);
             }
         } else
+        if (collision.CompareTag("NightmatrixBorder"))
+        {
+            NightmatrixBorder border = collision.GetComponent<NightmatrixBorder>();
+            if (border)
+            {
+                controller.SetDreamPhase(border.mainMatrix);
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
         if (collision.CompareTag("Nightmatrix"))
         {
             controller.SetDreamPhase(collision.gameObject);
