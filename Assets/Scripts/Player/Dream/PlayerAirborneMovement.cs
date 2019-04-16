@@ -11,11 +11,6 @@ public class PlayerAirborneMovement : MonoBehaviour
     [SerializeField] private float jumpInitialSpeed;
     [SerializeField] private float superJumpInitialSpeed;
 
-    [Header("Attack")]
-    [SerializeField] private Hitbox hammerHitbox;
-    [SerializeField] private AudioSource attackSFX;
-    [SerializeField] private float airdashSpeed;
-
     private float horizontalMovement;
     private bool breaking;
 
@@ -116,44 +111,5 @@ public class PlayerAirborneMovement : MonoBehaviour
     private void OnDisable()
     {
         horizontalMovement = horizontalInput = 0;
-    }
-
-    public void SetAttackInput()
-    {
-        StartCoroutine(AttackSequence());
-    }
-
-    private IEnumerator AttackSequence()
-    {
-        controller.gravityLock = true;
-        controller.attacking = true;
-        m_rigidbody.velocity = Vector3.zero;
-        horizontalMovement = (controller.facingRight ? 1 : -1) * airdashSpeed;
-        horizontalInput = 0;
-        breaking = false;
-
-        hammerHitbox.direction = controller.facingRight ? Vector2.right : Vector2.left;
-        Vector3 spawnOffset = new Vector3(1.1f * ((controller.facingRight) ? .7f : -.7f), -.5f);
-        hammerHitbox.transform.localPosition = spawnOffset;
-        m_animator.SetTrigger("Attack");
-        attackSFX.Play();
-
-        for (int i = 0; i < 10; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_rigidbody.velocity = Vector3.zero;
-        controller.gravityLock = false;
-        horizontalMovement = 0;
-
-        for (int i = 0; i < 10; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_animator.SetTrigger("Reset");
-
-        controller.attacking = false;
     }
 }

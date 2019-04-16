@@ -84,7 +84,7 @@ SpriteRenderer:
 --- !u!199 &1573231799
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4831,7 +4831,7 @@ SpriteRenderer:
   m_SortingLayerID: -2052119825
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 1b398e7fe5e4d4f4d9b0e45bec9bd0fd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 11788998922e76f4094f783b83b90447, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4874,8 +4874,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c32d7320293f194695a3ad35a8c255f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
-  aimAtPlayerOnStart: 1
+  moveSpeed: 2
+  animateWalk: 1
+  aimAtPlayerOnStart: 0
   turnAroundOnWall: 1
   reverseOnLayer:
     serializedVersion: 2
@@ -9697,7 +9698,7 @@ ParticleSystem:
 --- !u!199 &8164671859420146872
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9842,7 +9843,7 @@ SpriteRenderer:
   m_SortingLayerID: -2052119825
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2b98139068360ba41bd8f5eb344ae8e2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e3b1dea6be222cc46a4f1e23e407ae97, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

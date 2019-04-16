@@ -65,20 +65,6 @@ public class YumeGoomba : Yume
         }
     }
 
-    protected override void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox)
-    {
-        base.OnHammerEvent(contactPosition, hitbox);
-        if(state == State.Idle && onGround)
-        {
-            SetVulnerableState();
-        }
-        else if (state != State.Squished) {
-            ResetValues();
-            if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-            stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
-        }
-    }
-
     protected override void OnHitboxEvent(Hitbox hitbox)
     {
         base.OnHitboxEvent(hitbox);

@@ -44,14 +44,6 @@ public class Yume : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Hammer"))
-        {
-            Hitbox hitbox = collision.GetComponent<Hitbox>();
-            if (hitbox != null)
-            {
-                OnHammerEvent(collision.transform.position, hitbox);
-            }
-        } else 
         if (collision.CompareTag("Hitbox"))
         {
             Hitbox hitbox = collision.GetComponent<Hitbox>();
@@ -79,7 +71,6 @@ public class Yume : MonoBehaviour
     }
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
-    protected virtual void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
 
     public virtual void OnStompEvent(PlayerDreamPhase player) { StartCoroutine(InteractionDelay(3)); }
     public virtual void OnTouchEvent(PlayerDreamPhase player) { StartCoroutine(InteractionDelay(3)); }

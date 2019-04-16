@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerZippingMovement : MonoBehaviour
 {
     [SerializeField] private ParticleSystem slideFX;
-    [SerializeField] private Hitbox hammerHitbox;
 
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
@@ -55,47 +54,11 @@ public class PlayerZippingMovement : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines();
-        if (controller.attacking) m_animator.SetTrigger("Reset");
-        hammerHitbox.gameObject.SetActive(false);
-        controller.attacking = false;
         controller.gravityLock = false;
 
         slideFX.Stop();
 
         zipline.Disabled = true;
         zipline = null;
-    }
-
-    public void SetAttackInput()
-    {
-        StartCoroutine(AttackSequence());
-    }
-
-    private IEnumerator AttackSequence()
-    {
-        controller.gravityLock = true;
-        controller.attacking = true;
-
-        hammerHitbox.direction = controller.facingRight ? Vector2.right : Vector2.left;
-        Vector3 spawnOffset = new Vector3(1.1f * ((controller.facingRight) ? .7f : -.7f), -.5f);
-        hammerHitbox.transform.localPosition = spawnOffset;
-        m_animator.SetTrigger("Attack");
-
-        for (int i = 0; i < 10; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_rigidbody.velocity = Vector3.zero;
-        controller.gravityLock = false;
-
-        for (int i = 0; i < 10; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_animator.SetTrigger("Reset");
-
-        controller.attacking = false;
     }
 }

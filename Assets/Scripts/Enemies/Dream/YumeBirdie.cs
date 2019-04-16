@@ -122,23 +122,6 @@ public class YumeBirdie : Yume
         m_animator.SetTrigger("Reset");
     }
 
-    protected override void OnHammerEvent(Vector2 contactPosition, Hitbox hitbox)
-    {
-        base.OnHammerEvent(contactPosition, hitbox);
-
-        switch (state)
-        {
-            case State.Idle:
-            case State.Attacking:
-                AttackIntoDirection(hitbox.direction);
-                break;
-
-            case State.Dizzy:
-                TakeDamage();
-                break;
-        }
-    }
-
     protected override void OnHitboxEvent(Hitbox hitbox)
     {
         ResetValues();

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Patroller : MonoBehaviour
 {
     public float moveSpeed;
+    public bool animateWalk;
     public bool aimAtPlayerOnStart;
     public bool turnAroundOnWall;
 
@@ -29,6 +30,12 @@ public class Patroller : MonoBehaviour
             {
                 SetFacingSide((transform.position.x < player.transform.position.x) ? true : false);
             }
+        }
+
+        if (animateWalk)
+        {
+            Animator _animator = GetComponent<Animator>();
+            if(_animator) _animator.SetBool("Walk", true);
         }
     }
 

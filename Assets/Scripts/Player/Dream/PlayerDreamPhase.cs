@@ -16,7 +16,6 @@ public class PlayerDreamPhase : MonoBehaviour
     [SerializeField] private AudioSource jumpSFX;
     [SerializeField] private AudioSource damageSFX;
 
-    [HideInInspector] public bool attacking;
     private Vector3 pushForce;
 
     private const float BASE_GRAVITY = 2f;
@@ -75,7 +74,7 @@ public class PlayerDreamPhase : MonoBehaviour
     {
         StopAllCoroutines();
         m_renderer.enabled = true;
-        onGround = invincible = stunned = gravityLock = attacking = false;
+        onGround = invincible = stunned = gravityLock = false;
     }
 
     public void SwitchIn(Vector3 targetCenter, bool jumpOnExit)
@@ -123,7 +122,7 @@ public class PlayerDreamPhase : MonoBehaviour
 
     void Update()
     {
-        if (!stunned && !attacking)
+        if (!stunned)
         {
             if(movementState != MovementState.Zipping)
             {
@@ -154,29 +153,14 @@ public class PlayerDreamPhase : MonoBehaviour
             case MovementState.Ground:
                 groundMovement.horizontalInput = Input.GetAxisRaw("Horizontal");
                 groundMovement.verticalInput = Input.GetAxisRaw("Vertical");
-
-                if (Input.GetButtonDown("Attack"))
-                {
-                    groundMovement.SetAttackInput();
-                }
                 break;
 
             case MovementState.Airborne:
                 airborneMovement.horizontalInput = Input.GetAxisRaw("Horizontal");
-
-                if (Input.GetButtonDown("Attack"))
-                {
-                    airborneMovement.SetAttackInput();
-                }
                 break;
 
             case MovementState.Zipping:
                 zippingMovement.horizontalInput = Input.GetAxisRaw("Horizontal");
-
-                if (Input.GetButtonDown("Attack"))
-                {
-                    zippingMovement.SetAttackInput();
-                }
                 break;
         }
 
@@ -358,8 +342,6 @@ public class PlayerDreamPhase : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //if (!interactable) return;
-
         //somente o filho "Ghost" consegue entrar em contato com "Enemy"s
         if (collision.transform.CompareTag("Enemy"))
         {

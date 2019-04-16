@@ -117,7 +117,7 @@ public class EGoomba : MonoBehaviour, IPhaseManager
         if (body.x < matrix.position.x - (matrix.localScale.x / 2) + extraOffset)
             direction += Vector3.left;
 
-        return direction * .8f;
+        return direction * 1f;
     }
 
     private IEnumerator MoveTransitionEffect(Transform startingPosition, Vector3 movement, bool moveIn, Transform matrix)

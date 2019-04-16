@@ -12,9 +12,6 @@ public class Akumu : MonoBehaviour, IObserver
     protected ID id;
     protected Nightmatrix currentNightmatrix;
 
-    private Shader spriteShader;
-    private Shader blinkShader;
-
     protected IPhaseManager controller;
 
     public void Init(IPhaseManager controller)
@@ -28,15 +25,12 @@ public class Akumu : MonoBehaviour, IObserver
         m_renderer = GetComponent<SpriteRenderer>();
         m_rigidbody = GetComponent<Rigidbody2D>();
 
-        spriteShader = Shader.Find("Sprites/Default");
-        blinkShader = Shader.Find("GUI / Text Shader");
-
         id = ID.Enemy;
     }
 
     public virtual void SwitchIn(Nightmatrix nightmatrix)
     {
-        m_renderer.material.shader = spriteShader;
+        m_renderer.color = Color.white;
 
         currentNightmatrix = nightmatrix;
         currentNightmatrix.AddObserver(this);
@@ -96,9 +90,9 @@ public class Akumu : MonoBehaviour, IObserver
 
     protected IEnumerator BlinkAnimation()
     {
-        m_renderer.material.shader = blinkShader;
+        m_renderer.color = Color.red;
         for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
-        m_renderer.material.shader = spriteShader;
+        m_renderer.color = Color.white;
     }
 
 }

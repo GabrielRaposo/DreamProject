@@ -28,9 +28,9 @@ public class Collectable : MonoBehaviour
 
     private void DisableComponents()
     {
-        if(collectFX) collectFX.Play();
+        if (collectFX) collectFX.Play();
         if (collectSFX) collectSFX.Play();
-        GetComponent<Collider2D>().enabled = false;
-        GetComponent<SpriteRenderer>().enabled = false;
+        if (m_collider) m_collider.enabled = false;
+        if (m_renderer) m_renderer.enabled = false;
     }
 }

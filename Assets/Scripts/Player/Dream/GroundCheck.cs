@@ -8,28 +8,12 @@ public class GroundCheck : MonoBehaviour
     [SerializeField] private Rigidbody2D playerRB;
     [SerializeField] private LayerMask groundLayer;
 
-    //private Transform currentPlatform;
-    //private Vector3 lastPlatformPosition;
-
-    private LayerMask playerLayer;
     private LayerMask platformLayer;
 
     private void Awake()
     {
-        playerLayer = LayerMask.NameToLayer("Player");
         platformLayer = LayerMask.NameToLayer("Platform");
     }
-
-    //private void MoveWithPlatform()
-    //{
-    //    if (lastPlatformPosition != currentPlatform.position)
-    //    {
-    //        Vector3 diff = currentPlatform.position - lastPlatformPosition;
-    //        controller.transform.position += diff;
-
-    //        lastPlatformPosition = currentPlatform.position;
-    //    }
-    //}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

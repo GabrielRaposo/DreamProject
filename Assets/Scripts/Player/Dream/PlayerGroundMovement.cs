@@ -11,10 +11,6 @@ public class PlayerGroundMovement : MonoBehaviour
     [SerializeField] private BoxCollider2D highCollider;
     [SerializeField] private float crouchSpeedModifier;
 
-    [Header("Attack")]
-    [SerializeField] private Hitbox hammerHitbox;
-    [SerializeField] private AudioSource attackSFX; 
-
     private float horizontalMovement;
     private bool breaking;
 
@@ -104,41 +100,8 @@ public class PlayerGroundMovement : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines();
-        if(controller.attacking) m_animator.SetTrigger("Reset");
-        hammerHitbox.gameObject.SetActive(false);
-        controller.attacking = false;
         horizontalMovement = horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;
-    }
-
-    public void SetAttackInput()
-    {
-        if (!crouching)
-        {
-            StartCoroutine(AttackSequence());
-        }
-    }
-
-    private IEnumerator AttackSequence()
-    {
-        controller.attacking = true;
-        horizontalMovement = 0;
-        horizontalInput = 0;
-
-        hammerHitbox.direction = controller.facingRight ? Vector2.right : Vector2.left;
-        Vector3 spawnOffset = new Vector3(1.1f * ((controller.facingRight) ? .8f : -.8f), -.2f);
-        hammerHitbox.transform.localPosition = spawnOffset;
-        hammerHitbox.transform.rotation = Quaternion.Euler(Vector3.up * (controller.facingRight ? 0 : 180));
-        m_animator.SetTrigger("Attack");
-        attackSFX.Play();
-
-        for (int i = 0; i < 20; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        m_animator.SetTrigger("Reset");
-        controller.attacking = false;
     }
 }
