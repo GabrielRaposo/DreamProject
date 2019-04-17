@@ -115,6 +115,5 @@ public class PlayerGroundMovement : MonoBehaviour
         horizontalMovement = horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;
-        Debug.Log("OUT");
     }
 }

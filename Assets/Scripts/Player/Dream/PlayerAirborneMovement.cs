@@ -49,6 +49,12 @@ public class PlayerAirborneMovement : MonoBehaviour
         m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
     }
 
+    public void CustomJump(float customMultiplier = 0)
+    {
+        Instantiate(jumpStartFX, transform.position, Quaternion.identity);
+        m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, jumpInitialSpeed * customMultiplier);
+    }
+
     private void Update()
     {
         //lidando com ghost vertices

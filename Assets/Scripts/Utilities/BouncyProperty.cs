@@ -30,7 +30,7 @@ public class BouncyProperty : MonoBehaviour
             PlayerDreamPhase player = collision.transform.GetComponent<PlayerDreamPhase>();
             if (player)
             {
-                player.SetJump(super);
+                player.SetJump(super, 1.5f);
                 if (!super)
                 {
                     OnBounceEvent.Invoke();

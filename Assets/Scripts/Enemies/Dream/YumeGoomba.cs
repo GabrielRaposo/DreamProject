@@ -48,7 +48,7 @@ public class YumeGoomba : Yume
             knockback = 0;
         }
 
-        player.SetJump(false);
+        player.SetEnemyJump();
         stompFX.Play();
 
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);

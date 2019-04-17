@@ -63,7 +63,7 @@ public class YumeBirdie : Yume
         {
             case State.Idle:
             case State.Dizzy:
-                player.SetJump(false);
+                player.SetEnemyJump();
                 stompFX.Play();
                 break;
 

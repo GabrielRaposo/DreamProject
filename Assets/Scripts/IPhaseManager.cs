@@ -2,8 +2,8 @@
 
 public interface IPhaseManager
 {
-    void SetDreamPhase(GameObject nightmatrix);
-    void SetNightmarePhase(GameObject nightmatrix);
+    void SetDreamPhase(Nightmatrix nightmatrix);
+    void SetNightmarePhase(Nightmatrix nightmatrix);
 
     void TakeDamage(int damage);
     int GetHealth();

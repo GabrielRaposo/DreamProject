@@ -7,7 +7,8 @@ public class PlayerNightmarePhase : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float movementSpeed;
     [SerializeField] [Range(0f, 1f)] private float speedModifier;
-    [SerializeField] private Animator wingsAnimator;
+    [SerializeField] private Animator wingLeftAnimator;
+    [SerializeField] private Animator wingRightAnimator;
 
     [Header("Shooting")]
     [SerializeField] private float bulletSpeed;
@@ -34,6 +35,8 @@ public class PlayerNightmarePhase : MonoBehaviour
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
     private SpriteRenderer m_renderer;
+    private SpriteRenderer wingLeftRenderer;
+    private SpriteRenderer wingRightRenderer;
 
     private PlayerPhaseManager controller;
 
@@ -47,6 +50,9 @@ public class PlayerNightmarePhase : MonoBehaviour
         m_animator = GetComponent<Animator>();
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_renderer = GetComponent<SpriteRenderer>();
+
+        wingLeftRenderer = wingLeftAnimator.GetComponent<SpriteRenderer>();
+        wingRightRenderer = wingRightAnimator.GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -61,7 +67,7 @@ public class PlayerNightmarePhase : MonoBehaviour
     private void HardReset()
     {
         StopAllCoroutines();
-        m_renderer.enabled = true;
+        m_renderer.enabled = wingLeftRenderer.enabled = wingRightRenderer.enabled = true;
         invincible = stunned = shooting = false;
     }
 
@@ -105,9 +111,12 @@ public class PlayerNightmarePhase : MonoBehaviour
         if (!locked)
         {
             m_animator.SetFloat("HorizontalMovement", movement.x);
-            if (movement.y > 0) wingsAnimator.speed = 1.5f; else 
-            if (movement.y < 0) wingsAnimator.speed = .7f; else 
-            wingsAnimator.speed = 1;
+
+            float animationSpeed = 1f; 
+            if (movement.y > 0) animationSpeed = 1.5f; else 
+            if (movement.y < 0) animationSpeed = .7f;
+
+            wingLeftAnimator.speed = wingRightAnimator.speed = animationSpeed;
 
             m_rigidbody.velocity = movement * movementSpeed * (shooting ? speedModifier : 1);
         }
@@ -173,7 +182,7 @@ public class PlayerNightmarePhase : MonoBehaviour
             NightmatrixBorder border = collision.GetComponent<NightmatrixBorder>();
             if (border)
             {
-                controller.SetDreamPhase(border.mainMatrix);
+                controller.SetDreamPhase(border.mainMatrix.GetComponent<Nightmatrix>());
             }
         }
     }
@@ -182,7 +191,7 @@ public class PlayerNightmarePhase : MonoBehaviour
     {
         if (!locked && collision.CompareTag("Nightmatrix"))
         {
-            controller.SetDreamPhase(collision.gameObject);
+            controller.SetDreamPhase(collision.gameObject.GetComponent<Nightmatrix>());
         }
     }
 
@@ -239,9 +248,9 @@ public class PlayerNightmarePhase : MonoBehaviour
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
 
-            m_renderer.enabled = !m_renderer.enabled;
+            m_renderer.enabled = wingLeftRenderer.enabled = wingRightRenderer.enabled = !m_renderer.enabled;
         }
-        m_renderer.enabled = true;
+        m_renderer.enabled = wingLeftRenderer.enabled = wingRightRenderer.enabled = true;
 
         invincible = false;
     }

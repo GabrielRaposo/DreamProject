@@ -57,7 +57,7 @@ public class Yume : MonoBehaviour
             NightmatrixBorder border = collision.GetComponent<NightmatrixBorder>();
             if (border)
             {
-                controller.SetNightmarePhase(border.mainMatrix);
+                controller.SetNightmarePhase(border.mainMatrix.GetComponent<Nightmatrix>());
             }
         }
     }
@@ -66,7 +66,7 @@ public class Yume : MonoBehaviour
     {
         if (collision.CompareTag("Nightmatrix"))
         {
-            controller.SetNightmarePhase(collision.gameObject);
+            controller.SetNightmarePhase(collision.gameObject.GetComponent<Nightmatrix>());
         }
     }
 

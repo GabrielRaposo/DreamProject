@@ -44,7 +44,7 @@ public class EBirdie : MonoBehaviour, IPhaseManager
         Destroy(gameObject);
     }
 
-    public void SetDreamPhase(GameObject nightmatrix)
+    public void SetDreamPhase(Nightmatrix nightmatrix)
     {
         if (!switchLock)
         {
@@ -53,12 +53,12 @@ public class EBirdie : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToDream(GameObject nightmatrix)
+    private IEnumerator TransitionToDream(Nightmatrix nightmatrix)
     {
         nightmarePhase.SwitchOut();
         nightmarePhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix.transform);
+        Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix);
 
         yield return MoveTransitionEffect(nightmarePhase.transform, movement, true, nightmatrix.transform);
 
@@ -73,7 +73,7 @@ public class EBirdie : MonoBehaviour, IPhaseManager
         }
     }
 
-    public void SetNightmarePhase(GameObject nightmatrix)
+    public void SetNightmarePhase(Nightmatrix nightmatrix)
     {
         if (!switchLock)
         {
@@ -82,11 +82,11 @@ public class EBirdie : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToNightmare(GameObject nightmatrix)
+    private IEnumerator TransitionToNightmare(Nightmatrix nightmatrix)
     {
         dreamPhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix.transform);
+        Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix);
 
         yield return MoveTransitionEffect(dreamPhase.transform, movement, false, nightmatrix.transform);
 
@@ -107,19 +107,19 @@ public class EBirdie : MonoBehaviour, IPhaseManager
         }
     }
 
-    private Vector3 GetMovement(Vector3 body, Transform matrix)
+    private Vector3 GetMovement(Vector3 body, Nightmatrix matrix)
     {
         Vector3 direction = Vector3.zero;
         float extraOffset = .5f;
 
-        if (body.y > matrix.position.y + (matrix.localScale.y / 2) - extraOffset)
+        if (body.y > matrix.transform.position.y + (matrix.size.y / 2) - extraOffset)
             direction += Vector3.up;
-        if (body.y < matrix.position.y - (matrix.localScale.y / 2) + extraOffset)
+        if (body.y < matrix.transform.position.y - (matrix.size.y / 2) + extraOffset)
             direction += Vector3.down;
 
-        if (body.x > matrix.position.x + (matrix.localScale.x / 2) - extraOffset)
+        if (body.x > matrix.transform.position.x + (matrix.size.x / 2) - extraOffset)
             direction += Vector3.right;
-        if (body.x < matrix.position.x - (matrix.localScale.x / 2) + extraOffset)
+        if (body.x < matrix.transform.position.x - (matrix.size.x / 2) + extraOffset)
             direction += Vector3.left;
 
         return direction * .8f;

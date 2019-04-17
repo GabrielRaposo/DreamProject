@@ -83,7 +83,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         switchLock = false;
     }
 
-    public void SetDreamPhase(GameObject nightmatrix)
+    public void SetDreamPhase(Nightmatrix nightmatrix)
     {
         if (!switchLock)
         {
@@ -92,11 +92,11 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToDream(GameObject nightmatrix, float multiplier = 1f)
+    private IEnumerator TransitionToDream(Nightmatrix nightmatrix, float multiplier = 1f)
     {
         nightmarePhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix.transform);
+        Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix);
 
         yield return MoveTransitionEffect(nightmarePhase.transform, movement * multiplier, true, nightmatrix.transform);
 
@@ -114,7 +114,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    public void SetNightmarePhase(GameObject nightmatrix)
+    public void SetNightmarePhase(Nightmatrix nightmatrix)
     {
         if (!switchLock)
         {
@@ -123,11 +123,11 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToNightmare(GameObject nightmatrix, float multiplier = 1f)
+    private IEnumerator TransitionToNightmare(Nightmatrix nightmatrix, float multiplier = 1f)
     {
         dreamPhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix.transform);
+        Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix);
 
         yield return MoveTransitionEffect(dreamPhase.transform, movement * multiplier, false, nightmatrix.transform);
 
@@ -145,19 +145,19 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    private Vector3 GetMovement(Vector3 body, Transform matrix)
+    private Vector3 GetMovement(Vector3 body, Nightmatrix matrix)
     {
         Vector3 direction = Vector3.zero;
         float extraOffset = .5f;
 
-        if (body.y > matrix.position.y + (matrix.localScale.y / 2) - extraOffset)
+        if (body.y > matrix.transform.position.y + (matrix.size.y / 2) - extraOffset)
             direction += Vector3.up;
-        else if (body.y < matrix.position.y - (matrix.localScale.y / 2) + extraOffset)
+        else if (body.y < matrix.transform.position.y - (matrix.size.y / 2) + extraOffset)
             direction += Vector3.down;
         
-        if (body.x > matrix.position.x + (matrix.localScale.x / 2) - extraOffset)
+        if (body.x > matrix.transform.position.x + (matrix.size.x / 2) - extraOffset)
             direction += Vector3.right;
-        else if (body.x < matrix.position.x - (matrix.localScale.x / 2) + extraOffset)
+        else if (body.x < matrix.transform.position.x - (matrix.size.x / 2) + extraOffset)
             direction += Vector3.left;
 
         return direction * .8f;

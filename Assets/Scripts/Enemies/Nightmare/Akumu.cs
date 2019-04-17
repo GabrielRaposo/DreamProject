@@ -68,7 +68,7 @@ public class Akumu : MonoBehaviour, IObserver
             NightmatrixBorder border = collision.GetComponent<NightmatrixBorder>();
             if (border)
             {
-                controller.SetDreamPhase(border.mainMatrix);
+                controller.SetDreamPhase(border.mainMatrix.GetComponent<Nightmatrix>());
             }
         }
     }
@@ -77,7 +77,7 @@ public class Akumu : MonoBehaviour, IObserver
     {
         if (collision.CompareTag("Nightmatrix"))
         {
-            controller.SetDreamPhase(collision.gameObject);
+            controller.SetDreamPhase(collision.gameObject.GetComponent<Nightmatrix>());
         }
     }
 

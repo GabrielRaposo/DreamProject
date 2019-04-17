@@ -224,13 +224,28 @@ public class PlayerDreamPhase : MonoBehaviour
         }
     }
 
-    public void SetJump(bool super = false)
+    public void SetJump(bool super = false, float customMultiplier = 0)
     {
         jumpSFX.Play();
 
         SetAirborneState();
-        airborneMovement.Jump(super);
+        if(customMultiplier == 0)
+        {
+            airborneMovement.Jump(super);
+        }
+        else
+        {
+            airborneMovement.CustomJump(customMultiplier);
+        }
         superJumping = super;
+    }
+
+    public void SetEnemyJump()
+    {
+        jumpSFX.Play();
+
+        SetAirborneState();
+        airborneMovement.CustomJump(1.3f);
     }
 
     public void SetDamage(Vector3 contactPoint, int damage)
@@ -394,7 +409,7 @@ public class PlayerDreamPhase : MonoBehaviour
     {
         if (collision.CompareTag("Nightmatrix"))
         {
-            controller.SetNightmarePhase(collision.gameObject);
+            controller.SetNightmarePhase(collision.gameObject.GetComponent<Nightmatrix>());
         }
     }
 
