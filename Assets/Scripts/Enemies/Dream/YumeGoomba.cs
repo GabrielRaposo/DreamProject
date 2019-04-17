@@ -11,6 +11,7 @@ public class YumeGoomba : Yume
     [SerializeField] private float jumpForce;
     [SerializeField] private ParticleSystem stompFX;
 
+    private bool stunned;
     private bool onGround;
     private Coroutine stunCoroutine;
     private Coroutine attackCoroutine;
@@ -20,6 +21,7 @@ public class YumeGoomba : Yume
 
     private void ResetValues()
     {
+        stunned = false;
         transform.rotation = Quaternion.Euler(Vector3.zero);
         if (m_rigidbody) m_rigidbody.gravityScale = 1;
         patroller.enabled = true;
@@ -35,6 +37,8 @@ public class YumeGoomba : Yume
 
     public override void OnStompEvent(PlayerDreamPhase player)
     {
+        if (stunned) return;    
+
         base.OnStompEvent(player);
 
         float knockback = 8;
@@ -90,6 +94,7 @@ public class YumeGoomba : Yume
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)
     {
+        stunned = true;
         m_animator.SetTrigger("Reset");
         m_animator.SetBool("Stunned", true);
 

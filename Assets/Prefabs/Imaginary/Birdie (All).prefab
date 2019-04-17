@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mininumTopY: 0.2
-  aimBelow: 1
+  aimBelow: 0
   hitbox: {fileID: 7275675722858868772}
   flightCicle: {fileID: 8473352924334771088}
   groundLayer:
@@ -14599,7 +14599,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.35
 --- !u!50 &7753652665201869541
 Rigidbody2D:
   serializedVersion: 4

@@ -7,12 +7,14 @@ public class PlayerNightmarePhase : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float movementSpeed;
     [SerializeField] [Range(0f, 1f)] private float speedModifier;
+    [SerializeField] private Animator wingsAnimator;
 
     [Header("Shooting")]
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int shotDelay;
     [SerializeField] private GameObject bulletPoolPrefab;
     [SerializeField] private AudioSource shotSFX;
+    [SerializeField] private Transform aimStar;
 
     [Space(10)]
     [SerializeField] private SpriteRenderer damageFX;
@@ -102,7 +104,11 @@ public class PlayerNightmarePhase : MonoBehaviour
     {
         if (!locked)
         {
-            m_animator.SetFloat("VerticalMovement", movement.y);
+            m_animator.SetFloat("HorizontalMovement", movement.x);
+            if (movement.y > 0) wingsAnimator.speed = 1.5f; else 
+            if (movement.y < 0) wingsAnimator.speed = .7f; else 
+            wingsAnimator.speed = 1;
+
             m_rigidbody.velocity = movement * movementSpeed * (shooting ? speedModifier : 1);
         }
     }
@@ -129,7 +135,7 @@ public class PlayerNightmarePhase : MonoBehaviour
         {
             bulletObject.SetActive(true);
             bullet.Launch((facingRight ? Vector2.right : Vector2.left) * bulletSpeed);
-            bulletObject.transform.position = transform.position;
+            bulletObject.transform.position = aimStar.position;
 
             shotSFX.Play();
         }

@@ -11,6 +11,9 @@ public class PlayerAirborneMovement : MonoBehaviour
     [SerializeField] private float jumpInitialSpeed;
     [SerializeField] private float superJumpInitialSpeed;
 
+    [Header("Effects")]
+    [SerializeField] private GameObject jumpStartFX;
+
     private float horizontalMovement;
     private bool breaking;
 
@@ -42,6 +45,7 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     public void Jump(bool super = false)
     {
+        Instantiate(jumpStartFX, transform.position, Quaternion.identity);
         m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
     }
 
@@ -54,7 +58,7 @@ public class PlayerAirborneMovement : MonoBehaviour
         //}
 
         m_animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
-        m_animator.SetFloat("VerticalSpeed", m_rigidbody.velocity.y);
+        m_animator.SetInteger("vSpeed", (int) m_rigidbody.velocity.y);
     }
 
     private void FixedUpdate()

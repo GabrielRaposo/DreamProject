@@ -105,7 +105,7 @@ public class YumeBirdie : Yume
         m_animator.SetTrigger("Stunned");
         stunned = true;
         m_collider.enabled = false;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(.3f);
         controller.Die();
     }
 

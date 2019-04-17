@@ -11,6 +11,10 @@ public class PlayerGroundMovement : MonoBehaviour
     [SerializeField] private BoxCollider2D highCollider;
     [SerializeField] private float crouchSpeedModifier;
 
+    [Header("Effects")]
+    [SerializeField] private GameObject landingSmokeFX;
+    [SerializeField] private ParticleSystem smokeTrailFX;
+
     private float horizontalMovement;
     private bool breaking;
 
@@ -34,11 +38,18 @@ public class PlayerGroundMovement : MonoBehaviour
     {
         breaking = false;
         m_animator.SetBool("Airborne", false);
+        Instantiate(landingSmokeFX, transform.position, Quaternion.identity);
     }
 
     private void Update()
     {
-        m_animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
+        float absHorMove = Mathf.Abs(horizontalMovement);
+        m_animator.SetFloat("HorizontalSpeed", absHorMove);
+        
+        if(absHorMove > 0) {
+            if(!smokeTrailFX.isPlaying) smokeTrailFX.Play();
+        }
+        else smokeTrailFX.Stop();
 
         CheckCrouch();
         m_animator.SetBool("Crouching", crouching);
@@ -100,8 +111,10 @@ public class PlayerGroundMovement : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines();
+        smokeTrailFX.Stop();
         horizontalMovement = horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;
+        Debug.Log("OUT");
     }
 }
