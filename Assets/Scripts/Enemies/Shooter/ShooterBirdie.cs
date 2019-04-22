@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AkumuBirdie : Akumu
+public class ShooterBirdie : ShooterCreature
 {
     [Header("Birdy")]
     [SerializeField] private ChaserMovement chaserMovement;

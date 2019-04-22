@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class YumeBirdie : Yume
+public class PlatformerBirdie : PlatformerCreature
 {
     [Header("Birdy")]
     [SerializeField] private bool aimBelow;
@@ -11,7 +11,7 @@ public class YumeBirdie : Yume
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private ParticleSystem flightFX;
     [SerializeField] private float stunTime;
-    [SerializeField] private ParticleSystem stompFX;
+    //[SerializeField] private ParticleSystem stompFX;
 
     public enum State { Idle, Attacking, Dizzy }
     public State state { get; private set; }
@@ -64,7 +64,7 @@ public class YumeBirdie : Yume
             case State.Idle:
             case State.Dizzy:
                 player.SetEnemyJump();
-                stompFX.Play();
+                //stompFX.Play();
                 break;
 
             case State.Attacking:

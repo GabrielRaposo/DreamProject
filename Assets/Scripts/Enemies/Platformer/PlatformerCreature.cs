@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Yume : MonoBehaviour
+public class PlatformerCreature : MonoBehaviour
 {
     [SerializeField] public float mininumTopY;
 
@@ -70,10 +70,10 @@ public class Yume : MonoBehaviour
         }
     }
 
-    protected virtual void OnHitboxEvent(Hitbox hitbox) { StartCoroutine(InteractionDelay(3)); }
+    protected virtual void OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
 
-    public virtual void OnStompEvent(PlayerDreamPhase player) { StartCoroutine(InteractionDelay(3)); }
-    public virtual void OnTouchEvent(PlayerDreamPhase player) { StartCoroutine(InteractionDelay(3)); }
+    public virtual void OnStompEvent(PlayerDreamPhase player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
+    public virtual void OnTouchEvent(PlayerDreamPhase player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
 
     public virtual void OnBouncyTopEvent(Vector2 contactPosition, bool super) { }
     public virtual void OnBouncySideEvent(Vector2 contactPosition) { }

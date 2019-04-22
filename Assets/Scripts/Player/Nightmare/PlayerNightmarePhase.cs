@@ -157,7 +157,7 @@ public class PlayerNightmarePhase : MonoBehaviour
         {
             Vector3 contactPoint = collision.transform.position;
 
-            Akumu enemy = collision.transform.GetComponent<Akumu>();
+            ShooterCreature enemy = collision.transform.GetComponent<ShooterCreature>();
             if (enemy != null)
             {
                 enemy.OnTouchEvent(this);

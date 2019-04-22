@@ -10350,7 +10350,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1493819898407570597
 Transform:
   m_ObjectHideFlags: 0
@@ -10665,7 +10665,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1489723054014721675
 Transform:
   m_ObjectHideFlags: 0
@@ -10700,6 +10700,7 @@ MonoBehaviour:
   customGravity: 1.8
   maxCoyoteTime: 5
   damageFX: {fileID: 4717262498088894841}
+  stompFX: {fileID: 3750140848456955048, guid: f177d91a3326c934ebd640f256152723, type: 3}
   jumpSFX: {fileID: 423818860}
   damageSFX: {fileID: 695161900}
   gravityLock: 0
@@ -10888,7 +10889,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.25}
   serializedVersion: 2
-  m_Radius: 0.27
+  m_Radius: 0.28
 --- !u!1 &7028626292399704957
 GameObject:
   m_ObjectHideFlags: 0

@@ -4773,7 +4773,7 @@ GameObject:
   - component: {fileID: 160729507149511214}
   - component: {fileID: 7427038761083100099}
   m_Layer: 10
-  m_Name: Goomba (Yume)
+  m_Name: Goomba (Platformer)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4996,8 +4996,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 20
-  dreamPhase: {fileID: 2017626364577760063}
-  nightmarePhase: {fileID: 7811572558803496708}
+  platformerPhase: {fileID: 2017626364577760063}
+  shooterPhase: {fileID: 7811572558803496708}
   transitionEffect: {fileID: 1573231796}
   destructionFX: {fileID: 8146530301406283517, guid: 66b7589ee4f2b0a49a25cccfa07bc07b,
     type: 3}
@@ -9772,7 +9772,7 @@ GameObject:
   - component: {fileID: 4046406021761095129}
   - component: {fileID: 356031745}
   m_Layer: 10
-  m_Name: Goomba (Akumu)
+  m_Name: Goomba (Nightmare)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

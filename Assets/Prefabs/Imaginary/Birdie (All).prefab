@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1784352131114545932}
   - component: {fileID: 5984415422465694354}
   m_Layer: 10
-  m_Name: Birdie (Yume)
+  m_Name: Birdie (Platformer)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -228,8 +228,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 20
-  dreamPhase: {fileID: 7393676916915727681}
-  nightmarePhase: {fileID: 6450978280540925302}
+  platformerPhase: {fileID: 7393676916915727681}
+  shooterPhase: {fileID: 6450978280540925302}
   transitionEffect: {fileID: 3963868321165626723}
   destructionFX: {fileID: 8146530301406283517, guid: 66b7589ee4f2b0a49a25cccfa07bc07b,
     type: 3}
@@ -14489,7 +14489,7 @@ GameObject:
   - component: {fileID: 7753652665201869541}
   - component: {fileID: 6292079594742611124}
   m_Layer: 10
-  m_Name: Birdie (Akumu)
+  m_Name: Birdie (Shooter)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

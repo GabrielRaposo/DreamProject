@@ -39,7 +39,7 @@ public class BouncyProperty : MonoBehaviour
         } 
         else if (collision.transform.CompareTag("Enemy"))
         {
-            Yume enemy = collision.transform.GetComponent<Yume>();
+            PlatformerCreature enemy = collision.transform.GetComponent<PlatformerCreature>();
             if (enemy)
             {
                 if(collision.transform.position.y > transform.position.y + .1f)

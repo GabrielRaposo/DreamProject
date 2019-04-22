@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Akumu : MonoBehaviour, IObserver
+public class ShooterCreature : MonoBehaviour, IObserver
 {
     protected Animator m_animator;
     protected SpriteRenderer m_renderer;

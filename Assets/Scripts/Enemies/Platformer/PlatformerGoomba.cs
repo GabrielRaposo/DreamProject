@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class YumeGoomba : Yume
+public class PlatformerGoomba : PlatformerCreature
 {
     [Header("Goomba")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Patroller patroller;
     [SerializeField] private float stunTime;
     [SerializeField] private float jumpForce;
-    [SerializeField] private ParticleSystem stompFX;
 
     private bool stunned;
     private bool onGround;
@@ -49,7 +48,7 @@ public class YumeGoomba : Yume
         }
 
         player.SetEnemyJump();
-        stompFX.Play();
+        //stompFX.Play();
 
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         if (stunCoroutine != null) StopCoroutine(stunCoroutine);
@@ -75,7 +74,7 @@ public class YumeGoomba : Yume
         if (state != State.Squished)
         {
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-            stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
+            if(gameObject.activeSelf) stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
         }
     }
 

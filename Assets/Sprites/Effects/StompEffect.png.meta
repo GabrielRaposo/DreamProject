@@ -1,17 +1,12 @@
 fileFormatVersion: 2
-guid: a369710854eb96e48ab9da8081b0b3da
+guid: d832f3c3b9bc33446b539ac81adc728e
 TextureImporter:
   fileIDToRecycleName:
-    21300000: EnemyBullet_0
-    21300002: EnemyBullet_1
-    21300004: EnemyBullet_2
-    21300006: EnemyBullet_3
-    21300008: EnemyBullet_4
-    21300010: EnemyBullet_5
-    21300012: EnemyBullet_6
-    21300014: EnemyBullet_7
-    21300016: EnemyBullet_8
-    21300018: EnemyBullet_9
+    21300000: StompEffect_0
+    21300002: StompEffect_1
+    21300004: StompEffect_2
+    21300006: StompEffect_3
+    21300008: StompEffect_4
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -105,112 +100,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: EnemyBullet_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: eec47296ea64a63469fd80d941db124a
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_1
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8282c10f0ead1b244980e374466a172d
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_2
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3516156e223b53e45a7a91f7231e8615
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_3
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f24d2e82340756146af25e03138ffcf7
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_4
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 58c8ab45cd09a244ab397ea1c08717b3
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_5
+      name: StompEffect_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
+        width: 128
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -219,78 +114,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2242520f59db23a48a61fa1a2a00f887
+      spriteID: 49bbb928947e270488ae4bb4af7f9301
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: EnemyBullet_6
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 52e99e9336f7c494aac20e4b2f97b9f5
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_7
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3d0eaf5fce41de04080593009fe4bea0
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_8
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: edfb33362bd9dab45b6352cf90ba2988
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EnemyBullet_9
+      name: StompEffect_1
       rect:
         serializedVersion: 2
         x: 128
         y: 0
-        width: 32
+        width: 128
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -299,7 +134,67 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f43bc4e84f954ef4687070afa2d8118a
+      spriteID: 4eeea44f982a72d40898775f58a697df
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StompEffect_2
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 128
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb1ae5a9301835f42b7c685aec19897a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StompEffect_3
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 128
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9fde52aa250f5a7459d6e648a14657c7
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StompEffect_4
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 128
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 555cd45970119b849a548b13e5e15a4e
       vertices: []
       indices: 
       edges: []
@@ -307,7 +202,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: e0fd692cd3ef44641bf0d8ed0f485310
+    spriteID: 06e32fad2e8e6a14d913d526441150fb
     vertices: []
     indices: 
     edges: []

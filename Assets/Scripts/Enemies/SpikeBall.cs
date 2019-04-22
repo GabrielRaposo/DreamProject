@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpikeBall : Yume
+public class SpikeBall : PlatformerCreature
 {
     public override void OnTouchEvent(PlayerDreamPhase player)
     {

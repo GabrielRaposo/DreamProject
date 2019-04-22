@@ -5,6 +5,7 @@ public class BulletLine : Bullet
 {
     public void MoveStraight()
     {
+        m_animator.SetTrigger("Reset");
         m_rigidbody.velocity = velocity;
     }
 }

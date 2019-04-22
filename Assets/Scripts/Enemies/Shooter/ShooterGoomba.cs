@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AkumuGoomba : Akumu
+public class ShooterGoomba : ShooterCreature
 {
     [Header("Goomba")]
     [SerializeField] private float bulletSpeed;

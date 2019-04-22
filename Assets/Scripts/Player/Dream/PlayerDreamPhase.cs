@@ -11,6 +11,7 @@ public class PlayerDreamPhase : MonoBehaviour
 
     [Header("Visual Effects")]
     [SerializeField] private SpriteRenderer damageFX;
+    [SerializeField] private GameObject stompFX;
 
     [Header("Audio Effects")]
     [SerializeField] private AudioSource jumpSFX;
@@ -243,6 +244,7 @@ public class PlayerDreamPhase : MonoBehaviour
     public void SetEnemyJump()
     {
         jumpSFX.Play();
+        Instantiate(stompFX, transform.position + Vector3.down, Quaternion.identity);
 
         SetAirborneState();
         airborneMovement.CustomJump(1.3f);
@@ -360,7 +362,7 @@ public class PlayerDreamPhase : MonoBehaviour
         //somente o filho "Ghost" consegue entrar em contato com "Enemy"s
         if (collision.transform.CompareTag("Enemy"))
         {
-            Yume enemy = collision.transform.GetComponent<Yume>();
+            PlatformerCreature enemy = collision.transform.GetComponent<PlatformerCreature>();
             if(enemy != null)
             {
                 if ((transform.position - collision.transform.position).y > enemy.mininumTopY)
