@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Patroller : MonoBehaviour
+public class PlatformerPatroller : MonoBehaviour
 {
-    public float moveSpeed;
-    public bool animateWalk;
-    public bool aimAtPlayerOnStart;
-    public bool turnAroundOnWall;
+    [SerializeField] float moveSpeed;
+    [SerializeField] bool animateWalk;
+    [SerializeField] bool aimAtPlayerOnStart;
+    [SerializeField] bool turnAroundOnWall;
 
-    public LayerMask reverseOnLayer;
+    [SerializeField] LayerMask reverseOnLayer;
 
     private bool facingRight;
     private new Rigidbody2D rigidbody;

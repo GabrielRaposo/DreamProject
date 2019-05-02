@@ -16,6 +16,9 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     [SerializeField] private HealthDisplay healthDisplay;
     [SerializeField] private int maxHealth;
 
+    [Header("Effects")]
+    [SerializeField] private ParticleSystem deathFX;
+
     private bool switchLock;
     private Transform targetTransform;
 
@@ -58,12 +61,6 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         {
             followTarget.position = targetTransform.position;
         }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("targetTransform.pos: " + targetTransform.position);
-            Debug.Log("followTarget.pos: " + followTarget.position);
-        }
     }
 
     public Transform GetTarget()
@@ -72,7 +69,6 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         {
             return targetTransform;
         }
-        Debug.Log("out");
         return transform;
     }
 
@@ -103,6 +99,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         dreamPhase.transform.position = transitionEffect.transform.position;
         if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground"))) 
         {
+            Debug.Log("wall found");
             StartCoroutine(TransitionToNightmare(nightmatrix, 1.5f));
         }
         else
@@ -128,13 +125,18 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         dreamPhase.gameObject.SetActive(false);
 
         Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix);
-
         yield return MoveTransitionEffect(dreamPhase.transform, movement * multiplier, false, nightmatrix.transform);
 
         nightmarePhase.transform.position = transitionEffect.transform.position;
         if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground")))
         {
-            StartCoroutine(TransitionToDream(nightmatrix, 1.5f));
+            if(movement != Vector3.zero) {
+                StartCoroutine(TransitionToDream(nightmatrix, 1.5f));
+            }
+            else {
+                nightmarePhase.gameObject.SetActive(true);
+                Die();
+            }
         }
         else
         {
@@ -164,7 +166,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     }
 
     private IEnumerator MoveTransitionEffect(Transform startingPosition, Vector3 movement, bool moveIn, Transform matrix)
-    {
+    {        
         transitionEffect.transform.position = startingPosition.position;
         transitionEffect.SetActive(true);
         targetTransform = transitionEffect.transform;
@@ -205,7 +207,14 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     public void Die()
     {
+        if (deathFX) 
+        { 
+            deathFX.transform.position = targetTransform.position;
+            deathFX.Play();
+        }
+        dreamPhase.gameObject.SetActive(false);
+        nightmarePhase.gameObject.SetActive(false);
         if (gameManager) gameManager.RestartScene();
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 }

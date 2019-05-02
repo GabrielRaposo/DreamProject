@@ -109,7 +109,6 @@ MonoBehaviour:
     m_Bits: 4352
   flightFX: {fileID: 2647247666587072575}
   stunTime: 6
-  stompFX: {fileID: 6127169975110191887}
 --- !u!114 &8473352924334771088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14484,6 +14483,7 @@ GameObject:
   - component: {fileID: 8474881804818910773}
   - component: {fileID: 6450978280540925302}
   - component: {fileID: 6265631910047095909}
+  - component: {fileID: 6191665570667494454}
   - component: {fileID: 5965516195047583637}
   - component: {fileID: 116533399738733210}
   - component: {fileID: 7753652665201869541}
@@ -14536,6 +14536,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   rotationTime: 5
+--- !u!114 &6191665570667494454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6292079594742611123}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4092cb10a29a8f4485c4975ca8f621e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
 --- !u!212 &5965516195047583637
 SpriteRenderer:
   m_ObjectHideFlags: 0

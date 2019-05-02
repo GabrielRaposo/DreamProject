@@ -6,7 +6,7 @@ public class PlatformerGoomba : PlatformerCreature
 {
     [Header("Goomba")]
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Patroller patroller;
+    [SerializeField] private PlatformerPatroller patroller;
     [SerializeField] private float stunTime;
     [SerializeField] private float jumpForce;
 

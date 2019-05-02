@@ -47,7 +47,15 @@ public class ShooterBirdie : ShooterCreature
     private IEnumerator StartleTime()
     {
         m_animator.SetTrigger("Startle");
+
+        if (shooterMovement != null) 
+        {
+            shooterMovement.enabled = false;
+        }
+        m_rigidbody.velocity = Vector2.zero;
+
         yield return new WaitForSeconds(.5f);
+
         SetAttack();
     }
 

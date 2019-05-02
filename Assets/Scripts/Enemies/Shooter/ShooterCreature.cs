@@ -13,6 +13,7 @@ public class ShooterCreature : MonoBehaviour, IObserver
     protected Nightmatrix currentNightmatrix;
 
     protected IPhaseManager controller;
+    protected ShooterMovement shooterMovement;
 
     public void Init(IPhaseManager controller)
     {
@@ -24,6 +25,7 @@ public class ShooterCreature : MonoBehaviour, IObserver
         m_animator = GetComponent<Animator>();
         m_renderer = GetComponent<SpriteRenderer>();
         m_rigidbody = GetComponent<Rigidbody2D>();
+        shooterMovement = GetComponent<ShooterMovement>();
 
         id = ID.Enemy;
     }
@@ -34,6 +36,12 @@ public class ShooterCreature : MonoBehaviour, IObserver
 
         currentNightmatrix = nightmatrix;
         currentNightmatrix.AddObserver(this);
+
+        if (shooterMovement != null)
+        {
+            shooterMovement.enabled = true;
+            shooterMovement.Call(nightmatrix);
+        }
     }
 
     public virtual void SwitchOut()
@@ -42,6 +50,11 @@ public class ShooterCreature : MonoBehaviour, IObserver
         {
             currentNightmatrix.RemoveObserver(this);
             currentNightmatrix = null;
+        }
+
+        if (shooterMovement != null)
+        {
+            shooterMovement.enabled = false;
         }
     }
 

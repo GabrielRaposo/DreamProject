@@ -4861,7 +4861,6 @@ MonoBehaviour:
   patroller: {fileID: 4074245582952226327}
   stunTime: 0.2
   jumpForce: 6
-  stompFX: {fileID: 5990186547326485642}
 --- !u!114 &4074245582952226327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9767,6 +9766,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1597832216512386730}
   - component: {fileID: 7811572558803496708}
+  - component: {fileID: 7040696575080128990}
   - component: {fileID: 2588194459413536756}
   - component: {fileID: 5513112819347654589}
   - component: {fileID: 4046406021761095129}
@@ -9806,6 +9806,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletSpeed: 4
   bloatedHealth: 6
+--- !u!114 &7040696575080128990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8484296379025035913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4092cb10a29a8f4485c4975ca8f621e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1
 --- !u!212 &2588194459413536756
 SpriteRenderer:
   m_ObjectHideFlags: 0

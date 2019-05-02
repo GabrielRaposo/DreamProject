@@ -281,7 +281,7 @@ public class PlayerDreamPhase : MonoBehaviour
         damageFX.enabled = true;
         Time.timeScale = 0;
         damageSFX.Play();
-        yield return new WaitForSecondsRealtime(.2f);
+        yield return new WaitForSecondsRealtime(.4f);
         Time.timeScale = 1;
         damageFX.enabled = false;
 

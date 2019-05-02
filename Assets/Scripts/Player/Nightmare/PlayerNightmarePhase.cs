@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerNightmarePhase : MonoBehaviour
+public class PlayerNightmarePhase : MonoBehaviour, ICanTarget
 {
     [Header("Movement")]
     [SerializeField] private float movementSpeed;
@@ -16,12 +16,14 @@ public class PlayerNightmarePhase : MonoBehaviour
     [SerializeField] private GameObject bulletPoolPrefab;
     [SerializeField] private AudioSource shotSFX;
     [SerializeField] private Transform aimStar;
+    [SerializeField] private GameObject autoAimPrefab;
 
     [Space(10)]
     [SerializeField] private SpriteRenderer damageFX;
 
     private Vector2 movement;
     private BulletPool bulletPool;
+    private Transform target;
 
     private bool locked;
     private bool shooting;
@@ -60,6 +62,14 @@ public class PlayerNightmarePhase : MonoBehaviour
         bulletPoolPrefab = Instantiate(bulletPoolPrefab);
         bulletPool = bulletPoolPrefab.GetComponent<BulletPool>();
         bulletPool.Init(ID.Player);
+
+        GameObject autoAimObject = Instantiate(autoAimPrefab, transform.position + ((facingRight ? Vector3.right : Vector3.left) * -2), Quaternion.identity); 
+        AutoAim autoAim = autoAimObject.GetComponent<AutoAim>();
+        if(autoAim)
+        {
+            autoAim.Init(this);
+            autoAim.GetComponent<InheritAnchorMovement>().Set(transform);
+        }
 
         facingRight = true;
     }
@@ -143,7 +153,16 @@ public class PlayerNightmarePhase : MonoBehaviour
         if (bullet)
         {
             bulletObject.SetActive(true);
-            bullet.Launch((facingRight ? Vector2.right : Vector2.left) * bulletSpeed);
+            Vector2 direction;
+            if (target == null)
+            {
+                direction = (facingRight ? Vector2.right : Vector2.left) * bulletSpeed;
+            }
+            else 
+            {
+                direction = (target.position - transform.position).normalized * bulletSpeed;
+            }
+            bullet.Launch(direction);
             bulletObject.transform.position = aimStar.position;
 
             shotSFX.Play();
@@ -221,9 +240,11 @@ public class PlayerNightmarePhase : MonoBehaviour
         damageFX.enabled = true;
         Time.timeScale = 0;
         damageFX.GetComponent<AudioSource>().Play();
-        yield return new WaitForSecondsRealtime(.2f);
+        yield return new WaitForSecondsRealtime(.4f);
         Time.timeScale = 1;
         damageFX.enabled = false;
+        if (shootCicle != null) StopCoroutine(shootCicle);
+                shooting = false;
 
         for (int i = 0; i < 3; i++)
         {
@@ -262,5 +283,20 @@ public class PlayerNightmarePhase : MonoBehaviour
             currentNightmatrix.Deactivate();
             currentNightmatrix = null;
         }
+    }
+
+    public void SetTarget(Transform target) 
+    {
+        if (this.target == null || 
+            Vector2.Distance(transform.position, target.position) < Vector2.Distance(transform.position, this.target.position))
+        { 
+            this.target = target;
+        }
+    }
+
+    public void RemoveTarget(Transform target) 
+    {
+        if(this.target == target)
+            this.target = null;
     }
 }

@@ -37,7 +37,7 @@ public class Bullet : MonoBehaviour
 
     protected void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("NightmatrixBorder"))
+        if (collision.CompareTag("NightmatrixBorder") || collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             Vanish();
         }
@@ -45,7 +45,7 @@ public class Bullet : MonoBehaviour
 
     protected void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Nightmatrix"))
+        if (collision.CompareTag("Nightmatrix") || collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             Vanish();
         }
@@ -66,7 +66,7 @@ public class Bullet : MonoBehaviour
         ReturnToPool();
     }
 
-    private void ReturnToPool()
+    protected virtual void ReturnToPool()
     {
         if (pool) pool.Return(gameObject);
         else gameObject.SetActive(false);

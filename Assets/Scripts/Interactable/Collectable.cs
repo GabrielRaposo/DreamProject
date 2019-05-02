@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Collectable : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class Collectable : MonoBehaviour
     private SpriteRenderer m_renderer;
     private ParticleSystem collectFX;
     private AudioSource collectSFX;
+    private FollowTransform followTransform;
 
     private void OnEnable()
     {
@@ -15,6 +17,7 @@ public class Collectable : MonoBehaviour
         m_renderer = GetComponent<SpriteRenderer>();
         collectFX = GetComponent<ParticleSystem>();
         collectSFX = GetComponent<AudioSource>();
+        followTransform = GetComponent<FollowTransform>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -22,15 +25,18 @@ public class Collectable : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             CollectableDisplay.instance.AddScore(1);
-            DisableComponents();
+            followTransform.enabled = true;
+            followTransform.Follow(collision.transform);
         }
     }
 
-    private void DisableComponents()
+    public void DisableComponents()
     {
         if (collectFX) collectFX.Play();
         if (collectSFX) collectSFX.Play();
+
         if (m_collider) m_collider.enabled = false;
         if (m_renderer) m_renderer.enabled = false;
+        if (followTransform) followTransform.enabled = false;
     }
 }
