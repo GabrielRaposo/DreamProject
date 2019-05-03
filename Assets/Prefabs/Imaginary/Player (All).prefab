@@ -15003,8 +15003,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   followTarget: {fileID: 2037617549}
   transitionEffect: {fileID: 2099063236}
-  dreamPhase: {fileID: 7391418692708443302}
-  nightmarePhase: {fileID: 6976181724411926850}
+  platformerPhase: {fileID: 7391418692708443302}
+  shooterPhase: {fileID: 6976181724411926850}
   healthDisplay: {fileID: 0}
   maxHealth: 3
   deathFX: {fileID: 970158811}
@@ -15237,7 +15237,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.1}
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.3
 --- !u!95 &5265603580337120181
 Animator:
   serializedVersion: 3
@@ -15400,7 +15400,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.1}
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.3
 --- !u!1 &6243963239476267438
 GameObject:
   m_ObjectHideFlags: 0

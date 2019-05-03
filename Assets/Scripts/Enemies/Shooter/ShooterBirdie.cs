@@ -84,7 +84,7 @@ public class ShooterBirdie : ShooterCreature
         if (controller.GetHealth() < 1) controller.Die();
     }
 
-    public override void OnTouchEvent(PlayerNightmarePhase player)
+    public override void OnTouchEvent(PlayerShooter player)
     {
         base.OnTouchEvent(player);
 

@@ -20,6 +20,7 @@ public class FollowTrail : MonoBehaviour
         if ((marks_quantity = anchors.childCount) == 0)
             this.enabled = false;
 
+
         global_reachmarks = new Vector3[marks_quantity + 1];
         global_reachmarks[0] = transform.position;
         for (int i = 0; i < marks_quantity; i++)
@@ -28,6 +29,13 @@ public class FollowTrail : MonoBehaviour
             anchors.GetChild(i).position = transform.position;
         }
         marks_quantity++;
+
+        LineRenderer lineRenderer = anchors.GetComponent<LineRenderer>();
+        if(lineRenderer) 
+        { 
+            lineRenderer.positionCount = global_reachmarks.Length;
+            lineRenderer.SetPositions(global_reachmarks); 
+        }
     }
 
     private void FixedUpdate()

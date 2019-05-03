@@ -54,7 +54,7 @@ public class PlatformerBirdie : PlatformerCreature
         m_animator.SetTrigger("Reset");
     }
 
-    public override void OnStompEvent(PlayerDreamPhase player)
+    public override void OnStompEvent(PlayerPlatformer player)
     {
         base.OnStompEvent(player);
 
@@ -85,7 +85,7 @@ public class PlatformerBirdie : PlatformerCreature
         StartCoroutine(StunState());
     }
 
-    public override void OnTouchEvent(PlayerDreamPhase player)
+    public override void OnTouchEvent(PlayerPlatformer player)
     { 
         base.OnTouchEvent(player);
 

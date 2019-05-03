@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformerCreature : MonoBehaviour
+public class PlatformerCreature : MonoBehaviour, IStompable
 {
-    [SerializeField] public float mininumTopY;
+    [SerializeField] protected float mininumTopY;
 
     protected bool interactable = true;
 
@@ -72,12 +72,14 @@ public class PlatformerCreature : MonoBehaviour
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
 
-    public virtual void OnStompEvent(PlayerDreamPhase player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
-    public virtual void OnTouchEvent(PlayerDreamPhase player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
+    public float GetYStompRange() { return mininumTopY; }
+    public virtual void OnStompEvent(PlayerPlatformer player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
+    public virtual void OnTouchEvent(PlayerPlatformer player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
 
     public virtual void OnBouncyTopEvent(Vector2 contactPosition, bool super) { }
     public virtual void OnBouncySideEvent(Vector2 contactPosition) { }
 
     public virtual void ChildHitboxEnterEvent(Collider2D collision) { }
     public virtual void ChildHitboxExitEvent(Collider2D collision) { }
+
 }

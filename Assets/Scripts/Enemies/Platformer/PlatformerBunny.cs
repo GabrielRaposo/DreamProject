@@ -18,7 +18,7 @@ public class PlatformerBunny : PlatformerCreature
         leaper.enabled = true;
     }
 
-    public override void OnStompEvent(PlayerDreamPhase player)
+    public override void OnStompEvent(PlayerPlatformer player)
     {
         if (stunned) return;    
 
@@ -32,7 +32,7 @@ public class PlatformerBunny : PlatformerCreature
         stunCoroutine = StartCoroutine(StunState(knockback, (int)(stunTime * 60), player.facingRight));
     }
 
-    public override void OnTouchEvent(PlayerDreamPhase player)
+    public override void OnTouchEvent(PlayerPlatformer player)
     {
         base.OnTouchEvent(player);
         player.SetDamage(transform.position, 1);

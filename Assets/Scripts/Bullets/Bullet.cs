@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, IPoolObject
 {
-    [SerializeField] protected Animator m_animator;
-    [SerializeField] protected Collider2D m_collider;
-    [SerializeField] protected Rigidbody2D m_rigidbody;
+    protected Animator m_animator;
+    protected Collider2D m_collider;
+    protected Rigidbody2D m_rigidbody;
+    protected Hitbox m_hitbox;
 
     [SerializeField] private UnityEvent launchEvent;
 
     protected Vector2 velocity;
-    [HideInInspector] public BulletPool pool;
+    private BulletPool pool;
+
+    private void Awake() 
+    {
+        m_animator = GetComponent<Animator>();
+        m_collider = GetComponent<Collider2D>();
+        m_rigidbody = GetComponent<Rigidbody2D>();
+        m_hitbox = GetComponent<Hitbox>();
+    }
 
     private void ToggleComponents(bool value)
     {
@@ -37,15 +46,24 @@ public class Bullet : MonoBehaviour
 
     protected void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("NightmatrixBorder") || collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (collision.CompareTag("NightmatrixBorder"))
         {
+            Vanish();
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            IBreakable breakable = collision.GetComponent<IBreakable>();
+            if (breakable != null)
+            {
+                breakable.TakeDamage(m_hitbox.damage);
+            }
             Vanish();
         }
     }
 
     protected void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Nightmatrix") || collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (collision.CompareTag("Nightmatrix"))
         {
             Vanish();
         }
@@ -70,5 +88,10 @@ public class Bullet : MonoBehaviour
     {
         if (pool) pool.Return(gameObject);
         else gameObject.SetActive(false);
+    }
+
+    public void SetPool(BulletPool pool) 
+    {
+        this.pool = pool;
     }
 }

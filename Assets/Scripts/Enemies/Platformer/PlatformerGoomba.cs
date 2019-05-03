@@ -34,7 +34,7 @@ public class PlatformerGoomba : PlatformerCreature
         CheckGround();
     }
 
-    public override void OnStompEvent(PlayerDreamPhase player)
+    public override void OnStompEvent(PlayerPlatformer player)
     {
         if (stunned) return;    
 
@@ -55,7 +55,7 @@ public class PlatformerGoomba : PlatformerCreature
         stunCoroutine = StartCoroutine(StunState(knockback, (int)(stunTime * 60), player.facingRight));
     }
 
-    public override void OnTouchEvent(PlayerDreamPhase player)
+    public override void OnTouchEvent(PlayerPlatformer player)
     {
         base.OnTouchEvent(player);
         switch (state)

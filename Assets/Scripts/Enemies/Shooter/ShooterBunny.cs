@@ -88,7 +88,7 @@ public class ShooterBunny : ShooterCreature
         controller.Die();
     }
 
-    public override void OnTouchEvent(PlayerNightmarePhase player)
+    public override void OnTouchEvent(PlayerShooter player)
     {
         base.OnTouchEvent(player);
 

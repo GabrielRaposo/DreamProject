@@ -6,7 +6,7 @@ public class ConferSuperJump : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            PlayerDreamPhase player = collision.GetComponent<PlayerDreamPhase>();
+            PlayerPlatformer player = collision.GetComponent<PlayerPlatformer>();
             if (player)
             {
                 player.SetJump(true);

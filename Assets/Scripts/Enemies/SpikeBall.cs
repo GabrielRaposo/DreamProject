@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpikeBall : PlatformerCreature
 {
-    public override void OnTouchEvent(PlayerDreamPhase player)
+    public override void OnTouchEvent(PlayerPlatformer player)
     {
         base.OnTouchEvent(player);
 

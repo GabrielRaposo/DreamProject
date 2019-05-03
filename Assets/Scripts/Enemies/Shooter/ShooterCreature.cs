@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShooterCreature : MonoBehaviour, IObserver
+public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
 {
     protected Animator m_animator;
     protected SpriteRenderer m_renderer;
@@ -90,6 +90,7 @@ public class ShooterCreature : MonoBehaviour, IObserver
     {
         if (collision.CompareTag("Nightmatrix"))
         {
+            Debug.Log("OnTriggerExit2D");
             controller.SetDreamPhase(collision.gameObject.GetComponent<Nightmatrix>());
         }
     }
@@ -97,7 +98,7 @@ public class ShooterCreature : MonoBehaviour, IObserver
     public virtual void OnNotify() {}
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { }
-    public virtual void OnTouchEvent(PlayerNightmarePhase player) { }
+    public virtual void OnTouchEvent(PlayerShooter player) { }
 
     protected virtual IEnumerator AttackCicle() { yield return null; }
 

@@ -9,8 +9,8 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     [SerializeField] private GameObject transitionEffect;
 
     [Header("Phases")]
-    [SerializeField] PlayerDreamPhase dreamPhase;
-    [SerializeField] PlayerNightmarePhase nightmarePhase;
+    [SerializeField] PlayerPlatformer platformerPhase;
+    [SerializeField] PlayerShooter shooterPhase;
 
     [Header("Health")]
     [SerializeField] private HealthDisplay healthDisplay;
@@ -32,14 +32,14 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
             instance = this;
         }
 
-        targetTransform = dreamPhase.transform;
+        targetTransform = platformerPhase.transform;
         transitionEffect.SetActive(false);
     }
 
     private void OnEnable()
     {
-        dreamPhase.Init(this);
-        nightmarePhase.Init(this);
+        platformerPhase.Init(this);
+        shooterPhase.Init(this);
     }
 
     private void Start()
@@ -49,10 +49,10 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
             healthDisplay.Init(maxHealth);
         }
 
-        dreamPhase.transform.position = nightmarePhase.transform.position;
+        platformerPhase.transform.position = shooterPhase.transform.position;
 
-        nightmarePhase.gameObject.SetActive(false);
-        dreamPhase.gameObject.SetActive(true);
+        shooterPhase.gameObject.SetActive(false);
+        platformerPhase.gameObject.SetActive(true);
     }
 
     private void FixedUpdate()
@@ -90,13 +90,13 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private IEnumerator TransitionToDream(Nightmatrix nightmatrix, float multiplier = 1f)
     {
-        nightmarePhase.gameObject.SetActive(false);
+        shooterPhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix);
+        Vector3 movement = GetMovement(shooterPhase.transform.position, nightmatrix);
 
-        yield return MoveTransitionEffect(nightmarePhase.transform, movement * multiplier, true, nightmatrix.transform);
+        yield return MoveTransitionEffect(shooterPhase.transform, movement * multiplier, true, nightmatrix.transform);
 
-        dreamPhase.transform.position = transitionEffect.transform.position;
+        platformerPhase.transform.position = transitionEffect.transform.position;
         if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground"))) 
         {
             Debug.Log("wall found");
@@ -104,10 +104,10 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
         else
         {
-            dreamPhase.gameObject.SetActive(true);
-            targetTransform = dreamPhase.transform;
+            platformerPhase.gameObject.SetActive(true);
+            targetTransform = platformerPhase.transform;
 
-            dreamPhase.SwitchIn(nightmatrix.transform.position, movement.y > -.1f);
+            platformerPhase.SwitchIn(nightmatrix.transform.position, movement.y > -.1f);
         }
     }
 
@@ -122,28 +122,28 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private IEnumerator TransitionToNightmare(Nightmatrix nightmatrix, float multiplier = 1f)
     {
-        dreamPhase.gameObject.SetActive(false);
+        platformerPhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix);
-        yield return MoveTransitionEffect(dreamPhase.transform, movement * multiplier, false, nightmatrix.transform);
+        Vector3 movement = GetMovement(platformerPhase.transform.position, nightmatrix);
+        yield return MoveTransitionEffect(platformerPhase.transform, movement * multiplier, false, nightmatrix.transform);
 
-        nightmarePhase.transform.position = transitionEffect.transform.position;
+        shooterPhase.transform.position = transitionEffect.transform.position;
         if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground")))
         {
             if(movement != Vector3.zero) {
                 StartCoroutine(TransitionToDream(nightmatrix, 1.5f));
             }
             else {
-                nightmarePhase.gameObject.SetActive(true);
+                shooterPhase.gameObject.SetActive(true);
                 Die();
             }
         }
         else
         {
-            nightmarePhase.gameObject.SetActive(true);
-            targetTransform = nightmarePhase.transform;
+            shooterPhase.gameObject.SetActive(true);
+            targetTransform = shooterPhase.transform;
 
-            nightmarePhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
+            shooterPhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
         }
     }
 
@@ -212,8 +212,8 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
             deathFX.transform.position = targetTransform.position;
             deathFX.Play();
         }
-        dreamPhase.gameObject.SetActive(false);
-        nightmarePhase.gameObject.SetActive(false);
+        platformerPhase.gameObject.SetActive(false);
+        shooterPhase.gameObject.SetActive(false);
         if (gameManager) gameManager.RestartScene();
         //Destroy(gameObject);
     }

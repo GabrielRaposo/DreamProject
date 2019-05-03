@@ -27,7 +27,7 @@ public class BouncyProperty : MonoBehaviour
     {
         if (collision.transform.CompareTag("Player"))
         {
-            PlayerDreamPhase player = collision.transform.GetComponent<PlayerDreamPhase>();
+            PlayerPlatformer player = collision.transform.GetComponent<PlayerPlatformer>();
             if (player)
             {
                 player.SetJump(super, 1.5f);
