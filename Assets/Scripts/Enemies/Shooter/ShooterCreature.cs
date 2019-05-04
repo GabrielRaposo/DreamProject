@@ -90,7 +90,6 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
     {
         if (collision.CompareTag("Nightmatrix"))
         {
-            Debug.Log("OnTriggerExit2D");
             controller.SetDreamPhase(collision.gameObject.GetComponent<Nightmatrix>());
         }
     }

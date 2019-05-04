@@ -6,11 +6,15 @@ public class BreakableBlock : MonoBehaviour, IBreakable
 {
     [SerializeField] private int health;    
 
+    private SpriteRenderer m_renderer;
+    private Animator m_animator;
     private ParticleSystem shakeFX;
     private Vector3 originalPosition;
 
     private void Awake() 
     {
+        m_renderer = GetComponent<SpriteRenderer>();
+        m_animator = GetComponent<Animator>();
         shakeFX = GetComponent<ParticleSystem>();
     }
 
@@ -41,18 +45,14 @@ public class BreakableBlock : MonoBehaviour, IBreakable
 
     private void Break()
     {
-        //if (transform.childCount > 0)
-        //{
-        //    for(int i = 0; i < transform.childCount; i++)
-        //    {
-        //        if (transform.GetChild(i).CompareTag("Player"))
-        //        {
-        //            transform.GetChild(i).parent = null;
-        //            break;
-        //        }
-        //    }
-        //}
+        m_renderer.sortingOrder++;
+        StartCoroutine(WaitToDestroy());
+    }
 
+    private IEnumerator WaitToDestroy()
+    {
+        m_animator.SetTrigger("Break");
+        yield return new WaitForSeconds(.5f);
         Destroy(gameObject);
     }
 }

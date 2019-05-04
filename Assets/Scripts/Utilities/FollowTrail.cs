@@ -35,6 +35,7 @@ public class FollowTrail : MonoBehaviour
         { 
             lineRenderer.positionCount = global_reachmarks.Length;
             lineRenderer.SetPositions(global_reachmarks); 
+            lineRenderer.loop = loop;
         }
     }
 
