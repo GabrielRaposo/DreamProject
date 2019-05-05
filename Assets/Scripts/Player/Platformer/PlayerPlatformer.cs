@@ -28,7 +28,7 @@ public class PlayerPlatformer : MonoBehaviour
     private MovementState movementState;
 
     private bool stunned;
-    private bool superJumping;
+    private bool maxJumpLock;
     private int coyoteTime;
     private bool invincible;
     private bool inputLock;
@@ -75,18 +75,25 @@ public class PlayerPlatformer : MonoBehaviour
     {
         StopAllCoroutines();
         m_renderer.enabled = true;
-        onGround = invincible = stunned = gravityLock = false;
+        onGround = invincible = stunned = gravityLock = maxJumpLock = false;
     }
 
-    public void SwitchIn(Vector3 targetCenter, bool jumpOnExit)
+    public void SwitchIn(Vector3 targetCenter, Vector3 exitMovement, bool dashing)
     {
         HardReset();
 
         SetAirborneState();
 
-        if(jumpOnExit)
+        if (exitMovement.y > 0)
         {
-            SetJump();
+            if (dashing)
+                SetJump(1.1f, true);
+            else
+                SetJump(.7f, true);
+        }
+        else if (exitMovement.y == 0 && dashing)
+        {
+            SetJump(.5f, true);
         }
     }
 
@@ -96,7 +103,7 @@ public class PlayerPlatformer : MonoBehaviour
         airborneMovement.enabled = false;
         zippingMovement.enabled = false;
 
-        superJumping = false;
+        maxJumpLock = false;
 
         movementState = MovementState.Ground;
     }
@@ -123,6 +130,9 @@ public class PlayerPlatformer : MonoBehaviour
 
     void Update()
     {
+        //temp -----------------------------
+        //m_renderer.color = (maxJumpLock ? Color.blue : Color.white);
+
         if (!stunned)
         {
             if(movementState != MovementState.Zipping)
@@ -184,8 +194,14 @@ public class PlayerPlatformer : MonoBehaviour
         if (!gravityLock)
         {
             float y;
-            if (!superJumping) y = velocity.y + (customGravity * gravityModifier * Physics2D.gravity.y * Time.fixedDeltaTime);
-            else               y = velocity.y + (customGravity * LIGHT_GRAVITY * Physics2D.gravity.y * Time.fixedDeltaTime);
+            if (maxJumpLock)
+            {
+                y = velocity.y + (customGravity * LIGHT_GRAVITY * Physics2D.gravity.y * Time.fixedDeltaTime);
+            }
+            else 
+            {
+                y = velocity.y + (customGravity * gravityModifier * Physics2D.gravity.y * Time.fixedDeltaTime);
+            }
             velocity.y = y;
         }
 
@@ -225,29 +241,25 @@ public class PlayerPlatformer : MonoBehaviour
         }
     }
 
-    public void SetJump(bool super = false, float customMultiplier = 0)
+    public void SetJump(float customMultiplier = 0, bool maxJumpLock = false)
     {
+        this.maxJumpLock = maxJumpLock;
+
         jumpSFX.Play();
 
         SetAirborneState();
-        if(customMultiplier == 0)
-        {
-            airborneMovement.Jump(super);
-        }
-        else
-        {
-            airborneMovement.CustomJump(customMultiplier);
-        }
-        superJumping = super;
+        airborneMovement.Jump(customMultiplier);
     }
 
     public void SetEnemyJump()
     {
+        maxJumpLock = true;
+
         jumpSFX.Play();
         Instantiate(stompFX, transform.position + Vector3.down, Quaternion.identity);
 
         SetAirborneState();
-        airborneMovement.CustomJump(1.3f);
+        airborneMovement.Jump(1.3f);
     }
 
     public void SetDamage(Vector3 contactPoint, int damage)
@@ -290,19 +302,24 @@ public class PlayerPlatformer : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        if (controller.GetHealth() < 1) controller.Die();
-
-        stunned = false;
-        StartCoroutine(InvencibilityTime());
-        if (onGround)
-        {
-            SetGroundState();
+        if (controller.GetHealth() < 1) 
+        { 
+            controller.Die();
         }
-        else
+        else 
         {
-            SetAirborneState();
+            stunned = false;
+            StartCoroutine(InvencibilityTime());
+            if (onGround)
+            {
+                SetGroundState();
+            }
+            else
+            {
+                SetAirborneState();
+            }
+            m_animator.SetBool("Stunned", false);
         }
-        m_animator.SetBool("Stunned", false);
     }
 
     private IEnumerator InvencibilityTime()

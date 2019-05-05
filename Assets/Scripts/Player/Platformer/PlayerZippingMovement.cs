@@ -26,7 +26,8 @@ public class PlayerZippingMovement : MonoBehaviour
         controller.gravityLock = true;
 
         slideFX.gameObject.SetActive(true);
-        slideFX.startColor = zipline.GetComponent<SpriteRenderer>().color;
+        ParticleSystem.MainModule mainModule = slideFX.main;
+        mainModule.startColor = zipline.GetComponent<SpriteRenderer>().color;
         slideFX.Play();
 
         m_animator.SetBool("Airborne", true);

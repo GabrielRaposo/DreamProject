@@ -5,10 +5,13 @@ using UnityEngine;
 public class PlayerShooter : MonoBehaviour, ICanTarget
 {
     [Header("Movement")]
-    [SerializeField] private float movementSpeed;
-    [SerializeField] [Range(0f, 1f)] private float speedModifier;
+    [SerializeField] private float movementSpeed = 5;
+    [SerializeField] [Range(0f, 1f)] private float speedModifier = .5f;
+    [SerializeField] private float dashSpeed = 14;
+    [SerializeField] private int dashDuration = 18;
     [SerializeField] private Animator wingLeftAnimator;
     [SerializeField] private Animator wingRightAnimator;
+    [SerializeField] private AfterImageTrailEffect afterImageTrailEffect;
 
     [Header("Shooting")]
     [SerializeField] private float bulletSpeed;
@@ -27,16 +30,19 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
 
     private bool locked;
     private bool shooting;
-    private bool stunned;
     private bool invincible;
     public bool facingRight { get; private set; }
 
     private Coroutine shootCicle;
     private Nightmatrix currentNightmatrix;
 
+    public enum State { Idle, Dashing, Stunned }
+    public State PlayerState { get; private set; }
+
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
     private SpriteRenderer m_renderer;
+    
     private SpriteRenderer wingLeftRenderer;
     private SpriteRenderer wingRightRenderer;
 
@@ -59,6 +65,8 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
 
     private void Start()
     {
+        PlayerState = State.Idle;
+
         bulletPoolPrefab = Instantiate(bulletPoolPrefab);
         bulletPool = bulletPoolPrefab.GetComponent<BulletPool>();
         bulletPool.Init(ID.Player);
@@ -77,8 +85,10 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
     private void HardReset()
     {
         StopAllCoroutines();
+        afterImageTrailEffect.StopAllCoroutines();
         m_renderer.enabled = wingLeftRenderer.enabled = wingRightRenderer.enabled = true;
-        invincible = stunned = shooting = false;
+        invincible = shooting = locked = false;
+        PlayerState = State.Idle;
     }
 
     public void SwitchIn(Vector3 targetCenter, Nightmatrix nightmatrix)
@@ -91,16 +101,17 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
 
     private void Update()
     {
-        if (!locked)
+        if (locked) return;
+        
+        switch(PlayerState)
         {
-            if (!stunned)
-            {
+            case State.Idle:
                 movement.x = Input.GetAxisRaw("Horizontal");
                 movement.y = Input.GetAxisRaw("Vertical");
 
                 if (Input.GetButtonDown("Attack"))
                 {
-                    shootCicle = StartCoroutine(ShootCicle());
+                    shootCicle = StartCoroutine(ShootAction());
                     shooting = true;
                 }
                 else if (Input.GetButtonUp("Attack"))
@@ -108,31 +119,46 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
                     if (shootCicle != null) StopCoroutine(shootCicle);
                     shooting = false;
                 }
-            }
-            else
-            {
+
+                if (Input.GetButtonDown("Jump") && movement != Vector2.zero)
+                {   
+                    if (shootCicle != null) StopCoroutine(shootCicle);
+                    shooting = false;
+
+                    StartCoroutine(DashAction(movement));
+                }
+                break;
+
+            default:
                 movement = Vector2.zero;
-            }
+                break;
         }
+        
     }
 
     private void FixedUpdate()
     {
-        if (!locked)
+        if (locked) return;
+
+        
+        switch (PlayerState)
         {
-            m_animator.SetFloat("HorizontalMovement", movement.x);
+            case State.Idle:
+                m_animator.SetFloat("HorizontalMovement", movement.x);
 
-            float animationSpeed = 1f; 
-            if (movement.y > 0) animationSpeed = 1.5f; else 
-            if (movement.y < 0) animationSpeed = .7f;
+                float animationSpeed = 1f; 
+                if (movement.y > 0) animationSpeed = 1.5f; else 
+                if (movement.y < 0) animationSpeed = .7f;
 
-            wingLeftAnimator.speed = wingRightAnimator.speed = animationSpeed;
+                wingLeftAnimator.speed = wingRightAnimator.speed = animationSpeed;
 
-            m_rigidbody.velocity = movement * movementSpeed * (shooting ? speedModifier : 1);
+                m_rigidbody.velocity = movement * movementSpeed * (shooting ? speedModifier : 1);                
+                break;
         }
+        
     }
 
-    private IEnumerator ShootCicle()
+    private IEnumerator ShootAction()
     {
         while (true)
         {
@@ -169,7 +195,39 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
         }
     }
 
+    private IEnumerator DashAction(Vector2 startingMovement)
+    {
+        PlayerState = State.Dashing;
+        invincible = true;
+        afterImageTrailEffect.StartCoroutine(afterImageTrailEffect.Call());
+
+        m_rigidbody.velocity = startingMovement.normalized * dashSpeed; 
+
+        for(int i = dashDuration; i > 0; i--)
+        {
+            yield return new WaitForFixedUpdate();
+            m_rigidbody.velocity = startingMovement.normalized * dashSpeed * ((float)i/dashDuration);
+        }
+
+        m_rigidbody.velocity = Vector2.zero; 
+        afterImageTrailEffect.StopAllCoroutines();
+        yield return new WaitForSeconds(.1f);
+
+        invincible = false;
+        PlayerState = State.Idle;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
+    {
+        TriggerEnterAndStayEvents(collision);
+    }
+
+    private void OnTriggerStay2D(Collider2D collision) 
+    {
+        TriggerEnterAndStayEvents(collision);
+    }
+
+    private void TriggerEnterAndStayEvents(Collider2D collision)
     {
         //somente o filho "Ghost" consegue entrar em contato com "Enemy"s
         if (collision.transform.CompareTag("Enemy"))
@@ -185,7 +243,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
         else if (collision.transform.CompareTag("Hitbox"))
         {
             Hitbox hitbox = collision.GetComponent<Hitbox>();
-            if (hitbox && hitbox.id != ID.Player)
+            if (hitbox && hitbox.id != ID.Player && PlayerState != State.Dashing)
             {
                 SetDamage(hitbox.damage);
 
@@ -231,7 +289,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
 
     private IEnumerator StunnedState()
     {
-        stunned = true;
+        PlayerState = State.Stunned;
         invincible = true;
 
         m_animator.SetBool("Stunned", true);
@@ -253,7 +311,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
 
         if (controller.GetHealth() < 1) controller.Die();
 
-        stunned = false;
+        PlayerState = State.Idle;
         if (gameObject.activeSelf) StartCoroutine(InvencibilityTime());
         m_animator.SetBool("Stunned", false);
     }
@@ -273,7 +331,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
         }
         m_renderer.enabled = wingLeftRenderer.enabled = wingRightRenderer.enabled = true;
 
-        invincible = false;
+        if(PlayerState != State.Dashing) invincible = false;
     }
 
     private void OnDisable()

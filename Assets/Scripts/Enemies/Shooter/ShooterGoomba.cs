@@ -114,6 +114,8 @@ public class ShooterGoomba : ShooterCreature
 
     public void SetVulnerableState()
     {
+        if(shooterMovement) shooterMovement.enabled = false;
+        m_rigidbody.velocity = Vector2.zero;
         m_animator.SetTrigger("Bloat");
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         controller.SetHealth(bloatedHealth);

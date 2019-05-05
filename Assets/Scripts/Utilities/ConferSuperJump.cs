@@ -9,7 +9,7 @@ public class ConferSuperJump : MonoBehaviour
             PlayerPlatformer player = collision.GetComponent<PlayerPlatformer>();
             if (player)
             {
-                player.SetJump(true);
+                player.SetJump(1.5f);
             }
         }
     }

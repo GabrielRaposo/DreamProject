@@ -99,7 +99,6 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         platformerPhase.transform.position = transitionEffect.transform.position;
         if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground"))) 
         {
-            Debug.Log("wall found");
             StartCoroutine(TransitionToNightmare(nightmatrix, 1.5f));
         }
         else
@@ -107,7 +106,11 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
             platformerPhase.gameObject.SetActive(true);
             targetTransform = platformerPhase.transform;
 
-            platformerPhase.SwitchIn(nightmatrix.transform.position, movement.y > -.1f);
+            platformerPhase.SwitchIn (
+                nightmatrix.transform.position, 
+                movement, 
+                shooterPhase.PlayerState == PlayerShooter.State.Dashing ? true : false
+            );
         }
     }
 

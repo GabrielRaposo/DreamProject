@@ -43,16 +43,13 @@ public class PlayerAirborneMovement : MonoBehaviour
         m_animator.SetBool("Airborne", true);
     }
 
-    public void Jump(bool super = false)
+    public void Jump(float customMultiplier = 0)
     {
         Instantiate(jumpStartFX, transform.position, Quaternion.identity);
-        m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, super ? superJumpInitialSpeed : jumpInitialSpeed);
-    }
-
-    public void CustomJump(float customMultiplier = 0)
-    {
-        Instantiate(jumpStartFX, transform.position, Quaternion.identity);
-        m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, jumpInitialSpeed * customMultiplier);
+        if(customMultiplier == 0)
+            m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, jumpInitialSpeed);
+        else 
+            m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, jumpInitialSpeed * customMultiplier);
     }
 
     private void Update()
