@@ -10211,7 +10211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   afterImagePrefab: {fileID: 1899409679}
-  spawnDelay: 0.1
+  spawnDelay: 0.06
 --- !u!1 &1899409679
 GameObject:
   m_ObjectHideFlags: 0
@@ -10239,7 +10239,7 @@ Transform:
   m_GameObject: {fileID: 1899409679}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.39, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_Children: []
   m_Father: {fileID: 1787909614}
   m_RootOrder: 0
@@ -10282,7 +10282,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: -10
   m_Sprite: {fileID: 21300000, guid: 14b9b42185efc9f4887ca90a82673131, type: 3}
-  m_Color: {r: 0.9811321, g: 0.28230685, b: 0.28230685, a: 1}
+  m_Color: {r: 0.98039216, g: 0.28235298, b: 0.83312523, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -15247,7 +15247,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1493819898407570597
 Transform:
   m_ObjectHideFlags: 0
@@ -15568,7 +15568,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1489723054014721675
 Transform:
   m_ObjectHideFlags: 0
@@ -15643,7 +15643,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horizontalSpeed: 200
   breakSpeed: 0.2
-  jumpInitialSpeed: 9
+  jumpInitialSpeed: 12
   superJumpInitialSpeed: 18
   jumpStartFX: {fileID: 7487942445748705406, guid: 31cbfe6c0c795264fa769c0a94db1b9e,
     type: 3}

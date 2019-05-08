@@ -5,6 +5,7 @@ using UnityEngine;
 public class EventSwitch : MonoBehaviour
 {
     [SerializeField] private SwitchPositionEvent[] eventsOnSwitch;
+    [SerializeField] private bool singleUse;
 
     private Animator m_animator;
     private ParticleSystem clickFX;
@@ -40,7 +41,7 @@ public class EventSwitch : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision) 
     {
-        if(collision.CompareTag("Player"))
+        if(!singleUse && collision.CompareTag("Player"))
         {
             if(eventsOnSwitch != null && eventsOnSwitch.Length > 0)
             {
@@ -61,7 +62,7 @@ public class EventSwitch : MonoBehaviour
     public void Unlock()
     {
         pressLock--;
-        if(pressLock < 1 && !pressed)
+        if(pressLock < 1 && !pressed && !singleUse)
         {
             m_animator.SetTrigger("Reset");
         }

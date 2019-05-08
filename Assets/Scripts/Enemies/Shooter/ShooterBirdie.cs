@@ -90,4 +90,14 @@ public class ShooterBirdie : ShooterCreature
 
         player.SetDamage(1);
     }
+
+    //generalizar depois
+    private void OnCollisionEnter2D(Collision2D collision) 
+    {
+        Debug.Log("name: " + collision.gameObject.name);
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            controller.Die();
+        }
+    }
 }

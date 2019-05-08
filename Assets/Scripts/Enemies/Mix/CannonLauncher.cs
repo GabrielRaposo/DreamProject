@@ -65,6 +65,7 @@ public class CannonLauncher : MonoBehaviour
     {
         if(collision.CompareTag("Nightmatrix"))
         {
+            m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
             m_rigidbody.velocity = Vector2.zero;
             m_rigidbody.gravityScale = 1;
         }
@@ -79,5 +80,6 @@ public class CannonLauncher : MonoBehaviour
             m_rigidbody.velocity += Vector2.up * .7f;
         }
         m_rigidbody.velocity = Vector2.zero;
+        m_rigidbody.bodyType = RigidbodyType2D.Static;
     }
 }

@@ -95,6 +95,9 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
     {
         HardReset();
 
+        //necessário por causa da interação com fallThorughPlatforms em PlayerAirborneMovement
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Platform"), false);
+
         currentNightmatrix = nightmatrix;
         currentNightmatrix.Activate();
     }

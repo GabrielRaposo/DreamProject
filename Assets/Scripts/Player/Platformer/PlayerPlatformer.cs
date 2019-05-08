@@ -19,8 +19,8 @@ public class PlayerPlatformer : MonoBehaviour
 
     private Vector3 pushForce;
 
-    private const float BASE_GRAVITY = 2f;
-    private const float LIGHT_GRAVITY = 1f;
+    private const float BASE_GRAVITY = 2.5f;
+    private const float LIGHT_GRAVITY = 1.5f;
     private float gravityModifier = BASE_GRAVITY;
     [HideInInspector] public bool gravityLock;
 
@@ -91,9 +91,12 @@ public class PlayerPlatformer : MonoBehaviour
             else
                 SetJump(.7f, true);
         }
-        else if (exitMovement.y == 0 && dashing)
+        else if (exitMovement.y == 0)
         {
-            SetJump(.5f, true);
+            if(dashing)
+                SetJump(.7f, true);
+            else
+                SetJump(.4f, true);
         }
     }
 
@@ -259,7 +262,7 @@ public class PlayerPlatformer : MonoBehaviour
         Instantiate(stompFX, transform.position + Vector3.down, Quaternion.identity);
 
         SetAirborneState();
-        airborneMovement.Jump(1.3f);
+        airborneMovement.Jump(1.2f);
     }
 
     public void SetDamage(Vector3 contactPoint, int damage)

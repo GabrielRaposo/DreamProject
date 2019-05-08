@@ -139,7 +139,7 @@ public class ShooterGoomba : ShooterCreature
 
     protected override IEnumerator AttackCicle()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.8f);
 
         while (true)
         {

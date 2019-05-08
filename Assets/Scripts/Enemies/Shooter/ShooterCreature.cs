@@ -98,6 +98,7 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
 
     protected virtual void OnHitboxEvent(Hitbox hitbox) { }
     public virtual void OnTouchEvent(PlayerShooter player) { }
+    protected virtual void OnWallEvent() { }
 
     protected virtual IEnumerator AttackCicle() { yield return null; }
 

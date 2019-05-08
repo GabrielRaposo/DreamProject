@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         ScreenTransition screenTransition = ScreenTransition.instance;
         string scenePath = SceneManager.GetActiveScene().path;
         int currentIndex = int.Parse(scenePath.Substring(scenePath.Length - 7, 1));
-        if(currentIndex + 1 < 4)
+        if(currentIndex + 1 < 5)
         {
             scenePath = scenePath.Substring(0, scenePath.Length - 7) + (currentIndex + 1) + ".unity";
         }
