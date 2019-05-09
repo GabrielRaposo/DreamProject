@@ -2,6 +2,8 @@
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerGroundMovement))]
+[RequireComponent(typeof(PlayerAirborneMovement))]
+[RequireComponent(typeof(PlayerZippingMovement))]
 public class PlayerPlatformer : MonoBehaviour
 {
     private const float MAX_Y = 15;
@@ -21,13 +23,15 @@ public class PlayerPlatformer : MonoBehaviour
 
     private const float BASE_GRAVITY = 2.5f;
     private const float LIGHT_GRAVITY = 1.5f;
+    private const float ATTACK_GRAVITY = .5f;
     private float gravityModifier = BASE_GRAVITY;
-    [HideInInspector] public bool gravityLock;
 
     private enum MovementState { Ground, Airborne, Zipping }
     private MovementState movementState;
 
-    private bool stunned;
+    private enum ActionState { Idle, Attacking, Stunned }
+    private ActionState actionState;
+
     private bool maxJumpLock;
     private int coyoteTime;
     private bool invincible;
@@ -64,6 +68,8 @@ public class PlayerPlatformer : MonoBehaviour
 
     private void Start()
     {
+        actionState = ActionState.Idle;
+
         gravityModifier = BASE_GRAVITY;
 
         startingPosition = transform.position;
@@ -75,28 +81,48 @@ public class PlayerPlatformer : MonoBehaviour
     {
         StopAllCoroutines();
         m_renderer.enabled = true;
-        onGround = invincible = stunned = gravityLock = maxJumpLock = false;
+        onGround = invincible = maxJumpLock = false;
+        actionState = ActionState.Idle;    
     }
 
-    public void SwitchIn(Vector3 targetCenter, Vector3 exitMovement, bool dashing)
+    public void SwitchIn(Vector3 targetCenter, Vector3 exitMovement, bool dashing, Vector2 shooterMovement)
     {
         HardReset();
 
         SetAirborneState();
 
-        if (exitMovement.y > 0)
+        //if (exitMovement.y > 0)
+        //{
+        //    if (dashing) SetJump(1.1f, true);
+        //    else         SetJump(.7f,  true);
+        //}
+        //else if (exitMovement.y == 0)
+        //{
+        //    if(dashing) SetJump(.7f, true);
+        //    else        SetJump(.4f, true);
+        //}
+
+        if (exitMovement.y > 0) // saindo por cima
         {
-            if (dashing)
-                SetJump(1.1f, true);
-            else
-                SetJump(.7f, true);
+            maxJumpLock = true;
+            Vector2 movement = Vector2.up * 7f;
+            if (dashing) 
+            {
+                movement.y = 12f;
+                if(shooterMovement.x != 0) movement.x = (shooterMovement.x > 0 ? 1 : -1) * 9f;
+            }
+            m_rigidbody.velocity = movement;
         }
-        else if (exitMovement.y == 0)
+        else if (exitMovement.y == 0) // saindo pelos lados
         {
-            if(dashing)
-                SetJump(.7f, true);
-            else
-                SetJump(.4f, true);
+            maxJumpLock = true;
+            Vector2 movement = new Vector2((exitMovement.x > 0 ? 1 : -1) * 6f, 4f);
+            if (dashing) 
+            {
+                movement.x = (exitMovement.x > 0 ? 1 : -1) * 10f;
+                if(shooterMovement.y != 0) movement.y += (shooterMovement.y > 0 ? 1 : -1) * 5f;
+            }
+            m_rigidbody.velocity = movement;
         }
     }
 
@@ -135,8 +161,8 @@ public class PlayerPlatformer : MonoBehaviour
     {
         //temp -----------------------------
         //m_renderer.color = (maxJumpLock ? Color.blue : Color.white);
-
-        if (!stunned)
+        
+        if (actionState == ActionState.Idle)
         {
             if(movementState != MovementState.Zipping)
             {
@@ -144,13 +170,10 @@ public class PlayerPlatformer : MonoBehaviour
                 {
                     if (movementState != MovementState.Ground) SetGroundState();
                 }
-                else
+                else if (movementState != MovementState.Airborne)
                 {
-                    if (movementState != MovementState.Airborne)
-                    {
-                        SetAirborneState();
-                        coyoteTime = maxCoyoteTime;
-                    }
+                    SetAirborneState();
+                    coyoteTime = maxCoyoteTime;
                 }
             }
 
@@ -183,6 +206,10 @@ public class PlayerPlatformer : MonoBehaviour
             gravityModifier = LIGHT_GRAVITY;
             SetJumpInput(true);
         }
+        else if (Input.GetButtonDown("Attack"))
+        {
+            SetAttackInput();
+        }
     }
 
     private void FixedUpdate()
@@ -194,28 +221,35 @@ public class PlayerPlatformer : MonoBehaviour
 
         Vector3 velocity = m_rigidbody.velocity;
 
-        if (!gravityLock)
+        if (movementState == MovementState.Airborne)
         {
             float y;
-            if (maxJumpLock)
+            if(actionState != ActionState.Attacking)
             {
-                y = velocity.y + (customGravity * LIGHT_GRAVITY * Physics2D.gravity.y * Time.fixedDeltaTime);
+                if (maxJumpLock)
+                {
+                    y = velocity.y + (customGravity * LIGHT_GRAVITY * Physics2D.gravity.y * Time.fixedDeltaTime);
+                }
+                else 
+                {
+                    y = velocity.y + (customGravity * gravityModifier * Physics2D.gravity.y * Time.fixedDeltaTime);
+                }
             }
-            else 
+            else
             {
-                y = velocity.y + (customGravity * gravityModifier * Physics2D.gravity.y * Time.fixedDeltaTime);
+                y = velocity.y + (customGravity * ATTACK_GRAVITY * Physics2D.gravity.y * Time.fixedDeltaTime);
             }
             velocity.y = y;
         }
 
-        if(pushForce != Vector3.zero)
-        {
-            velocity.y += pushForce.y;
-            transform.position += Vector3.right * pushForce.x * .01f;
+        //if (pushForce != Vector3.zero)
+        //{
+        //    velocity.y += pushForce.y;
+        //    transform.position += Vector3.right * pushForce.x * .01f;
 
-            pushForce -= pushForce.normalized * .3f;
-            if (pushForce.magnitude < .3f) pushForce = Vector3.zero;
-        }
+        //    pushForce -= pushForce.normalized * .3f;
+        //    if (pushForce.magnitude < .3f) pushForce = Vector3.zero;
+        //}
 
         if (Mathf.Abs(velocity.y) > MAX_Y) velocity.y = (velocity.y > 0) ? MAX_Y : -MAX_Y;
 
@@ -265,6 +299,25 @@ public class PlayerPlatformer : MonoBehaviour
         airborneMovement.Jump(1.2f);
     }
 
+    private void SetAttackInput()
+    {
+        if (groundMovement.enabled)   
+        {
+            actionState = ActionState.Attacking;
+            groundMovement.SetAttack(Input.GetAxisRaw("Horizontal") * Vector2.right); 
+        } 
+        else if (airborneMovement.enabled) 
+        {
+            actionState = ActionState.Attacking;
+            airborneMovement.SetAttack(Input.GetAxisRaw("Horizontal") * Vector2.right);
+        }
+    }
+
+    public void EndAttack()
+    {
+        if(actionState == ActionState.Attacking) actionState = ActionState.Idle;
+    }
+
     public void SetDamage(Vector3 contactPoint, int damage)
     {
         if (invincible) return;
@@ -287,8 +340,8 @@ public class PlayerPlatformer : MonoBehaviour
     {
         groundMovement.enabled = false;
         airborneMovement.enabled = false;
-        stunned = true;
         invincible = true;
+        actionState = ActionState.Stunned;
 
         m_animator.SetBool("Stunned", true);
         m_rigidbody.velocity = Vector2.zero;
@@ -305,13 +358,9 @@ public class PlayerPlatformer : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        if (controller.GetHealth() < 1) 
+        if (controller.GetHealth() > 0) 
         { 
-            controller.Die();
-        }
-        else 
-        {
-            stunned = false;
+            actionState = ActionState.Idle;
             StartCoroutine(InvencibilityTime());
             if (onGround)
             {
@@ -322,7 +371,8 @@ public class PlayerPlatformer : MonoBehaviour
                 SetAirborneState();
             }
             m_animator.SetBool("Stunned", false);
-        }
+        } else controller.Die();
+
     }
 
     private IEnumerator InvencibilityTime()

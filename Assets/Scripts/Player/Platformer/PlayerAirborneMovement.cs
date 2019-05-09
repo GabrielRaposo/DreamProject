@@ -5,7 +5,7 @@ public class PlayerAirborneMovement : MonoBehaviour
 {
     [Header("Horizontal Movement")]
     [SerializeField] private float horizontalSpeed;
-    [SerializeField] private float breakSpeed;
+    [SerializeField] private float acceleration;
 
     [Header("Jump")]
     [SerializeField] private float jumpInitialSpeed;
@@ -14,8 +14,7 @@ public class PlayerAirborneMovement : MonoBehaviour
     [Header("Effects")]
     [SerializeField] private GameObject jumpStartFX;
 
-    private float horizontalMovement;
-    private bool breaking;
+    private float targetHorizontalSpeed;
 
     private bool fallingThroughPlatform;
     private LayerMask playerLayer;
@@ -60,7 +59,7 @@ public class PlayerAirborneMovement : MonoBehaviour
         //    m_animator.SetBool("Airborne", true);
         //}
 
-        m_animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalMovement));
+        m_animator.SetFloat("HorizontalSpeed", Mathf.Abs(horizontalInput));
         m_animator.SetInteger("vSpeed", (int) m_rigidbody.velocity.y);
     }
 
@@ -68,39 +67,27 @@ public class PlayerAirborneMovement : MonoBehaviour
     {
         Vector2 velocity = m_rigidbody.velocity;
 
-        //if (Mathf.Abs(horizontalInput) > 0.9f)
-        //{
-        //    horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
-        //    breaking = false;
-        //    controller.UpdateFacingDirection(horizontalMovement > 0 ? true : false);
-        //}
-        //else if (Mathf.Abs(horizontalMovement) > 0)
-        //{
-        //    breaking = true;
-        //}
+        targetHorizontalSpeed = horizontalInput * horizontalSpeed;
 
-        horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
-        if (Mathf.Abs(horizontalInput) > 0.9f) controller.UpdateFacingDirection(horizontalMovement > 0 ? true : false);
+        float diff = velocity.x - targetHorizontalSpeed;
+        if(Mathf.Abs(diff) > acceleration)
+        {
+            velocity.x += (diff > 0 ? -1 : 1) * acceleration;
+        }
+        else
+        {
+            velocity.x = targetHorizontalSpeed;
+        }
+
+        if (Mathf.Abs(horizontalInput) > 0.9f)
+        { 
+            controller.UpdateFacingDirection(horizontalInput > 0 ? true : false);
+        }
 
         if (!fallingThroughPlatform)
         {
             Physics2D.IgnoreLayerCollision(playerLayer, platformLayer, velocity.y > 0);
         }
-
-        if (breaking)
-        {
-            if (Mathf.Abs(velocity.x) > breakSpeed)
-            {
-                horizontalMovement -= velocity.normalized.x * breakSpeed;
-            }
-            else
-            {
-                horizontalMovement = 0;
-                breaking = false;
-            }
-        }
-
-        velocity.x = horizontalMovement;
 
         m_rigidbody.velocity = velocity;
     }
@@ -115,8 +102,23 @@ public class PlayerAirborneMovement : MonoBehaviour
         fallingThroughPlatform = false;
     }
 
+    public void SetAttack(Vector2 direction)
+    {
+        StartCoroutine(AttackAction(direction));
+    }
+
+    public IEnumerator AttackAction(Vector2 direction)
+    {
+        m_rigidbody.velocity = Vector2.up * 2 + direction * horizontalSpeed;
+        m_animator.SetTrigger("Attack");
+        yield return new WaitForSeconds(.4f);
+        m_animator.SetTrigger("Reset");
+        controller.EndAttack();
+    }
+
     private void OnDisable()
     {
-        horizontalMovement = horizontalInput = 0;
+        targetHorizontalSpeed = horizontalInput = 0;
+        controller.EndAttack();
     }
 }

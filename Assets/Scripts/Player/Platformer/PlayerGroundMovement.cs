@@ -5,7 +5,7 @@ public class PlayerGroundMovement : MonoBehaviour
 {
     [Header("Horizontal Movement")]
     [SerializeField] private float horizontalSpeed;
-    [SerializeField] private float breakSpeed;
+    [SerializeField] private float acceleration;
 
     [Header("Crounching")]
     [SerializeField] private BoxCollider2D highCollider;
@@ -15,8 +15,7 @@ public class PlayerGroundMovement : MonoBehaviour
     [SerializeField] private GameObject landingSmokeFX;
     [SerializeField] private ParticleSystem smokeTrailFX;
 
-    private float horizontalMovement;
-    private bool breaking;
+    private float targetHorizontalSpeed;
 
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
@@ -36,14 +35,13 @@ public class PlayerGroundMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        breaking = false;
         m_animator.SetBool("Airborne", false);
         Instantiate(landingSmokeFX, transform.position, Quaternion.identity);
     }
 
     private void Update()
     {
-        float absHorMove = Mathf.Abs(horizontalMovement);
+        float absHorMove = Mathf.Abs(targetHorizontalSpeed);
         m_animator.SetFloat("HorizontalSpeed", absHorMove);
         
         if(absHorMove > 0) {
@@ -59,31 +57,38 @@ public class PlayerGroundMovement : MonoBehaviour
     {
         Vector2 velocity = m_rigidbody.velocity;
 
-        if (Mathf.Abs(horizontalInput) > 0.9f)
+        targetHorizontalSpeed = horizontalInput * horizontalSpeed;
+
+        float diff = velocity.x - targetHorizontalSpeed;
+        if(Mathf.Abs(diff) > acceleration)
         {
-            horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
-            breaking = false;
-            controller.UpdateFacingDirection(horizontalMovement > 0 ? true : false);
+            velocity.x += (diff > 0 ? -1 : 1) * acceleration;
         }
-        else if (Mathf.Abs(horizontalMovement) > 0)
+        else
         {
-            breaking = true;
+            velocity.x = targetHorizontalSpeed;
         }
 
-        if (breaking)
+        if(Mathf.Abs(horizontalInput) > .9f)
         {
-            if (Mathf.Abs(velocity.x) > breakSpeed)
-            {
-                horizontalMovement -= velocity.normalized.x * breakSpeed;
-            }
-            else
-            {
-                horizontalMovement = 0;
-                breaking = false;
-            }
+            controller.UpdateFacingDirection(horizontalInput > 0 ? true : false);
         }
 
-        velocity.x = horizontalMovement * (crouching ? crouchSpeedModifier : 1);
+        //horizontalMovement = horizontalInput * horizontalSpeed * Time.fixedDeltaTime;
+
+        //if (targetHorizontalSpeed == 0)
+        //{
+        //    if (Mathf.Abs(velocity.x) > breakSpeed)
+        //    {
+        //        horizontalMovement -= velocity.normalized.x * breakSpeed;
+        //    }
+        //    else
+        //    {
+        //        horizontalMovement = 0;
+        //    }
+        //}
+
+        velocity.x *= (crouching ? crouchSpeedModifier : 1);
 
         //gambiarra temporária
         if (velocity.y > 0 && velocity.y < 1)
@@ -108,12 +113,28 @@ public class PlayerGroundMovement : MonoBehaviour
         }
     }
 
+    public void SetAttack(Vector2 direction)
+    {
+        StartCoroutine(AttackAction(direction));
+    }
+
+    public IEnumerator AttackAction(Vector2 direction)
+    {
+        m_rigidbody.velocity = direction * horizontalSpeed;
+        m_animator.SetTrigger("Attack");
+        yield return new WaitForSeconds(.4f);
+        m_animator.SetTrigger("Reset");
+        controller.EndAttack();
+    }
+
     private void OnDisable()
     {
+        targetHorizontalSpeed = 0;
         StopAllCoroutines();
         smokeTrailFX.Stop();
-        horizontalMovement = horizontalInput = verticalInput = 0;
+        horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;
+        controller.EndAttack();
     }
 }

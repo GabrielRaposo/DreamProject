@@ -90,6 +90,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private IEnumerator TransitionToDream(Nightmatrix nightmatrix, float multiplier = 1f)
     {
+        Vector2 shooterMovement = shooterPhase.GetComponent<Rigidbody2D>().velocity;
         shooterPhase.gameObject.SetActive(false);
 
         Vector3 movement = GetMovement(shooterPhase.transform.position, nightmatrix);
@@ -106,10 +107,12 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
             platformerPhase.gameObject.SetActive(true);
             targetTransform = platformerPhase.transform;
 
+
             platformerPhase.SwitchIn (
                 nightmatrix.transform.position, 
                 movement, 
-                shooterPhase.PlayerState == PlayerShooter.State.Dashing ? true : false
+                shooterPhase.PlayerState == PlayerShooter.State.Dashing ? true : false,
+                shooterMovement
             );
         }
     }

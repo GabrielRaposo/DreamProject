@@ -23,8 +23,6 @@ public class PlayerZippingMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        controller.gravityLock = true;
-
         slideFX.gameObject.SetActive(true);
         ParticleSystem.MainModule mainModule = slideFX.main;
         mainModule.startColor = zipline.GetComponent<SpriteRenderer>().color;
@@ -55,7 +53,6 @@ public class PlayerZippingMovement : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines();
-        controller.gravityLock = false;
 
         slideFX.Stop();
 

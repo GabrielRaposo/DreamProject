@@ -210,13 +210,14 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
         {
             yield return new WaitForFixedUpdate();
             m_rigidbody.velocity = startingMovement.normalized * dashSpeed * ((float)i/dashDuration);
+            if(i == 8) afterImageTrailEffect.StopAllCoroutines();
         }
 
         m_rigidbody.velocity = Vector2.zero; 
-        afterImageTrailEffect.StopAllCoroutines();
-        yield return new WaitForSeconds(.1f);
-
         invincible = false;
+
+        for(int i = 0; i < 4; i++) yield return new WaitForFixedUpdate();
+
         PlayerState = State.Idle;
     }
 
