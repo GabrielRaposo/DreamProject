@@ -44,6 +44,15 @@ public class PlatformerCreature : MonoBehaviour, IStompable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.CompareTag("Twirl"))
+        {
+            Debug.Log("a");
+            Hitbox hitbox = collision.GetComponent<Hitbox>();
+            if (hitbox != null)
+            {
+                OnTwirlEvent(hitbox);
+            }
+        } else 
         if (collision.CompareTag("Hitbox"))
         {
             Hitbox hitbox = collision.GetComponent<Hitbox>();
@@ -70,6 +79,7 @@ public class PlatformerCreature : MonoBehaviour, IStompable
         }
     }
 
+    protected virtual void OnTwirlEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }  
     protected virtual void OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
 
     public float GetYStompRange() { return mininumTopY; }

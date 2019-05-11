@@ -1,20 +1,25 @@
 fileFormatVersion: 2
-guid: 7bf8c0b2ec836f74dbde065e5ad0e2e7
+guid: e8e41857825539e458b0a489a89433d0
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Birdy_0
-    21300002: Birdy_1
-    21300004: Birdy_2
-    21300006: Birdy_3
-    21300008: Birdy_4
-    21300010: Birdy_5
-    21300012: Birdy_6
-    21300014: Birdy_7
-    21300016: Birdy_8
-    21300018: Birdy_9
-    21300020: Birdy_10
-    21300022: Birdy_11
-    21300024: Birdy_12
+    21300000: Birdy2_0
+    21300002: Birdy2_1
+    21300004: Birdy2_2
+    21300006: Birdy2_3
+    21300008: Birdy2_4
+    21300010: Birdy2_5
+    21300012: Birdy2_6
+    21300014: Birdy2_7
+    21300016: Birdy2_8
+    21300018: Birdy2_9
+    21300020: Birdy2_10
+    21300022: Birdy2_11
+    21300024: Birdy2_12
+    21300026: Birdy2_13
+    21300028: Birdy2_14
+    21300030: Birdy2_15
+    21300032: Birdy2_16
+    21300034: Birdy2_17
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -108,7 +113,107 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Birdy_0
+      name: Birdy2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d65fc6c988887c49bf4c1dbc6cce1c2
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Birdy2_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09df50d2d98dbd4449782faff7ade244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Birdy2_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 265f4260594bb2f4fbe305660f96e5be
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Birdy2_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0415737b51a5ef94bb7ea0c4bd153a2a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Birdy2_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72ea1b4bdae75d44298d280450575dea
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Birdy2_5
       rect:
         serializedVersion: 2
         x: 0
@@ -122,13 +227,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8c0740bee8798004d8091e2998de0f4b
+      spriteID: a60d742605ee7d7438c266ac699f2b93
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_1
+      name: Birdy2_6
       rect:
         serializedVersion: 2
         x: 64
@@ -142,13 +247,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c7ccf78b7793c294983b86d875a0a9a1
+      spriteID: 3f94d19a2c7b4804a99e7df57cf545ee
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_2
+      name: Birdy2_7
       rect:
         serializedVersion: 2
         x: 128
@@ -162,13 +267,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1a47719b38d2e714097a9611a7e67b3f
+      spriteID: b0ae49bff83852147980be8be94965c8
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_3
+      name: Birdy2_8
       rect:
         serializedVersion: 2
         x: 192
@@ -182,13 +287,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b556b9035bd4a844cbdd4ca8d9768ded
+      spriteID: 57c49e0da6a2fab46b88765f9d0d2f13
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_4
+      name: Birdy2_9
       rect:
         serializedVersion: 2
         x: 256
@@ -202,13 +307,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b740a5a1a5149774e8371ed873ce9d8f
+      spriteID: 92d070ce1a239c3428deabce79c85e65
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_5
+      name: Birdy2_10
       rect:
         serializedVersion: 2
         x: 0
@@ -222,13 +327,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0711c6c756f13514491d959fa0c334ef
+      spriteID: 2964d5f92959c6549aab72e7a4cea9fb
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_6
+      name: Birdy2_11
       rect:
         serializedVersion: 2
         x: 64
@@ -242,13 +347,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d99a8793616e20249a326d7201a1cfce
+      spriteID: 3490488b9a3977940a2072753ae3195e
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_7
+      name: Birdy2_12
       rect:
         serializedVersion: 2
         x: 128
@@ -262,13 +367,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ca0a877979674d0479c84cc5529ebfdb
+      spriteID: d3f733ab6fa8e8a4082849cff071852e
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_8
+      name: Birdy2_13
       rect:
         serializedVersion: 2
         x: 192
@@ -282,13 +387,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a2fba575d600e0a4791ba0a6c426e5f4
+      spriteID: af71a0c2fd9bff447bdfc03a3ff38b21
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_9
+      name: Birdy2_14
       rect:
         serializedVersion: 2
         x: 256
@@ -302,13 +407,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4140e08eb24b1ef40aa539a4799e7694
+      spriteID: 2c90859323b3cac46a86c22c5df48ba7
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_10
+      name: Birdy2_15
       rect:
         serializedVersion: 2
         x: 0
@@ -322,13 +427,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 38dd66e94f547bf4eaa26999b76a1ad8
+      spriteID: a8a086fdcddae0d4caa108582eabc533
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_11
+      name: Birdy2_16
       rect:
         serializedVersion: 2
         x: 64
@@ -342,13 +447,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a9aac3160d187064f940094ec17e8b1c
+      spriteID: 94da9da7b22658e4a81ba3d5b27b806f
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Birdy_12
+      name: Birdy2_17
       rect:
         serializedVersion: 2
         x: 128
@@ -362,7 +467,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1f6fbf2086ac2524b8d7cfe27e678e92
+      spriteID: 510d17f71ac0cb14c8c3ec97faa92457
       vertices: []
       indices: 
       edges: []
@@ -370,7 +475,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 13e449fdc1f723745ad53f29fff6923d
+    spriteID: 95874999a28da214babfdc2ef7d50927
     vertices: []
     indices: 
     edges: []

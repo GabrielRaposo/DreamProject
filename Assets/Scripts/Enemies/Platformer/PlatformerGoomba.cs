@@ -29,11 +29,6 @@ public class PlatformerGoomba : PlatformerCreature
         state = State.Idle;
     }
 
-    //private void Update()
-    //{
-    //    CheckGround();
-    //}
-
     public override void OnStompEvent(PlayerPlatformer player)
     {
         if (stunned) return;    
@@ -160,12 +155,4 @@ public class PlatformerGoomba : PlatformerCreature
     {
         m_rigidbody.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
     }
-
-    //private void CheckGround()
-    //{
-    //    Vector2 axis = transform.position + (Vector3.down * .5f * transform.localScale.x);
-    //    Vector2 border = new Vector2(.1f, .1f) * transform.localScale.x;
-
-    //    onGround = Physics2D.OverlapArea(axis - border, axis + border, groundLayer);
-    //}
 }

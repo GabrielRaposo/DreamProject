@@ -73,7 +73,15 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
             Hitbox hitbox = collision.GetComponent<Hitbox>();
             if (hitbox != null && hitbox.id != id)
             {
-                OnHitboxEvent(hitbox);
+                OnHitboxEvent(hitbox, hitbox.damage);
+            }
+        } else
+        if (collision.CompareTag("Explosion"))
+        {
+            Hitbox hitbox = collision.GetComponent<Hitbox>();
+            if (hitbox != null && hitbox.id != id)
+            {
+                OnHitboxEvent(hitbox, 100);
             }
         } else
         if (collision.CompareTag("NightmatrixBorder"))
@@ -96,7 +104,7 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
 
     public virtual void OnNotify() {}
 
-    protected virtual void OnHitboxEvent(Hitbox hitbox) { }
+    protected virtual void OnHitboxEvent(Hitbox hitbox, int damage) { }
     public virtual void OnTouchEvent(PlayerShooter player) { }
     protected virtual void OnWallEvent() { }
 

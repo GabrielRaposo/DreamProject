@@ -10,12 +10,13 @@ TagManager:
   - Blastzone
   - Enemy
   - OneWay
-  - Hammer
   - Zipline
   - Damage
   - Exit
   - Nightmatrix
   - NightmatrixBorder
+  - Twirl
+  - Explosion
   layers:
   - Default
   - TransparentFX

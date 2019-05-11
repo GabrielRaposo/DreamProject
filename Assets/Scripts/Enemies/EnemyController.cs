@@ -18,6 +18,8 @@ public class EnemyController : MonoBehaviour, IPhaseManager
     protected Transform currentPhase;
     protected bool switchLock;
 
+    [HideInInspector] public ChallengeBarrier challengeBarrier;
+
     void Start()
     {
         platformerPhase.Init(this);
@@ -37,11 +39,18 @@ public class EnemyController : MonoBehaviour, IPhaseManager
     }
 
     public void Die()
-    {
+    { 
         if (destructionFX != null)
         {
             Instantiate(destructionFX, currentPhase.transform.position, Quaternion.identity);
         }
+
+        if (challengeBarrier != null)
+        {
+            challengeBarrier.NotifyDeath();
+            challengeBarrier = null;
+        }
+
         Destroy(gameObject);
     }
 

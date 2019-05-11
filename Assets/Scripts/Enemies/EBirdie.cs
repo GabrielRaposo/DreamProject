@@ -18,8 +18,8 @@ public class EBirdie : EnemyController
     {
         yield return base.TransitionToDream(nightmatrix);
 
-        ChaserMovement cm = shooterPhase.GetComponent<ChaserMovement>();
-        if(cm && cm.enabled)
+        LinearMovement lm = shooterPhase.GetComponent<LinearMovement>();
+        if(lm && lm.enabled)
         {
             platformerBirdie.AttackIntoDirection(movement.normalized);
         }
@@ -27,17 +27,12 @@ public class EBirdie : EnemyController
 
     protected override IEnumerator TransitionToNightmare(Nightmatrix nightmatrix)
     {
+        bool attacking = (platformerBirdie.state == PlatformerBirdie.State.Attacking || platformerBirdie.state == PlatformerBirdie.State.Diving);
+        shooterBirdie.attacking = attacking;
+
         yield return base.TransitionToNightmare(nightmatrix);
 
-        if (platformerBirdie.state == PlatformerBirdie.State.Attacking)
-        {
-            ChaserMovement cm = shooterPhase.GetComponent<ChaserMovement>();
-            if (cm)
-            {
-                shooterBirdie.SetAttack();
-                shooterBirdie.transform.rotation = Quaternion.Euler(Vector3.forward * (platformerPhase.transform.rotation.eulerAngles.z + 180));
-            }
-        }
+        if (attacking) shooterBirdie.SetDirectionalAttack(-movement.normalized);
     }
 
 }

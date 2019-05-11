@@ -30,7 +30,7 @@ public class BouncyProperty : MonoBehaviour
             PlayerPlatformer player = collision.transform.GetComponent<PlayerPlatformer>();
             if (player)
             {
-                player.SetJump(1.5f);
+                player.SetBounceJump(1.6f);
                 if (!super)
                 {
                     OnBounceEvent.Invoke();
@@ -53,7 +53,7 @@ public class BouncyProperty : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Hammer"))
+        if (collision.CompareTag("Twirl"))
         {
             OnHammerEvent.Invoke();
         }

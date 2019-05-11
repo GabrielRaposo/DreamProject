@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerGroundMovement : MonoBehaviour
 {
+    [SerializeField] private Hitbox attackHitbox;
+
     [Header("Horizontal Movement")]
     [SerializeField] private float horizontalSpeed;
     [SerializeField] private float acceleration;
@@ -115,6 +117,7 @@ public class PlayerGroundMovement : MonoBehaviour
 
     public void SetAttack(Vector2 direction)
     {
+        attackHitbox.direction = (controller.facingRight ? Vector2.right : Vector2.left);
         StartCoroutine(AttackAction(direction));
     }
 
@@ -122,7 +125,10 @@ public class PlayerGroundMovement : MonoBehaviour
     {
         m_rigidbody.velocity = direction * horizontalSpeed;
         m_animator.SetTrigger("Attack");
+        attackHitbox.gameObject.SetActive(true);
+
         yield return new WaitForSeconds(.4f);
+        attackHitbox.gameObject.SetActive(false);
         m_animator.SetTrigger("Reset");
         controller.EndAttack();
     }
@@ -135,6 +141,7 @@ public class PlayerGroundMovement : MonoBehaviour
         horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;
+        attackHitbox.gameObject.SetActive(false);
         controller.EndAttack();
     }
 }

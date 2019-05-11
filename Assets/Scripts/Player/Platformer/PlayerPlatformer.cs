@@ -23,7 +23,7 @@ public class PlayerPlatformer : MonoBehaviour
 
     private const float BASE_GRAVITY = 2.5f;
     private const float LIGHT_GRAVITY = 1.5f;
-    private const float ATTACK_GRAVITY = .5f;
+    private const float ATTACK_GRAVITY = 0.5f;
     private float gravityModifier = BASE_GRAVITY;
 
     private enum MovementState { Ground, Airborne, Zipping }
@@ -32,6 +32,7 @@ public class PlayerPlatformer : MonoBehaviour
     private enum ActionState { Idle, Attacking, Stunned }
     private ActionState actionState;
 
+    private bool holdingJump;
     private bool maxJumpLock;
     private int coyoteTime;
     private bool invincible;
@@ -91,17 +92,6 @@ public class PlayerPlatformer : MonoBehaviour
 
         SetAirborneState();
 
-        //if (exitMovement.y > 0)
-        //{
-        //    if (dashing) SetJump(1.1f, true);
-        //    else         SetJump(.7f,  true);
-        //}
-        //else if (exitMovement.y == 0)
-        //{
-        //    if(dashing) SetJump(.7f, true);
-        //    else        SetJump(.4f, true);
-        //}
-
         if (exitMovement.y > 0) // saindo por cima
         {
             maxJumpLock = true;
@@ -160,7 +150,7 @@ public class PlayerPlatformer : MonoBehaviour
     void Update()
     {
         //temp -----------------------------
-        //m_renderer.color = (maxJumpLock ? Color.blue : Color.white);
+        //m_renderer.color = (holdingJump ? Color.blue : Color.white);
         
         if (actionState == ActionState.Idle)
         {
@@ -205,11 +195,20 @@ public class PlayerPlatformer : MonoBehaviour
         {
             gravityModifier = LIGHT_GRAVITY;
             SetJumpInput(true);
+            holdingJump = true;
         }
+        else if(Input.GetButtonUp("Jump")) StartCoroutine(WaitAndReleaseJump());
+        
         else if (Input.GetButtonDown("Attack"))
         {
             SetAttackInput();
         }
+    }
+
+    private IEnumerator WaitAndReleaseJump()
+    {
+        for(int i = 0; i < 4; i++) yield return new WaitForFixedUpdate();
+        holdingJump = false;
     }
 
     private void FixedUpdate()
@@ -251,7 +250,7 @@ public class PlayerPlatformer : MonoBehaviour
         //    if (pushForce.magnitude < .3f) pushForce = Vector3.zero;
         //}
 
-        if (Mathf.Abs(velocity.y) > MAX_Y) velocity.y = (velocity.y > 0) ? MAX_Y : -MAX_Y;
+        if (Mathf.Abs(velocity.y) > MAX_Y) velocity.y = (velocity.y > 0) ? MAX_Y : - MAX_Y;
 
         m_rigidbody.velocity = velocity;
     }
@@ -288,15 +287,25 @@ public class PlayerPlatformer : MonoBehaviour
         airborneMovement.Jump(customMultiplier);
     }
 
+    public void SetBounceJump(float customMultiplier = 0)
+    {
+        maxJumpLock = holdingJump;
+
+        jumpSFX.Play();
+
+        SetAirborneState();
+        airborneMovement.Jump(customMultiplier);
+    }
+
     public void SetEnemyJump()
     {
-        maxJumpLock = true;
+        maxJumpLock = holdingJump;
 
         jumpSFX.Play();
         Instantiate(stompFX, transform.position + Vector3.down, Quaternion.identity);
 
         SetAirborneState();
-        airborneMovement.Jump(1.2f);
+        airborneMovement.Jump(maxJumpLock ? 1.2f : 1f);
     }
 
     private void SetAttackInput()
@@ -349,7 +358,7 @@ public class PlayerPlatformer : MonoBehaviour
         damageFX.enabled = true;
         Time.timeScale = 0;
         damageSFX.Play();
-        yield return new WaitForSecondsRealtime(.4f);
+        yield return new WaitForSecondsRealtime(.32f);
         Time.timeScale = 1;
         damageFX.enabled = false;
 
@@ -459,7 +468,7 @@ public class PlayerPlatformer : MonoBehaviour
                 }
             }
         }
-        else if (collision.transform.CompareTag("Hitbox"))
+        else if (collision.transform.CompareTag("Hitbox") || collision.transform.CompareTag("Explosion"))
         {
             Hitbox hitbox = collision.GetComponent<Hitbox>();
             if (hitbox && hitbox.id != ID.Player)

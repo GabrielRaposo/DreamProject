@@ -67,14 +67,14 @@ public class GroundCheck : MonoBehaviour
             platformEvent.OnLeaveEvent();
         }
 
-        if (collision.transform == controller.transform.parent)
-        {
-            controller.transform.parent = null;
-        }
-
         if (groundLayer == (groundLayer | (1 << collision.gameObject.layer)))
         {
             controller.OnGround(false, collision);
+
+            if (collision.transform == controller.transform.parent)
+            {
+                controller.transform.parent = null;
+            }
         }
     }
 }

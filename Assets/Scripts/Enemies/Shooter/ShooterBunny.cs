@@ -61,9 +61,9 @@ public class ShooterBunny : ShooterCreature
         }
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox)
+    protected override void OnHitboxEvent(Hitbox hitbox, int damage)
     {
-        base.OnHitboxEvent(hitbox);
+        base.OnHitboxEvent(hitbox, damage);
 
         Bullet bullet = hitbox.GetComponent<Bullet>();
         if (bullet)
@@ -73,7 +73,7 @@ public class ShooterBunny : ShooterCreature
 
         if (gameObject.activeSelf) StartCoroutine(BlinkAnimation());
 
-        controller.TakeDamage(hitbox.damage);
+        controller.TakeDamage(damage);
 
         if (controller.GetHealth() < 1)
         {

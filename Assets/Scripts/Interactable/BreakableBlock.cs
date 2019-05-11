@@ -55,4 +55,12 @@ public class BreakableBlock : MonoBehaviour, IBreakable
         yield return new WaitForSeconds(.5f);
         Destroy(gameObject);
     }
+    
+    protected void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Explosion"))
+        {
+            TakeDamage(100);
+        }
+    }
 }

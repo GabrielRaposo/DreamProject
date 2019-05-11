@@ -244,7 +244,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
                 enemy.OnTouchEvent(this);
             }
         }
-        else if (collision.transform.CompareTag("Hitbox"))
+        else if (collision.transform.CompareTag("Hitbox") || collision.transform.CompareTag("Explosion"))
         {
             Hitbox hitbox = collision.GetComponent<Hitbox>();
             if (hitbox && hitbox.id != ID.Player && PlayerState != State.Dashing)
@@ -302,7 +302,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
         damageFX.enabled = true;
         Time.timeScale = 0;
         damageFX.GetComponent<AudioSource>().Play();
-        yield return new WaitForSecondsRealtime(.4f);
+        yield return new WaitForSecondsRealtime(.32f);
         Time.timeScale = 1;
         damageFX.enabled = false;
         if (shootCicle != null) StopCoroutine(shootCicle);

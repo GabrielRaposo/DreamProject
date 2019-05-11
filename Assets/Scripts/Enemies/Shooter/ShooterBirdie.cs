@@ -5,9 +5,12 @@ using UnityEngine;
 public class ShooterBirdie : ShooterCreature
 {
     [Header("Birdy")]
-    [SerializeField] private ChaserMovement chaserMovement;
+    [SerializeField] private LinearMovement linearMovement;
+    [SerializeField] private GameObject targetAim;
+    [SerializeField] private GameObject explosion;
 
     private bool locked;
+    [HideInInspector] public bool attacking;
 
     private PlayerPhaseManager player;
 
@@ -20,15 +23,28 @@ public class ShooterBirdie : ShooterCreature
     {
         base.SwitchIn(nightmatrix);
 
-        if (nightmatrix.active)
+        if(attacking)
         {
-            StartCoroutine( StartleTime() );
+            if (shooterMovement != null) 
+            {
+                shooterMovement.enabled = false;
+            }
+        } else 
+        if (nightmatrix.active)
+        {   
+            StartCoroutine(StartleTime());
         }
     }
 
     public override void SwitchOut()
     {
         base.SwitchOut();
+
+        if (targetAim && targetAim.activeSelf)
+        {
+            targetAim.GetComponent<Animator>().SetTrigger("Fade");
+            Destroy(targetAim, .7f);
+        }
     }
 
     public override void OnNotify()
@@ -37,8 +53,13 @@ public class ShooterBirdie : ShooterCreature
 
         if (currentNightmatrix != null)
         {
-            if (currentNightmatrix.active)
+            if (currentNightmatrix.active && !targetAim.activeSelf && !attacking)
             {
+                if (shooterMovement != null) 
+                {
+                    shooterMovement.enabled = false;
+                }
+
                 StartCoroutine(StartleTime());
             }
         }
@@ -48,40 +69,74 @@ public class ShooterBirdie : ShooterCreature
     {
         m_animator.SetTrigger("Startle");
 
-        if (shooterMovement != null) 
-        {
-            shooterMovement.enabled = false;
-        }
         m_rigidbody.velocity = Vector2.zero;
 
-        yield return new WaitForSeconds(.5f);
+        Transform t = PlayerPhaseManager.instance.GetTarget();
+        targetAim.transform.parent = null;
+        targetAim.transform.position = t.position;
+        targetAim.SetActive(true);
+        FollowTransform followTransform = targetAim.GetComponent<FollowTransform>();
+        followTransform.Follow(t);
+
+        yield return new WaitForSeconds(1f);
+
+        followTransform.enabled = false;
 
         SetAttack();
     }
 
     public void SetAttack()
     {
+        attacking = true;
         m_animator.SetTrigger("Attack");
 
-        chaserMovement.enabled = true;
-        if (!player) player = PlayerPhaseManager.instance;
-        chaserMovement.SetTarget(player.GetTarget());
+        linearMovement.enabled = true;
+        Vector2 direction = Vector2.left;
+        direction = (targetAim.transform.position - transform.position).normalized;
+        transform.rotation = Quaternion.Euler(Vector2.SignedAngle(Vector2.left, direction) * Vector3.forward);
+        
+        linearMovement.SetDirection(direction, targetAim.transform);
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox)
+    public void SetDirectionalAttack(Vector2 direction)
     {
-        base.OnHitboxEvent(hitbox);
+        attacking = true;
+        m_animator.SetTrigger("Attack");
+
+        linearMovement.enabled = true;
+        transform.rotation = Quaternion.Euler(Vector2.SignedAngle(Vector2.left, direction) * Vector3.forward);
+        
+        linearMovement.SetDirection(direction);
+    }
+
+    public void Explode()
+    {
+        if (targetAim) 
+        {
+            if(targetAim.activeSelf) targetAim.GetComponent<Animator>().SetTrigger("Fade");
+            Destroy(targetAim, .7f);
+        }
+        explosion.transform.parent = null;
+        explosion.SetActive(true);
+
+        controller.Die();
+    }
+
+    protected override void OnHitboxEvent(Hitbox hitbox, int damage)
+    {
+        base.OnHitboxEvent(hitbox, damage);
 
         Bullet bullet = hitbox.GetComponent<Bullet>();
         if (bullet)
         {
             bullet.Vanish();
+            linearMovement.MoveBack();
         }
 
         StartCoroutine(BlinkAnimation());
 
-        controller.TakeDamage(hitbox.damage);
-        if (controller.GetHealth() < 1) controller.Die();
+        controller.TakeDamage(damage);
+        if (controller.GetHealth() < 1) Explode();
     }
 
     public override void OnTouchEvent(PlayerShooter player)
@@ -94,10 +149,9 @@ public class ShooterBirdie : ShooterCreature
     //generalizar depois
     private void OnCollisionEnter2D(Collision2D collision) 
     {
-        Debug.Log("name: " + collision.gameObject.name);
         if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            controller.Die();
+            Explode();
         }
     }
 }
