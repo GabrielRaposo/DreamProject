@@ -263,7 +263,15 @@ public class PlatformerBirdie : PlatformerCreature
         switch(state)
         {
             default:
-                AttackIntoDirection(hitbox.direction);
+                break;
+
+            case State.Diving:
+                if(direction.x != 0) AttackIntoDirection(direction.x > 0 ? Vector2.left : Vector2.right);
+                else                 AttackIntoDirection(hitbox.direction);
+                break;
+
+            case State.Attacking:
+                AttackIntoDirection(-direction);
                 break;
 
             case State.Dizzy: 

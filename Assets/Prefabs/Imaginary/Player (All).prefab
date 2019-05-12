@@ -363,7 +363,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1, y: 1.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -5314,7 +5314,8 @@ GameObject:
   - component: {fileID: 1196928707}
   - component: {fileID: 1196928706}
   - component: {fileID: 353413626893060281}
-  m_Layer: 0
+  - component: {fileID: 4653566352148884998}
+  m_Layer: 16
   m_Name: AttackHitbox
   m_TagString: Twirl
   m_Icon: {fileID: 0}
@@ -5414,6 +5415,20 @@ MonoBehaviour:
   id: 0
   damage: 1
   direction: {x: 0, y: 0}
+--- !u!114 &4653566352148884998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1196928704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f098afbb27b2955478fbd5d3b8592571, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitbox: {fileID: 353413626893060281}
+  coll: {fileID: 1196928706}
 --- !u!1 &1458729107
 GameObject:
   m_ObjectHideFlags: 0
@@ -5488,7 +5503,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1, y: 1.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -15811,7 +15826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b47337d04bafeb14db17d600633daa53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackHitbox: {fileID: 353413626893060281}
+  attackHitbox: {fileID: 4653566352148884998}
   horizontalSpeed: 5
   acceleration: 0.7
   highCollider: {fileID: 7843312213163578441}
@@ -15834,7 +15849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15ff2dee888850e498f4488d7a091ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackHitbox: {fileID: 353413626893060281}
+  attackHitbox: {fileID: 4653566352148884998}
   horizontalSpeed: 5
   acceleration: 0.4
   jumpInitialSpeed: 12

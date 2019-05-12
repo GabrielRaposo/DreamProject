@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerAirborneMovement : MonoBehaviour
 {
-    [SerializeField] private Hitbox attackHitbox;
+    [SerializeField] private TwirlHitbox attackHitbox;
 
     [Header("Horizontal Movement")]
     [SerializeField] private float horizontalSpeed;
@@ -106,7 +106,7 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     public void SetAttack(Vector2 direction)
     {
-        attackHitbox.direction = (controller.facingRight ? Vector2.right : Vector2.left);
+        attackHitbox.SetDirection(controller.facingRight ? Vector2.right : Vector2.left);
         StartCoroutine(AttackAction(direction));
     }
 
@@ -114,10 +114,10 @@ public class PlayerAirborneMovement : MonoBehaviour
     {
         m_rigidbody.velocity = Vector2.up * 2 + direction * horizontalSpeed;
         m_animator.SetTrigger("Attack");
-        attackHitbox.gameObject.SetActive(true);
+        attackHitbox.SetTarget(transform);
 
         yield return new WaitForSeconds(.4f);
-        attackHitbox.gameObject.SetActive(false);
+        attackHitbox.Dettach();
         m_animator.SetTrigger("Reset");
         controller.EndAttack();
     }

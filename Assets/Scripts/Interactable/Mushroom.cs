@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class Mushroom : MonoBehaviour
 {
-    public BouncyProperty bouncyCap;
+    [SerializeField] private BouncyProperty bouncyCap;
 
     private Animator animator;
+    private ParticleSystem sporesFX;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        sporesFX = GetComponent<ParticleSystem>();
     }
 
     public void StartTremble()
     {
         animator.SetTrigger("Tremble");
+        sporesFX.Play();
     }
 
     public void StartCharge()

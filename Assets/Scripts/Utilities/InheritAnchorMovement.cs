@@ -2,6 +2,7 @@
 
 public class InheritAnchorMovement : MonoBehaviour
 {
+    [SerializeField] private bool keepAnchorOnDisable;
     private Transform anchor;
     private Vector3 anchorPreviousPosition;
 
@@ -24,6 +25,9 @@ public class InheritAnchorMovement : MonoBehaviour
 
     private void OnDisable() 
     {
-        anchor = null;
+        if (!keepAnchorOnDisable)
+        {
+            anchor = null;
+        }
     }
 }

@@ -46,7 +46,6 @@ public class PlatformerCreature : MonoBehaviour, IStompable
     {
         if (collision.CompareTag("Twirl"))
         {
-            Debug.Log("a");
             Hitbox hitbox = collision.GetComponent<Hitbox>();
             if (hitbox != null)
             {

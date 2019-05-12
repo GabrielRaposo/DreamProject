@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2151838762060905326}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.1, y: -7.69, z: -2.5917969}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.29999998, y: 0.29999998, z: 1}
   m_Children: []
   m_Father: {fileID: 151224154362860129}
@@ -4996,6 +4996,7 @@ MonoBehaviour:
   transitionEffect: {fileID: 2151838762060905326}
   destructionFX: {fileID: 8146530301406283517, guid: 66b7589ee4f2b0a49a25cccfa07bc07b,
     type: 3}
+  challengeBarrier: {fileID: 0}
 --- !u!1 &7521745227625821523
 GameObject:
   m_ObjectHideFlags: 0
@@ -5046,7 +5047,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletSpeed: 3
   bulletsPerCicle: 8
-  shooterMovement: {fileID: 1012882879741540771}
 --- !u!114 &1012882879741540771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5102,7 +5102,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

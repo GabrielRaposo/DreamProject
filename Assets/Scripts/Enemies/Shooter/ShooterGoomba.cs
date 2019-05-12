@@ -5,6 +5,7 @@ using UnityEngine;
 public class ShooterGoomba : ShooterCreature
 {
     [Header("Goomba")]
+    [SerializeField] private bool bloatOnDeath;
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int bloatedHealth;
 
@@ -82,13 +83,13 @@ public class ShooterGoomba : ShooterCreature
 
         if (controller.GetHealth() < 1)
         {
-            if (!vulnerable)
+            if (bloatOnDeath && !vulnerable)
             {
                 SetVulnerableState();
             }
             else
             {
-                SuicideShots();
+                if (bloatOnDeath) SuicideShots();
                 controller.Die();
             }
         }
