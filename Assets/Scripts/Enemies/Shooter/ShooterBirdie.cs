@@ -8,6 +8,7 @@ public class ShooterBirdie : ShooterCreature
     [SerializeField] private LinearMovement linearMovement;
     [SerializeField] private GameObject targetAim;
     [SerializeField] private GameObject explosion;
+    [SerializeField] private Hitbox launchHitbox;
 
     private bool locked;
     [HideInInspector] public bool attacking;
@@ -53,7 +54,7 @@ public class ShooterBirdie : ShooterCreature
 
         if (currentNightmatrix != null)
         {
-            if (currentNightmatrix.active && !targetAim.activeSelf && !attacking)
+            if (currentNightmatrix.active && targetAim && !targetAim.activeSelf && !attacking)
             {
                 if (shooterMovement != null) 
                 {
@@ -98,7 +99,7 @@ public class ShooterBirdie : ShooterCreature
         linearMovement.SetDirection(direction, targetAim.transform);
     }
 
-    public void SetDirectionalAttack(Vector2 direction)
+    public void SetDirectionalAttack(Vector2 direction, bool playerActivated)
     {
         attacking = true;
         m_animator.SetTrigger("Attack");
@@ -107,6 +108,8 @@ public class ShooterBirdie : ShooterCreature
         transform.rotation = Quaternion.Euler(Vector2.SignedAngle(Vector2.left, direction) * Vector3.forward);
         
         linearMovement.SetDirection(direction);
+
+        launchHitbox.GetComponent<Collider2D>().enabled = playerActivated;
     }
 
     public void Explode()
@@ -122,7 +125,7 @@ public class ShooterBirdie : ShooterCreature
         controller.Die();
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox, int damage)
+    public override void OnHitboxEvent(Hitbox hitbox, int damage)
     {
         base.OnHitboxEvent(hitbox, damage);
 
@@ -146,12 +149,28 @@ public class ShooterBirdie : ShooterCreature
         player.SetDamage(1);
     }
 
-    //generalizar depois
-    private void OnCollisionEnter2D(Collision2D collision) 
+    protected override void OnWallEvent(Collision2D collision) 
     {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
+        base.OnWallEvent(collision);
+
+        if(attacking) 
             Explode();
+        else 
+            shooterMovement.NotifyGround();
+    }
+
+    public override void ChildHitboxEnterEvent(Collider2D collision, Hitbox hitbox) 
+    {
+        base.ChildHitboxEnterEvent(collision, hitbox);
+       
+        if(collision.CompareTag("Enemy"))
+        {
+            ShooterCreature shooterCreature = collision.GetComponent<ShooterCreature>();
+            if(shooterCreature != null)
+            {
+                shooterCreature.OnHitboxEvent(hitbox, 20);
+                //controller.Die();
+            }
         }
     }
 }

@@ -8,8 +8,11 @@ public class ShooterGoomba : ShooterCreature
     [SerializeField] private bool bloatOnDeath;
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int bloatedHealth;
+    [SerializeField] private LaunchMovement launchMovement;
 
-    public bool vulnerable { get; private set; }
+    public enum State { Idle, Bloated, Launched }
+    public State state; 
+
     private bool locked;
     private PlayerPhaseManager player;
     private BulletPool pool;
@@ -25,7 +28,7 @@ public class ShooterGoomba : ShooterCreature
     {
         base.SwitchIn(nightmatrix);
 
-        if (vulnerable) SetVulnerableState(); 
+        if (state == State.Bloated) SetBloatedState(); 
 
         if (nightmatrix.active)
         {
@@ -61,13 +64,13 @@ public class ShooterGoomba : ShooterCreature
     {
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
 
-        if (!vulnerable)
+        if (state == State.Idle)
         {
             attackCoroutine = StartCoroutine(AttackCicle());
         }
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox, int damage)
+    public override void OnHitboxEvent(Hitbox hitbox, int damage)
     {
         base.OnHitboxEvent(hitbox, damage);
 
@@ -83,9 +86,9 @@ public class ShooterGoomba : ShooterCreature
 
         if (controller.GetHealth() < 1)
         {
-            if (bloatOnDeath && !vulnerable)
+            if (bloatOnDeath && state != State.Bloated)
             {
-                SetVulnerableState();
+                SetBloatedState();
             }
             else
             {
@@ -113,7 +116,7 @@ public class ShooterGoomba : ShooterCreature
         }
     }
 
-    public void SetVulnerableState()
+    public void SetBloatedState()
     {
         if(shooterMovement) shooterMovement.enabled = false;
         m_rigidbody.velocity = Vector2.zero;
@@ -122,13 +125,24 @@ public class ShooterGoomba : ShooterCreature
         controller.SetHealth(bloatedHealth);
         StartCoroutine(DeathTimer());
 
-        vulnerable = true;
+        state = State.Bloated;
     }
 
     private IEnumerator DeathTimer()
     {
         yield return new WaitForSeconds(3);
         controller.Die();
+    }
+
+    public void SetLaunchedState(Vector2 movement)
+    {
+        if(shooterMovement) shooterMovement.enabled = false;
+        m_animator.SetTrigger("Launch");
+        m_renderer.flipX = (movement.x > 0);
+        launchMovement.enabled = true;
+        launchMovement.Launch(this, movement * 6);
+
+        state = State.Launched;
     }
 
     public override void OnTouchEvent(PlayerShooter player)
@@ -166,6 +180,40 @@ public class ShooterGoomba : ShooterCreature
             }
 
             yield return new WaitForSeconds(1);
+        }
+    }
+
+    public override void ChildHitboxEnterEvent(Collider2D collision, Hitbox hitbox) 
+    {
+        if(collision.CompareTag("Enemy"))
+        {
+            ShooterCreature shooterCreature = collision.GetComponent<ShooterCreature>();
+            if(shooterCreature != null)
+            {
+                shooterCreature.OnHitboxEvent(hitbox, 20);
+                //controller.Die();
+            }
+        }
+    }
+
+    protected override void OnWallEvent(Collision2D collision) 
+    {
+        base.OnWallEvent(collision);
+
+        switch(state)
+        {
+            case State.Idle:
+                shooterMovement.NotifyGround();
+                break;
+
+            case State.Launched:
+                controller.Die();
+                BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
+                if(breakableBlock != null)
+                {
+                    breakableBlock.TakeDamage(999);
+                }
+                break;
         }
     }
 }

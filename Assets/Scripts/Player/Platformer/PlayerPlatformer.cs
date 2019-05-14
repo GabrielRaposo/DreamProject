@@ -23,20 +23,22 @@ public class PlayerPlatformer : MonoBehaviour
 
     private const float BASE_GRAVITY = 2.5f;
     private const float LIGHT_GRAVITY = 1.5f;
-    private const float ATTACK_GRAVITY = 0.5f;
+    private const float ATTACK_GRAVITY = 0.75f;
     private float gravityModifier = BASE_GRAVITY;
 
     private enum MovementState { Ground, Airborne, Zipping }
     private MovementState movementState;
 
-    private enum ActionState { Idle, Attacking, Stunned }
-    private ActionState actionState;
+    public enum ActionState { Idle, Attacking, Stunned }
+    public ActionState actionState;
 
     private bool holdingJump;
     private bool maxJumpLock;
     private int coyoteTime;
     private bool invincible;
     private bool inputLock;
+    private bool onAttackCooldown;
+
     public bool onGround { get; private set; }
     public bool facingRight { get; private set; }
     public Vector2 startingPosition { get; private set; }
@@ -82,7 +84,7 @@ public class PlayerPlatformer : MonoBehaviour
     {
         StopAllCoroutines();
         m_renderer.enabled = true;
-        onGround = invincible = maxJumpLock = false;
+        onGround = invincible = maxJumpLock = onAttackCooldown = false;
         actionState = ActionState.Idle;    
     }
 
@@ -129,6 +131,14 @@ public class PlayerPlatformer : MonoBehaviour
 
     private void SetAirborneState()
     {
+        if(actionState == ActionState.Attacking) 
+        {
+            if(groundMovement.enabled)   groundMovement.CancelAttack();
+            if(airborneMovement.enabled) airborneMovement.CancelAttack();
+            
+            actionState = ActionState.Idle;
+        }
+
         groundMovement.enabled = false;
         airborneMovement.enabled = true;
         zippingMovement.enabled = false;
@@ -149,8 +159,8 @@ public class PlayerPlatformer : MonoBehaviour
 
     void Update()
     {
-        //temp -----------------------------
-        //m_renderer.color = (holdingJump ? Color.blue : Color.white);
+        //test -----------------------------
+        m_renderer.color = (onAttackCooldown ? Color.gray : Color.white);
         
         if (actionState == ActionState.Idle)
         {
@@ -199,7 +209,7 @@ public class PlayerPlatformer : MonoBehaviour
         }
         else if(Input.GetButtonUp("Jump")) StartCoroutine(WaitAndReleaseJump());
         
-        else if (Input.GetButtonDown("Attack"))
+        if (Input.GetButtonDown("Attack"))
         {
             SetAttackInput();
         }
@@ -310,6 +320,8 @@ public class PlayerPlatformer : MonoBehaviour
 
     private void SetAttackInput()
     {
+        if (onAttackCooldown) return;
+
         if (groundMovement.enabled)   
         {
             actionState = ActionState.Attacking;
@@ -324,7 +336,18 @@ public class PlayerPlatformer : MonoBehaviour
 
     public void EndAttack()
     {
-        if(actionState == ActionState.Attacking) actionState = ActionState.Idle;
+        if (actionState == ActionState.Attacking)
+        { 
+            if (gameObject.activeSelf) StartCoroutine(AttackCooldownTimer());
+            actionState = ActionState.Idle;
+        }
+    }
+
+    private IEnumerator AttackCooldownTimer()
+    {
+        onAttackCooldown = true;
+        yield return new WaitForSeconds(.2f);
+        onAttackCooldown = false;
     }
 
     public void SetDamage(Vector3 contactPoint, int damage)
@@ -349,6 +372,7 @@ public class PlayerPlatformer : MonoBehaviour
     {
         groundMovement.enabled = false;
         airborneMovement.enabled = false;
+        onAttackCooldown = false;
         invincible = true;
         actionState = ActionState.Stunned;
 
@@ -380,6 +404,7 @@ public class PlayerPlatformer : MonoBehaviour
                 SetAirborneState();
             }
             m_animator.SetBool("Stunned", false);
+            m_animator.SetTrigger("Reset");
         } else controller.Die();
 
     }

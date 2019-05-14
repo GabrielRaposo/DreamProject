@@ -19,4 +19,6 @@ public class ShooterMovement : MonoBehaviour
             nightmatrix = null;
         }
     }
+
+    public virtual void NotifyGround() { }
 }

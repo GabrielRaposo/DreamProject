@@ -20,6 +20,8 @@ public class PlatformerBirdie : PlatformerCreature
     public enum State { Idle, WindingUp, Diving, Attacking, Dizzy }
     public State state { get; private set; }
 
+    public bool playerActivated { get; private set; }
+
     private Coroutine windUpCoroutine;
     private Coroutine angryCoroutine;
 
@@ -203,7 +205,7 @@ public class PlatformerBirdie : PlatformerCreature
         m_animator.SetTrigger("Reset");
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox)
+    public override bool OnHitboxEvent(Hitbox hitbox)
     {
         ResetValues();
 
@@ -211,6 +213,8 @@ public class PlatformerBirdie : PlatformerCreature
         m_rigidbody.velocity = (Vector2.up * .5f);
         flightCicle.enabled = false;
         StartCoroutine(StunState());
+
+        return false;
     }
 
     public void AttackIntoDirection(Vector2 direction)
@@ -263,18 +267,19 @@ public class PlatformerBirdie : PlatformerCreature
         switch(state)
         {
             default:
-                break;
-
             case State.Diving:
+                playerActivated = true;
                 if(direction.x != 0) AttackIntoDirection(direction.x > 0 ? Vector2.left : Vector2.right);
                 else                 AttackIntoDirection(hitbox.direction);
                 break;
 
             case State.Attacking:
+                playerActivated = true;
                 AttackIntoDirection(-direction);
                 break;
 
             case State.Dizzy: 
+                controller.Die();
                 break;
         }
     }

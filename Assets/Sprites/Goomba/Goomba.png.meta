@@ -12,32 +12,6 @@ TextureImporter:
     21300014: Goomba_7
     21300016: Goomba_8
     21300018: Goomba_9
-    21300020: Goomba_10
-    21300022: Goomba_11
-    21300024: Goomba_12
-    21300026: Goomba_13
-    21300028: Goomba_14
-    21300030: Goomba_15
-    21300032: Goomba_16
-    21300034: Goomba_17
-    21300036: Goomba_18
-    21300038: Goomba_19
-    21300040: Goomba_20
-    21300042: Goomba_21
-    21300044: Goomba_22
-    21300046: Goomba_23
-    21300048: Goomba_24
-    21300050: Goomba_25
-    21300052: Goomba_26
-    21300054: Goomba_27
-    21300056: Goomba_28
-    21300058: Goomba_29
-    21300060: Goomba_30
-    21300062: Goomba_31
-    21300064: Goomba_32
-    21300066: Goomba_33
-    21300068: Goomba_34
-    21300070: Goomba_35
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -97,9 +71,9 @@ TextureImporter:
   - serializedVersion: 2
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -108,9 +82,9 @@ TextureImporter:
   - serializedVersion: 2
     buildTarget: Standalone
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -119,9 +93,9 @@ TextureImporter:
   - serializedVersion: 2
     buildTarget: Android
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -135,7 +109,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -145,7 +119,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 39f2574c9e6b67845becd4d685fdcf88
+      spriteID: 4278cf605e738d7439fefd643ace697d
       vertices: []
       indices: 
       edges: []
@@ -155,7 +129,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 0
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -165,7 +139,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 97c724621a961c344a240700354251db
+      spriteID: c6802afd73d2ba448a610c0d433dfd18
       vertices: []
       indices: 
       edges: []
@@ -175,7 +149,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 128
-        y: 0
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -185,7 +159,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f5316c907861d904fbd3a0c09b2281ec
+      spriteID: 815e58f748f837c45ba25a85d16c0824
       vertices: []
       indices: 
       edges: []
@@ -195,7 +169,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 192
-        y: 0
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -205,7 +179,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3169ff77d0702664ca3864bc715d0255
+      spriteID: 2db763be5599a844d9da6d8d26fdbaaa
       vertices: []
       indices: 
       edges: []
@@ -215,7 +189,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 256
-        y: 0
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -225,7 +199,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 36ae557ecb974f64c930e8726d337375
+      spriteID: e645ba919e394b141a1e6209bfadd02b
       vertices: []
       indices: 
       edges: []
@@ -234,8 +208,8 @@ TextureImporter:
       name: Goomba_5
       rect:
         serializedVersion: 2
-        x: 320
-        y: 0
+        x: 0
+        y: 64
         width: 64
         height: 64
       alignment: 0
@@ -245,7 +219,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 408c1c48c27dca541903322dbb1550e5
+      spriteID: 9aa85641f56a16243ba672d0fb6fc769
       vertices: []
       indices: 
       edges: []
@@ -254,8 +228,8 @@ TextureImporter:
       name: Goomba_6
       rect:
         serializedVersion: 2
-        x: 384
-        y: 0
+        x: 64
+        y: 64
         width: 64
         height: 64
       alignment: 0
@@ -265,7 +239,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 51f65eb44fc81f44aa69ba3443e779c2
+      spriteID: 29b9834a4a93bd34e9bf1256321a0e1e
       vertices: []
       indices: 
       edges: []
@@ -274,8 +248,8 @@ TextureImporter:
       name: Goomba_7
       rect:
         serializedVersion: 2
-        x: 448
-        y: 0
+        x: 128
+        y: 64
         width: 64
         height: 64
       alignment: 0
@@ -285,7 +259,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 28d130c6c8a84864cb5423cb50735714
+      spriteID: 3b3b178002a336b438908a5a07e69e1c
       vertices: []
       indices: 
       edges: []
@@ -294,8 +268,8 @@ TextureImporter:
       name: Goomba_8
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
+        x: 192
+        y: 64
         width: 64
         height: 64
       alignment: 0
@@ -305,7 +279,27 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b2e850bea80e459438a1ce2a2cde3a16
+      spriteID: 4632b0fd7657a234a80e72a7f278189a
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goomba_9
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78c9fd3901c9728439a4139c5ac914e7
       vertices: []
       indices: 
       edges: []
@@ -313,7 +307,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 59b0f5d683ccbed4497bafff5140a6a3
+    spriteID: fbc1dd27b60d12e4b99beab62dc72e51
     vertices: []
     indices: 
     edges: []

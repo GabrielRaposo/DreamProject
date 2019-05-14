@@ -42,4 +42,9 @@ public class ShooterLinearHover : ShooterMovement
             }
         } 
     }
+
+    public override void NotifyGround() 
+    {
+        targetSpeed *= -1;
+    }
 }

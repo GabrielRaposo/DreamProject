@@ -38,11 +38,12 @@ public class PlatformerBunny : PlatformerCreature
         player.SetDamage(transform.position, 1);
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox)
+    public override bool OnHitboxEvent(Hitbox hitbox)
     {
         base.OnHitboxEvent(hitbox);
         if (stunCoroutine != null) StopCoroutine(stunCoroutine);
         if (gameObject.activeSelf) stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
+        return false;
     }
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)

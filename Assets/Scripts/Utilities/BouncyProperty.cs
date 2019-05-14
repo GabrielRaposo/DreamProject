@@ -47,6 +47,10 @@ public class BouncyProperty : MonoBehaviour
                     OnBounceEvent.Invoke();
                     enemy.OnBouncyTopEvent(collision.contacts[0].point, super);
                 }
+                else
+                {
+                    enemy.OnBouncySideEvent(collision.contacts[0].point);
+                } 
             }
         }
     }

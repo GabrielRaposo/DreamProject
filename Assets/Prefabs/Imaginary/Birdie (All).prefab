@@ -9907,7 +9907,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mininumTopY: 0.2
-  diveAttack: 1
+  diveAttack: 0
   raycastSize: {x: 6.5, y: 4}
   raycastOffset: {x: -3.5, y: -2, z: 0}
   diveSpeed: 7
@@ -24319,6 +24319,7 @@ Transform:
   m_Children:
   - {fileID: 1325669273}
   - {fileID: 473985475}
+  - {fileID: 3819439282238735933}
   m_Father: {fileID: 5339144243781959684}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -24375,12 +24376,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6292079594742611123}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b4092cb10a29a8f4485c4975ca8f621e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
+  speed: 1
 --- !u!212 &5965516195047583637
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -24496,14 +24497,14 @@ GameObject:
   - component: {fileID: 499739308962415322}
   - component: {fileID: 7275675722858868772}
   - component: {fileID: 7822560376903932334}
-  - component: {fileID: 3754905927013032764}
+  - component: {fileID: 132842548}
   m_Layer: 0
   m_Name: BeakHitbox
   m_TagString: Hitbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &499739308962415322
 Transform:
   m_ObjectHideFlags: 0
@@ -24545,9 +24546,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b21d30feb400dd440a659617ad05c488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 7393676916915727681}
---- !u!61 &3754905927013032764
-BoxCollider2D:
+  source: {fileID: 954438798531091076}
+--- !u!58 &132842548
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -24560,15 +24561,82 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.2}
-  m_EdgeRadius: 0
+  m_Radius: 0.2
+--- !u!1 &7874365654194280436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3819439282238735933}
+  - component: {fileID: 3241753284421124595}
+  - component: {fileID: 8692063668431743581}
+  - component: {fileID: 6764778763227836199}
+  m_Layer: 0
+  m_Name: LaunchHitbox
+  m_TagString: Hitbox
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3819439282238735933
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7874365654194280436}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8474881804818910773}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &3241753284421124595
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7874365654194280436}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.2
+--- !u!114 &8692063668431743581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7874365654194280436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d85b15255ad38314aaada98dd5c7a975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 2
+  damage: 5
+  direction: {x: 0, y: 0}
+--- !u!114 &6764778763227836199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7874365654194280436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21d30feb400dd440a659617ad05c488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 6292079594742611123}

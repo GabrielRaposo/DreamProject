@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
+public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHitboxEvent
 {
     protected Animator m_animator;
     protected SpriteRenderer m_renderer;
@@ -66,6 +66,14 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision) 
+    {
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            OnWallEvent(collision);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Hitbox"))
@@ -104,9 +112,12 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch
 
     public virtual void OnNotify() {}
 
-    protected virtual void OnHitboxEvent(Hitbox hitbox, int damage) { }
+    public virtual void OnHitboxEvent(Hitbox hitbox, int damage) { }
     public virtual void OnTouchEvent(PlayerShooter player) { }
-    protected virtual void OnWallEvent() { }
+    protected virtual void OnWallEvent(Collision2D collision) { }
+
+    public virtual void ChildHitboxEnterEvent(Collider2D collision, Hitbox hitbox) { }
+    public virtual void ChildHitboxExitEvent(Collider2D collision, Hitbox hitbox) { }
 
     protected virtual IEnumerator AttackCicle() { yield return null; }
 

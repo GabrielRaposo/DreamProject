@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TwirlHitbox : MonoBehaviour
 {
+    [SerializeField] private Animator animator;
     [SerializeField] private Hitbox hitbox;
     [SerializeField] private Collider2D coll;
     
@@ -25,13 +26,12 @@ public class TwirlHitbox : MonoBehaviour
     {
         this.target = target;
         transform.position = target.position;
-        coll.enabled = true;
         gameObject.SetActive(true);
+        animator.SetTrigger("Reset");
     }
 
     public void Dettach()
     {
-        coll.enabled = false;
         target = null;
         gameObject.SetActive(false);
     }

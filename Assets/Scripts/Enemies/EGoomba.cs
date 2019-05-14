@@ -17,9 +17,9 @@ public class EGoomba : EnemyController
     {
         yield return base.TransitionToDream(nightmatrix);
         
-        if (shooterGoomba.vulnerable)
+        if (shooterGoomba.state == ShooterGoomba.State.Launched)
         {
-            platformerGoomba.SetVulnerableState();
+            platformerGoomba.SetRollingState(movement.normalized);
         }
     }
 
@@ -27,9 +27,9 @@ public class EGoomba : EnemyController
     {
         yield return base.TransitionToNightmare(nightmatrix);
 
-        if(platformerGoomba.state == PlatformerGoomba.State.Vulnerable)
+        if(platformerGoomba.state == PlatformerGoomba.State.Rolling)
         {
-            shooterGoomba.SetVulnerableState();
+            shooterGoomba.SetLaunchedState(-movement.normalized);
         }
     }
 }

@@ -7,15 +7,17 @@ public class PlatformerGoomba : PlatformerCreature
     [Header("Goomba")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private PlatformerPatroller patroller;
+    [SerializeField] private RollingMovement rollingMovement;
     [SerializeField] private float stunTime;
     [SerializeField] private float jumpForce;
+    [SerializeField] private ParticleSystem spinFX;
 
     private bool stunned;
     //private bool onGround;
     private Coroutine stunCoroutine;
     private Coroutine attackCoroutine;
 
-    public enum State { Idle, Squished, Vulnerable }
+    public enum State { Idle, Rolling }
     public State state { get; private set; }
 
     private void ResetValues()
@@ -36,11 +38,6 @@ public class PlatformerGoomba : PlatformerCreature
         base.OnStompEvent(player);
 
         float knockback = 8;
-        if(state == State.Vulnerable)
-        {
-            ResetValues();
-            knockback = 0;
-        }
 
         player.SetEnemyJump();
         //stompFX.Play();
@@ -63,14 +60,16 @@ public class PlatformerGoomba : PlatformerCreature
         }
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox)
+    public override bool OnHitboxEvent(Hitbox hitbox)
     {
         base.OnHitboxEvent(hitbox);
-        if (state != State.Squished)
+        if (!stunned)
         {
             if (stunCoroutine != null) StopCoroutine(stunCoroutine);
             if(gameObject.activeSelf) stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
+            return true;
         }
+        return false;
     }
 
     private IEnumerator AttackState()
@@ -99,6 +98,8 @@ public class PlatformerGoomba : PlatformerCreature
         }
 
         patroller.enabled = false;
+        rollingMovement.enabled = false;
+
         Vector2 startingVelocity = m_rigidbody.velocity;
         for (int i = 0; i < time; i++)
         {
@@ -109,50 +110,99 @@ public class PlatformerGoomba : PlatformerCreature
         controller.Die();
     }
 
-    public void SetVulnerableState()
+
+    public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
+    {
+        m_rigidbody.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+    }
+
+    public override void OnBouncySideEvent(Vector2 contactPosition) 
+    {
+        base.OnBouncySideEvent(contactPosition);
+
+        switch(state)
+        {
+            case State.Rolling:
+
+                SetRollingState((contactPosition.x < transform.position.x ? Vector3.right : Vector3.left));
+                
+                break;
+        }
+    }
+
+    protected override void OnTwirlEvent(Hitbox hitbox) 
+    {
+        base.OnTwirlEvent(hitbox);
+    
+        SetRollingState((hitbox.transform.position.x < transform.position.x ? Vector3.right : Vector3.left));
+    }
+
+    public void SetRollingState(Vector2 movement)
     {
         if (attackCoroutine != null)
         {
             StopCoroutine(attackCoroutine);
             m_animator.SetTrigger("Reset");
         }
-        StartCoroutine(GhostState());
-    }
-
-    private IEnumerator GhostState()
-    {
-        state = State.Squished;
+        
+        m_animator.SetTrigger("Spin");
         patroller.enabled = false;
-        if (m_rigidbody)
-        {
-            m_rigidbody.velocity = Vector2.zero;
-        }
-        m_animator.SetTrigger("Hammer");
-
-        for (int i = 0; i < 20; i++)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        state = State.Vulnerable;
-        float targetY = transform.position.y + 3;
-        m_animator.SetTrigger("Launch");
-        if (m_rigidbody)
-        {
-            m_rigidbody.gravityScale = 0;
-            m_rigidbody.velocity = Vector2.up * 1;
-        }
-
-        while(transform.position.y < targetY)
-        {
-            yield return new WaitForFixedUpdate();
-        }
-
-        controller.Die();
+        rollingMovement.enabled = true;
+        rollingMovement.Launch(this, movement * 6); 
+        spinFX.Play();
+        state = State.Rolling;
     }
 
-    public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
+    protected override void OnHitWall(Collision2D collision, Vector2 point) 
     {
-        m_rigidbody.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+        //base.OnHitWall();
+
+        switch(state)
+        {
+            default:
+                if(patroller.enabled) patroller.SetFacingSide(point.x < 0 ? true : false);
+                break;
+
+            case State.Rolling:
+                if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                {
+                    BreakableBlock breakableBlock = collision.transform.GetComponent<BreakableBlock>();
+                    if(breakableBlock != null)
+                    {
+                        breakableBlock.TakeDamage(999);
+                    }
+                    controller.Die();
+                }
+                break;
+        }
+    }
+
+    public override void ChildHitboxEnterEvent(Collider2D collision, Hitbox hitbox) 
+    {
+        base.ChildHitboxEnterEvent(collision, hitbox);
+
+        if(collision.CompareTag("Enemy"))
+        {
+            PlatformerCreature platformerCreature = collision.GetComponent<PlatformerCreature>();
+            if(platformerCreature != null)
+            {
+                if(platformerCreature.OnHitboxEvent(hitbox)) 
+                    StartCoroutine(HitStop());
+            }
+        }
+    }
+
+    private IEnumerator HitStop()
+    {
+        m_animator.speed = 0;
+        rollingMovement.enabled = false;
+        m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
+        m_rigidbody.velocity = Vector2.zero;
+
+        yield return new WaitForSecondsRealtime(.05f);
+
+        m_animator.speed = 1;
+        rollingMovement.enabled = true;
+        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
     }
 }

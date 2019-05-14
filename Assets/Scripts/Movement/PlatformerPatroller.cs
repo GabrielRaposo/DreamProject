@@ -7,9 +7,6 @@ public class PlatformerPatroller : MonoBehaviour
     [SerializeField] float moveSpeed;
     [SerializeField] bool animateWalk;
     [SerializeField] bool aimAtPlayerOnStart;
-    [SerializeField] bool turnAroundOnWall;
-
-    [SerializeField] LayerMask reverseOnLayer;
 
     private bool facingRight;
     private new Rigidbody2D rigidbody;
@@ -52,37 +49,6 @@ public class PlatformerPatroller : MonoBehaviour
         if (renderer)
         {
             renderer.flipX = lookingRight;
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        CollisionEvent(collision);
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        CollisionEvent(collision);
-    }
-
-    void CollisionEvent(Collision2D collision)
-    {
-        if (collision.transform.CompareTag("Player"))
-        {
-            return;
-        }
-
-        if (collision.contactCount > 0)
-        {
-            foreach (ContactPoint2D cp in collision.contacts)
-            {
-                Vector2 point = cp.point - (Vector2)transform.position;
-                if (point.y > -.4f)
-                {
-                    SetFacingSide(point.x < 0 ? true : false);
-                    break;
-                }
-            }
         }
     }
 }

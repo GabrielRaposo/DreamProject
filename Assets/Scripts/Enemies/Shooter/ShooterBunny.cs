@@ -8,6 +8,9 @@ public class ShooterBunny : ShooterCreature
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int bulletsPerCicle = 6;
 
+    public enum State { Idle }
+    public State state;
+
     private bool offsetCicle;
     private BulletPool pool;
     private Coroutine attackCoroutine;
@@ -61,7 +64,7 @@ public class ShooterBunny : ShooterCreature
         }
     }
 
-    protected override void OnHitboxEvent(Hitbox hitbox, int damage)
+    public override void OnHitboxEvent(Hitbox hitbox, int damage)
     {
         base.OnHitboxEvent(hitbox, damage);
 
@@ -168,6 +171,18 @@ public class ShooterBunny : ShooterCreature
                 Vector2 direction = RaposUtil.RotateVector(Vector3.up, i * (360/bulletsPerCicle) + (offsetCicle ? (180/bulletsPerCicle) : 0));
                 bullet.Launch(direction * bulletSpeed);
             }
+        }
+    }
+
+    protected override void OnWallEvent(Collision2D collision) 
+    {
+        base.OnWallEvent(collision);
+
+        switch(state)
+        {
+            case State.Idle:
+                shooterMovement.NotifyGround();
+                break;
         }
     }
 }

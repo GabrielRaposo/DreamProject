@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformerCreature : MonoBehaviour, IStompable
+public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
 {
     [SerializeField] protected float mininumTopY;
 
@@ -42,8 +42,27 @@ public class PlatformerCreature : MonoBehaviour, IStompable
         interactable = true;
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.contactCount > 0)
+        {
+            foreach (ContactPoint2D cp in collision.contacts)
+            {
+                Vector2 point = cp.point - (Vector2)transform.position;
+                if (point.y > -.4f)
+                {
+                    OnHitWall(collision, point);
+                    break;
+                }
+                else OnHitGround();
+            }
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!interactable) return;
+
         if (collision.CompareTag("Twirl"))
         {
             Hitbox hitbox = collision.GetComponent<Hitbox>();
@@ -78,8 +97,11 @@ public class PlatformerCreature : MonoBehaviour, IStompable
         }
     }
 
-    protected virtual void OnTwirlEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }  
-    protected virtual void OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
+    protected virtual void OnHitWall(Collision2D collision, Vector2 point) { }
+    protected virtual void OnHitGround() { }
+
+    protected virtual void OnTwirlEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(30)); }  
+    public virtual bool OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); return false;}
 
     public float GetYStompRange() { return mininumTopY; }
     public virtual void OnStompEvent(PlayerPlatformer player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
@@ -88,7 +110,7 @@ public class PlatformerCreature : MonoBehaviour, IStompable
     public virtual void OnBouncyTopEvent(Vector2 contactPosition, bool super) { }
     public virtual void OnBouncySideEvent(Vector2 contactPosition) { }
 
-    public virtual void ChildHitboxEnterEvent(Collider2D collision) { }
-    public virtual void ChildHitboxExitEvent(Collider2D collision) { }
+    public virtual void ChildHitboxEnterEvent(Collider2D collision, Hitbox hitbox) { }
+    public virtual void ChildHitboxExitEvent(Collider2D collision, Hitbox hitbox) { }
 
 }

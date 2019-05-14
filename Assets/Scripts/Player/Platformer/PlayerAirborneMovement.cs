@@ -8,6 +8,7 @@ public class PlayerAirborneMovement : MonoBehaviour
     [Header("Horizontal Movement")]
     [SerializeField] private float horizontalSpeed;
     [SerializeField] private float acceleration;
+    [SerializeField] private float attackMultiplier;
 
     [Header("Jump")]
     [SerializeField] private float jumpInitialSpeed;
@@ -17,6 +18,7 @@ public class PlayerAirborneMovement : MonoBehaviour
     [SerializeField] private GameObject jumpStartFX;
 
     private float targetHorizontalSpeed;
+    private bool attacking;
 
     private bool fallingThroughPlatform;
     private LayerMask playerLayer;
@@ -46,6 +48,13 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     public void Jump(float customMultiplier = 0)
     {
+        if(controller.actionState == PlayerPlatformer.ActionState.Attacking)
+        {
+            attackHitbox.Dettach();
+            m_animator.SetTrigger("Reset");
+            controller.EndAttack();
+        }
+
         Instantiate(jumpStartFX, transform.position, Quaternion.identity);
         if(customMultiplier == 0)
             m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, jumpInitialSpeed);
@@ -69,7 +78,7 @@ public class PlayerAirborneMovement : MonoBehaviour
     {
         Vector2 velocity = m_rigidbody.velocity;
 
-        targetHorizontalSpeed = horizontalInput * horizontalSpeed;
+        targetHorizontalSpeed = horizontalInput * horizontalSpeed * (attacking ? attackMultiplier : 1);
 
         float diff = velocity.x - targetHorizontalSpeed;
         if(Mathf.Abs(diff) > acceleration)
@@ -112,14 +121,22 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     public IEnumerator AttackAction(Vector2 direction)
     {
-        m_rigidbody.velocity = Vector2.up * 2 + direction * horizontalSpeed;
+        attacking = true;
+        m_rigidbody.velocity = Vector2.up * 4 + direction * horizontalSpeed;
+        //m_rigidbody.velocity = Vector2.up * 3;
         m_animator.SetTrigger("Attack");
         attackHitbox.SetTarget(transform);
 
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSeconds(.5f);
+        CancelAttack();
+    }
+
+    public void CancelAttack()
+    {
         attackHitbox.Dettach();
         m_animator.SetTrigger("Reset");
         controller.EndAttack();
+        attacking = false;
     }
 
     private void OnDisable()

@@ -32,7 +32,7 @@ public class EBirdie : EnemyController
 
         yield return base.TransitionToNightmare(nightmatrix);
 
-        if (attacking) shooterBirdie.SetDirectionalAttack(-movement.normalized);
+        if (attacking) shooterBirdie.SetDirectionalAttack(-movement.normalized, platformerBirdie.playerActivated);
     }
 
 }

@@ -8,6 +8,7 @@ public class PlayerGroundMovement : MonoBehaviour
     [Header("Horizontal Movement")]
     [SerializeField] private float horizontalSpeed;
     [SerializeField] private float acceleration;
+    [SerializeField] private float attackMultiplier;
 
     [Header("Crounching")]
     [SerializeField] private BoxCollider2D highCollider;
@@ -18,6 +19,7 @@ public class PlayerGroundMovement : MonoBehaviour
     [SerializeField] private ParticleSystem smokeTrailFX;
 
     private float targetHorizontalSpeed;
+    private bool attacking;
 
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
@@ -59,7 +61,7 @@ public class PlayerGroundMovement : MonoBehaviour
     {
         Vector2 velocity = m_rigidbody.velocity;
 
-        targetHorizontalSpeed = horizontalInput * horizontalSpeed;
+        targetHorizontalSpeed = horizontalInput * horizontalSpeed * (attacking ? attackMultiplier : 1);
 
         float diff = velocity.x - targetHorizontalSpeed;
         if(Mathf.Abs(diff) > acceleration)
@@ -123,14 +125,22 @@ public class PlayerGroundMovement : MonoBehaviour
 
     public IEnumerator AttackAction(Vector2 direction)
     {
+        attacking = true;
         m_rigidbody.velocity = direction * horizontalSpeed;
+        //m_rigidbody.velocity = Vector2.zero;
         m_animator.SetTrigger("Attack");
         attackHitbox.SetTarget(transform);
 
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSeconds(.6f);
+        CancelAttack();
+    }
+
+    public void CancelAttack()
+    {
         attackHitbox.Dettach();
         m_animator.SetTrigger("Reset");
         controller.EndAttack();
+        attacking = false;
     }
 
     private void OnDisable()
@@ -141,7 +151,7 @@ public class PlayerGroundMovement : MonoBehaviour
         horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;
-        attackHitbox.gameObject.SetActive(false);
+        if (attackHitbox) attackHitbox.gameObject.SetActive(false); // "if" pra lidar com bug do editor
         controller.EndAttack();
     }
 }
