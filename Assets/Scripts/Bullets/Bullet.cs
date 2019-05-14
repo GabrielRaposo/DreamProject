@@ -42,6 +42,14 @@ public class Bullet : MonoBehaviour, IPoolObject
         {
             launchEvent.Invoke();
         }
+
+        StartCoroutine(TimerToVanish(3));
+    }
+
+    private IEnumerator TimerToVanish(float time)
+    {
+        yield return new WaitForSeconds(time);
+        Vanish();
     }
 
     protected void OnTriggerEnter2D(Collider2D collision)
@@ -71,6 +79,7 @@ public class Bullet : MonoBehaviour, IPoolObject
 
     public void Vanish()
     {
+        StopAllCoroutines();
         StartCoroutine(DisableComponents());
     }
 

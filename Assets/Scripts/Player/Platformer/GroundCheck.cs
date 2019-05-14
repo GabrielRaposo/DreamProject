@@ -33,7 +33,7 @@ public class GroundCheck : MonoBehaviour
 
         if (groundLayer == (groundLayer | (1 << layer)))
         {
-            controller.OnGround(true, collision);
+            controller.OnGround(true, collision); 
 
             if (layer == platformLayer)
             {

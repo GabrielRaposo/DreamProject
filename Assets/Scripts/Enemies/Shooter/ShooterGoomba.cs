@@ -136,9 +136,22 @@ public class ShooterGoomba : ShooterCreature
 
     public void SetLaunchedState(Vector2 movement)
     {
+        if (attackCoroutine != null) StopCoroutine(attackCoroutine);
+
         if(shooterMovement) shooterMovement.enabled = false;
         m_animator.SetTrigger("Launch");
-        m_renderer.flipX = (movement.x > 0);
+
+        if (movement.y == 0)
+        { 
+            m_renderer.flipX = (movement.x > 0);
+        }
+        else 
+        {
+            if (movement.x == 0) m_renderer.flipX = (movement.x > 0);
+            else if (movement.x > 0) m_renderer.flipY = true;
+            transform.rotation = Quaternion.Euler( Vector3.forward * (Vector2.SignedAngle(Vector2.up, movement) - 90) );
+        }
+
         launchMovement.enabled = true;
         launchMovement.Launch(this, movement * 6);
 
@@ -207,12 +220,12 @@ public class ShooterGoomba : ShooterCreature
                 break;
 
             case State.Launched:
-                controller.Die();
                 BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
                 if(breakableBlock != null)
                 {
                     breakableBlock.TakeDamage(999);
                 }
+                controller.Die();
                 break;
         }
     }

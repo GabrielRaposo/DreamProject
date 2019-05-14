@@ -39,7 +39,7 @@ public class PlayerPlatformer : MonoBehaviour
     private bool inputLock;
     private bool onAttackCooldown;
 
-    public bool onGround { get; private set; }
+    private bool onGround;
     public bool facingRight { get; private set; }
     public Vector2 startingPosition { get; private set; }
 
@@ -160,15 +160,18 @@ public class PlayerPlatformer : MonoBehaviour
     void Update()
     {
         //test -----------------------------
-        m_renderer.color = (onAttackCooldown ? Color.gray : Color.white);
+        m_renderer.color = (onGround ? Color.red : Color.white);
         
-        if (actionState == ActionState.Idle)
+        if (actionState != ActionState.Stunned)
         {
-            if(movementState != MovementState.Zipping)
+            if(actionState == ActionState.Idle && movementState != MovementState.Zipping)
             {
                 if (onGround)
                 {
-                    if (movementState != MovementState.Ground) SetGroundState();
+                    if (movementState != MovementState.Ground) 
+                    { 
+                        SetGroundState();
+                    }
                 }
                 else if (movementState != MovementState.Airborne)
                 {
@@ -201,17 +204,20 @@ public class PlayerPlatformer : MonoBehaviour
                 break;
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (actionState == ActionState.Idle)
         {
-            gravityModifier = LIGHT_GRAVITY;
-            SetJumpInput(true);
-            holdingJump = true;
-        }
-        else if(Input.GetButtonUp("Jump")) StartCoroutine(WaitAndReleaseJump());
+            if (Input.GetButtonDown("Jump"))
+            {
+                gravityModifier = LIGHT_GRAVITY;
+                SetJumpInput(true);
+                holdingJump = true;
+            }
+            else if(Input.GetButtonUp("Jump")) StartCoroutine(WaitAndReleaseJump());
         
-        if (Input.GetButtonDown("Attack"))
-        {
-            SetAttackInput();
+            if (Input.GetButtonDown("Attack"))
+            {
+                SetAttackInput();
+            }
         }
     }
 
@@ -269,7 +275,8 @@ public class PlayerPlatformer : MonoBehaviour
     {
         if (inputLock) return;
 
-        if(movementState != MovementState.Airborne || coyoteTime > 0)
+        //if(movementState != MovementState.Airborne || coyoteTime > 0)
+        if(onGround || coyoteTime > 0)
         {
             if (!groundMovement.crouching)
             {
@@ -341,6 +348,9 @@ public class PlayerPlatformer : MonoBehaviour
             if (gameObject.activeSelf) StartCoroutine(AttackCooldownTimer());
             actionState = ActionState.Idle;
         }
+
+        //para corrigir bug em que é possível pular no frame que sai do ataque
+        if (movementState != MovementState.Airborne && !onGround) SetAirborneState();
     }
 
     private IEnumerator AttackCooldownTimer()

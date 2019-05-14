@@ -7,8 +7,9 @@ public class ShooterBunny : ShooterCreature
     [Header("Bunny")]
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int bulletsPerCicle = 6;
+    [SerializeField] private LaunchMovement launchMovement;
 
-    public enum State { Idle }
+    public enum State { Idle, Launched }
     public State state;
 
     private bool offsetCicle;
@@ -58,7 +59,7 @@ public class ShooterBunny : ShooterCreature
 
     private void SetAttackCicle()
     {
-        if (attackCoroutine == null)
+        if (state == State.Idle && attackCoroutine == null)
         {
             attackCoroutine = StartCoroutine(AttackCicle());
         }
@@ -183,6 +184,37 @@ public class ShooterBunny : ShooterCreature
             case State.Idle:
                 shooterMovement.NotifyGround();
                 break;
+            
+            case State.Launched:
+                BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
+                if(breakableBlock != null)
+                {
+                    breakableBlock.TakeDamage(999);
+                }
+                controller.Die();
+                break;
         }
+    }
+
+    public void SetLaunchedState(Vector2 movement)
+    {
+        if(shooterMovement) shooterMovement.enabled = false;
+        m_animator.SetTrigger("Launch");
+
+        if (movement.y == 0)
+        { 
+            m_renderer.flipX = (movement.x > 0);
+        }
+        else 
+        {
+            if (movement.x == 0) m_renderer.flipX = (movement.x > 0);
+            else if (movement.x > 0) m_renderer.flipY = true;
+            transform.rotation = Quaternion.Euler( Vector3.forward * (Vector2.SignedAngle(Vector2.up, movement) - 90) );
+        }
+
+        launchMovement.enabled = true;
+        launchMovement.Launch(this, movement * 6);
+
+        state = State.Launched;
     }
 }

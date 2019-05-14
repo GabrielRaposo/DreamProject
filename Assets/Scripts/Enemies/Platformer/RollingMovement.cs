@@ -24,7 +24,7 @@ public class RollingMovement : MonoBehaviour
         rollHitbox.enabled = true;
         rollHitbox.GetComponent<Hitbox>().direction = velocity.normalized;
     }
-    
+
     void Update()
     {
         m_rigidbody2D.velocity = new Vector2(velocity.x, m_rigidbody2D.velocity.y);

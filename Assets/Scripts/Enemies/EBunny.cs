@@ -4,32 +4,32 @@ using UnityEngine;
 
 public class EBunny : EnemyController
 {
-    //private PlatformerBunny platformerBunny;
-    //private ShooterGoomba shooterGoomba;
+    private PlatformerBunny platformerBunny;
+    private ShooterBunny shooterBunny;
 
-    //private void Awake() 
-    //{
-    //    platformerBunny = platformerPhase.GetComponent<PlatformerBunny>();
-    //    shooterGoomba = shooterPhase.GetComponent<ShooterGoomba>();
-    //}
+    private void Awake() 
+    {
+        platformerBunny = platformerPhase.GetComponent<PlatformerBunny>();
+        shooterBunny = shooterPhase.GetComponent<ShooterBunny>();
+    }
 
-    //protected override IEnumerator TransitionToDream (Nightmatrix nightmatrix)
-    //{
-    //    yield return base.TransitionToDream(nightmatrix);
-        
-    //    if (shooterGoomba.vulnerable)
-    //    {
-    //        platformerBunny.SetVulnerableState();
-    //    }
-    //}
+    protected override IEnumerator TransitionToDream (Nightmatrix nightmatrix)
+    {
+        yield return base.TransitionToDream(nightmatrix);
 
-    //protected override IEnumerator TransitionToNightmare (Nightmatrix nightmatrix)
-    //{
-    //    yield return base.TransitionToNightmare(nightmatrix);
+        if (shooterBunny.state == ShooterBunny.State.Launched)
+        {
+            platformerBunny.SetRollingState(movement.normalized);
+        }
+    }
 
-    //    if(platformerBunny.state == PlatformerGoomba.State.Vulnerable)
-    //    {
-    //        shooterGoomba.SetVulnerableState();
-    //    }
-    //}
+    protected override IEnumerator TransitionToNightmare (Nightmatrix nightmatrix)
+    {
+        yield return base.TransitionToNightmare(nightmatrix);
+
+        if(platformerBunny.state == PlatformerBunny.State.Rolling)
+        {
+            shooterBunny.SetLaunchedState(- movement.normalized);
+        }
+    }
 }

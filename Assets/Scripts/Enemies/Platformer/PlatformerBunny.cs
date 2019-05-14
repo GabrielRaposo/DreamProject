@@ -8,19 +8,23 @@ public class PlatformerBunny : PlatformerCreature
     [SerializeField] private PlatformerLeaper leaper;
     [SerializeField] private float stunTime;
     [SerializeField] private float jumpForce;
+    [SerializeField] private BouncerMovement bouncerMovement;
+    [SerializeField] private ParticleSystem spinFX;
 
-    private bool stunned;
+    public enum State { Idle, Stunned, Rolling }
+    public State state;
+
     private Coroutine stunCoroutine;
 
     private void ResetValues()
     {
-        stunned = false;
+        state = State.Idle;
         leaper.enabled = true;
     }
 
     public override void OnStompEvent(PlayerPlatformer player)
     {
-        if (stunned) return;    
+        if (state == State.Stunned) return;    
 
         base.OnStompEvent(player);
 
@@ -48,7 +52,7 @@ public class PlatformerBunny : PlatformerCreature
 
     private IEnumerator StunState(float pushForce, int time, bool goRight)
     {
-        stunned = true;
+        state = State.Stunned;
         m_animator.SetTrigger("Reset");
         m_animator.SetBool("Stunned", true);
 
@@ -72,5 +76,62 @@ public class PlatformerBunny : PlatformerCreature
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
     {
         m_rigidbody.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+    }
+
+    protected override void OnTwirlEvent(Hitbox hitbox) 
+    {
+        base.OnTwirlEvent(hitbox);
+
+        SetRollingState((hitbox.transform.position.x < transform.position.x ? Vector2.right : Vector2.left) + (Vector2.up *2));
+    }
+
+    public void SetRollingState(Vector2 movement)
+    {      
+        m_animator.SetTrigger("Spin");
+        leaper.enabled = false;
+        m_rigidbody.velocity = Vector2.zero;
+        bouncerMovement.enabled = true;
+        bouncerMovement.Launch(this, movement * 5); 
+        m_rigidbody.gravityScale = 1.5f;
+        spinFX.Play();
+        state = State.Rolling;
+    }
+
+    protected override void OnHitWall(Collision2D collision, Vector2 point) 
+    {
+        switch(state)
+        {
+            case State.Idle:
+                leaper.SetFacingSide(point.x < 0);
+                break;
+
+            case State.Rolling:
+                BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
+                if(breakableBlock)
+                {
+                    breakableBlock.TakeDamage(999);
+                    controller.Die();
+                }
+                else if (!bouncerMovement.CountBounce()) controller.Die();
+                break;
+        }
+        if (state == State.Rolling)
+        {
+            
+        }
+    }
+
+    protected override void OnHitGround(Collision2D collision) 
+    {
+        if (state == State.Rolling)
+        { 
+            BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
+            if(breakableBlock)
+            {
+                breakableBlock.TakeDamage(999);
+                controller.Die();
+            }
+            else if (!bouncerMovement.CountBounce()) controller.Die();
+        }
     }
 }

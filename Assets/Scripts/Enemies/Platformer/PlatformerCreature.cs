@@ -42,7 +42,17 @@ public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
         interactable = true;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision) 
+    {
+        CollisionEvents(collision);
+    }
+
     private void OnCollisionStay2D(Collision2D collision)
+    {
+        CollisionEvents(collision);
+    }
+
+    private void CollisionEvents(Collision2D collision)
     {
         if (collision.contactCount > 0)
         {
@@ -52,10 +62,11 @@ public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
                 if (point.y > -.4f)
                 {
                     OnHitWall(collision, point);
-                    break;
+                    return;
                 }
-                else OnHitGround();
             }
+
+            OnHitGround(collision);
         }
     }
 
@@ -98,10 +109,10 @@ public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
     }
 
     protected virtual void OnHitWall(Collision2D collision, Vector2 point) { }
-    protected virtual void OnHitGround() { }
+    protected virtual void OnHitGround(Collision2D collision) { }
 
     protected virtual void OnTwirlEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(30)); }  
-    public virtual bool OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); return false;}
+    public virtual bool OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); return false; }
 
     public float GetYStompRange() { return mininumTopY; }
     public virtual void OnStompEvent(PlayerPlatformer player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }
