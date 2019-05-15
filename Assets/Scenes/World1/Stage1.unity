@@ -49522,7 +49522,7 @@ PrefabInstance:
     - target: {fileID: 7598343529246263964, guid: 121f4b50608eac14f96e07474bae9389,
         type: 3}
       propertyPath: orthographic size
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7598343529246263965, guid: 121f4b50608eac14f96e07474bae9389,
         type: 3}
@@ -49560,6 +49560,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 621877227, guid: 121f4b50608eac14f96e07474bae9389, type: 3}
+      propertyPath: m_Follow
+      value: 
+      objectReference: {fileID: 568961891}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 121f4b50608eac14f96e07474bae9389, type: 3}
 --- !u!1001 &416713226

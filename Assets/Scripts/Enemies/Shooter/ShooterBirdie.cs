@@ -9,6 +9,7 @@ public class ShooterBirdie : ShooterCreature
     [SerializeField] private GameObject targetAim;
     [SerializeField] private GameObject explosion;
     [SerializeField] private Hitbox launchHitbox;
+    [SerializeField] private ParticleSystem trailFX;
 
     private bool locked;
     [HideInInspector] public bool attacking;
@@ -79,9 +80,13 @@ public class ShooterBirdie : ShooterCreature
         FollowTransform followTransform = targetAim.GetComponent<FollowTransform>();
         followTransform.Follow(t);
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.8f);
 
         followTransform.enabled = false;
+
+        m_animator.SetTrigger("PreAttack");
+        m_rigidbody.velocity = (facingRight ? Vector2.right : Vector2.left) * .2f;
+        yield return new WaitForSeconds(.4f);
 
         SetAttack();
     }
@@ -90,6 +95,7 @@ public class ShooterBirdie : ShooterCreature
     {
         attacking = true;
         m_animator.SetTrigger("Attack");
+        trailFX.Play();
 
         linearMovement.enabled = true;
         Vector2 direction = Vector2.left;
@@ -103,6 +109,7 @@ public class ShooterBirdie : ShooterCreature
     {
         attacking = true;
         m_animator.SetTrigger("Attack");
+        trailFX.Play();
 
         linearMovement.enabled = true;
         transform.rotation = Quaternion.Euler(Vector2.SignedAngle(Vector2.left, direction) * Vector3.forward);

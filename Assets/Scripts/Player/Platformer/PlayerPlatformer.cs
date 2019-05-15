@@ -160,7 +160,7 @@ public class PlayerPlatformer : MonoBehaviour
     void Update()
     {
         //test -----------------------------
-        m_renderer.color = (onGround ? Color.red : Color.white);
+        m_renderer.color = (onAttackCooldown ? Color.gray : Color.white);
         
         if (actionState != ActionState.Stunned)
         {

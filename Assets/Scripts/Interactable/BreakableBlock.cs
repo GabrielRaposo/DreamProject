@@ -5,6 +5,7 @@ using UnityEngine;
 public class BreakableBlock : MonoBehaviour, IBreakable
 {
     [SerializeField] private int health;    
+    [SerializeField] private GameObject hiddenTreasure;
 
     private SpriteRenderer m_renderer;
     private Animator m_animator;
@@ -21,6 +22,7 @@ public class BreakableBlock : MonoBehaviour, IBreakable
     private void Start() 
     {
         originalPosition = transform.position;
+        if (hiddenTreasure != null) hiddenTreasure.SetActive(false);
     }
 
     public void TakeDamage(int damage)
@@ -52,6 +54,11 @@ public class BreakableBlock : MonoBehaviour, IBreakable
     private IEnumerator WaitToDestroy()
     {
         m_animator.SetTrigger("Break");
+        if(hiddenTreasure != null)  
+        { 
+            hiddenTreasure.transform.parent = null;
+            hiddenTreasure.SetActive(true);
+        }
         yield return new WaitForSeconds(.5f);
         Destroy(gameObject);
     }
