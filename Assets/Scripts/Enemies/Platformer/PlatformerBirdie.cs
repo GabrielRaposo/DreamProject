@@ -148,6 +148,8 @@ public class PlatformerBirdie : PlatformerCreature
 
     public override void OnStompEvent(PlayerPlatformer player)
     {
+        if(stunned) return;
+
         base.OnStompEvent(player);
 
         ResetValues();
@@ -155,17 +157,27 @@ public class PlatformerBirdie : PlatformerCreature
         if(state == State.Dizzy) StopAllCoroutines();
 
         player.SetEnemyJump();
-        TakeDamage();
-    }
 
-    private void TakeDamage()
-    {
         state = State.Idle;
         ResetValues();
-        m_collider.enabled = false;
-        m_rigidbody.velocity = (Vector2.up * .5f);
-        flightCicle.enabled = false;
-        StartCoroutine(StunState());
+        StartCoroutine(StunState (5 * new Vector2((!player.facingRight ? -1 : 1), .6f),
+                                 (int)(stunTime * 60), 
+                                 player.facingRight));
+    }
+
+    public override bool OnHitboxEvent(Hitbox hitbox)
+    {
+        if(stunned) return false;    
+
+        state = State.Idle;
+        ResetValues();
+
+        bool goRight = hitbox.direction.x > 0;
+        StartCoroutine(StunState (6 * new Vector2((!goRight ? -1 : 1), 1),
+                                 (int)(stunTime * 60), 
+                                 goRight));
+
+        return false;
     }
 
     public override void OnTouchEvent(PlayerPlatformer player)
@@ -183,12 +195,27 @@ public class PlatformerBirdie : PlatformerCreature
         }
     }
 
-    private IEnumerator StunState()
+    private IEnumerator StunState(Vector2 launchDirection, int time, bool goRight)
     {
-        m_animator.SetTrigger("Stunned");
         stunned = true;
+        m_animator.SetTrigger("Stunned");
+        flightCicle.enabled = false;
         m_collider.enabled = false;
-        yield return new WaitForSeconds(.3f);
+
+        m_rigidbody.gravityScale = .5f;
+        m_rigidbody.velocity = launchDirection;
+
+        Vector2 startingVelocity = m_rigidbody.velocity;
+        Color blinkColor = new Color(255f/255, 150f/255, 150f/255);
+        int j = 0;
+        for (int i = 0; i < time; i++)
+        {
+            yield return new WaitForFixedUpdate();
+            m_rigidbody.velocity -= (startingVelocity / (time + 1));
+            if (i % 3 == 0) j++;
+            m_renderer.color = (j % 2 == 0) ? blinkColor : Color.white;
+        }
+
         controller.Die();
     }
 
@@ -203,18 +230,6 @@ public class PlatformerBirdie : PlatformerCreature
         }
         flightCicle.Restart();
         m_animator.SetTrigger("Reset");
-    }
-
-    public override bool OnHitboxEvent(Hitbox hitbox)
-    {
-        ResetValues();
-
-        m_collider.enabled = false;
-        m_rigidbody.velocity = (Vector2.up * .5f);
-        flightCicle.enabled = false;
-        StartCoroutine(StunState());
-
-        return false;
     }
 
     public void AttackIntoDirection(Vector2 direction)

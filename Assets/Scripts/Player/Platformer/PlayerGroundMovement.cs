@@ -73,7 +73,7 @@ public class PlayerGroundMovement : MonoBehaviour
             velocity.x = targetHorizontalSpeed;
         }
 
-        if(Mathf.Abs(horizontalInput) > .9f)
+        if(!attacking && Mathf.Abs(horizontalInput) > .9f)
         {
             controller.UpdateFacingDirection(horizontalInput > 0 ? true : false);
         }
@@ -119,7 +119,7 @@ public class PlayerGroundMovement : MonoBehaviour
 
     public void SetAttack(Vector2 direction)
     {
-        attackHitbox.SetDirection(controller.facingRight ? Vector2.right : Vector2.left);
+        attackHitbox.SetDirection(controller.facingRight ? Vector2.right : Vector2.left, true);
         StartCoroutine(AttackAction(direction));
     }
 
@@ -145,6 +145,7 @@ public class PlayerGroundMovement : MonoBehaviour
 
     private void OnDisable()
     {
+        attacking = false;
         targetHorizontalSpeed = 0;
         StopAllCoroutines();
         smokeTrailFX.Stop();

@@ -52,6 +52,7 @@ public class PlayerPlatformer : MonoBehaviour
     private PlayerZippingMovement zippingMovement;
 
     private PlayerPhaseManager controller; 
+    private CameraPriorityManager cameraPriorityManager;
 
     public void Init(PlayerPhaseManager controller)
     {
@@ -71,6 +72,8 @@ public class PlayerPlatformer : MonoBehaviour
 
     private void Start()
     {
+        cameraPriorityManager = CameraPriorityManager.instance;
+
         actionState = ActionState.Idle;
 
         gravityModifier = BASE_GRAVITY;
@@ -126,6 +129,8 @@ public class PlayerPlatformer : MonoBehaviour
 
         maxJumpLock = false;
 
+        //cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformGround);
+
         movementState = MovementState.Ground;
     }
 
@@ -143,6 +148,8 @@ public class PlayerPlatformer : MonoBehaviour
         airborneMovement.enabled = true;
         zippingMovement.enabled = false;
 
+        //cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
+
         movementState = MovementState.Airborne;
     }
 
@@ -154,13 +161,17 @@ public class PlayerPlatformer : MonoBehaviour
         airborneMovement.enabled = false;
         zippingMovement.enabled = true;
 
+        EndAttack();
+
+        //cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
+
         movementState = MovementState.Zipping;
     }
 
     void Update()
     {
         //test -----------------------------
-        m_renderer.color = (onAttackCooldown ? Color.gray : Color.white);
+        //m_renderer.color = (onAttackCooldown ? Color.gray : Color.white);
         
         if (actionState != ActionState.Stunned)
         {
@@ -276,7 +287,7 @@ public class PlayerPlatformer : MonoBehaviour
         if (inputLock) return;
 
         //if(movementState != MovementState.Airborne || coyoteTime > 0)
-        if(onGround || coyoteTime > 0)
+        if(onGround || coyoteTime > 0 || movementState == MovementState.Zipping)
         {
             if (!groundMovement.crouching)
             {
@@ -350,7 +361,7 @@ public class PlayerPlatformer : MonoBehaviour
         }
 
         //para corrigir bug em que é possível pular no frame que sai do ataque
-        if (movementState != MovementState.Airborne && !onGround) SetAirborneState();
+        if (movementState == MovementState.Ground && !onGround) SetAirborneState();
     }
 
     private IEnumerator AttackCooldownTimer()
@@ -392,7 +403,7 @@ public class PlayerPlatformer : MonoBehaviour
         damageFX.enabled = true;
         Time.timeScale = 0;
         damageSFX.Play();
-        yield return new WaitForSecondsRealtime(.32f);
+        yield return new WaitForSecondsRealtime(.2f);
         Time.timeScale = 1;
         damageFX.enabled = false;
 

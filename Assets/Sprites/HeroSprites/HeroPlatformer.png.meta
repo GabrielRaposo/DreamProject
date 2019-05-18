@@ -27,6 +27,15 @@ TextureImporter:
     21300044: HeroPlatformer_22
     21300046: HeroPlatformer_23
     21300048: HeroPlatformer_24
+    21300050: HeroPlatformer_25
+    21300052: HeroPlatformer_26
+    21300054: HeroPlatformer_27
+    21300056: HeroPlatformer_28
+    21300058: HeroPlatformer_29
+    21300060: HeroPlatformer_30
+    21300062: HeroPlatformer_31
+    21300064: HeroPlatformer_32
+    21300066: HeroPlatformer_33
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -86,9 +95,9 @@ TextureImporter:
   - serializedVersion: 2
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -97,9 +106,9 @@ TextureImporter:
   - serializedVersion: 2
     buildTarget: Standalone
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -108,9 +117,9 @@ TextureImporter:
   - serializedVersion: 2
     buildTarget: Android
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -124,9 +133,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 256
-        width: 64
-        height: 64
+        y: 384
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,7 +143,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2899422a07723634096ae1d7b6be7ff8
+      spriteID: ec3fe338d58a63841b458c5f77d09767
       vertices: []
       indices: 
       edges: []
@@ -143,10 +152,10 @@ TextureImporter:
       name: HeroPlatformer_1
       rect:
         serializedVersion: 2
-        x: 64
-        y: 256
-        width: 64
-        height: 64
+        x: 96
+        y: 384
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,7 +163,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 623eb17c444def4449e637bbfeb5ad11
+      spriteID: 54a8bd616c55f3e4385eb27430e5b0af
       vertices: []
       indices: 
       edges: []
@@ -163,10 +172,10 @@ TextureImporter:
       name: HeroPlatformer_2
       rect:
         serializedVersion: 2
-        x: 128
-        y: 256
-        width: 64
-        height: 64
+        x: 192
+        y: 384
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,7 +183,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 65358e5a664c5c34eab88eed42fa5c2e
+      spriteID: 4f4b1ea42052e8c4fa41b8928f3dad86
       vertices: []
       indices: 
       edges: []
@@ -183,10 +192,10 @@ TextureImporter:
       name: HeroPlatformer_3
       rect:
         serializedVersion: 2
-        x: 192
-        y: 256
-        width: 64
-        height: 64
+        x: 288
+        y: 384
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,7 +203,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d0d22ff985d7e9d4eb67f09837168502
+      spriteID: 3e5be34495fd33443ad039d7f24f9410
       vertices: []
       indices: 
       edges: []
@@ -203,10 +212,10 @@ TextureImporter:
       name: HeroPlatformer_4
       rect:
         serializedVersion: 2
-        x: 256
-        y: 256
-        width: 64
-        height: 64
+        x: 384
+        y: 384
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -214,7 +223,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a29c28ce92842164cb97b3305cd4663d
+      spriteID: 52043bedd887d244fa36a581630c8098
       vertices: []
       indices: 
       edges: []
@@ -223,10 +232,10 @@ TextureImporter:
       name: HeroPlatformer_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 192
-        width: 64
-        height: 64
+        x: 480
+        y: 384
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -234,7 +243,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: be151d1c3c60ae7469fb6d12ebabdcc5
+      spriteID: aa6e9e069b542cd48be13652c732a9ad
       vertices: []
       indices: 
       edges: []
@@ -243,10 +252,10 @@ TextureImporter:
       name: HeroPlatformer_6
       rect:
         serializedVersion: 2
-        x: 64
-        y: 192
-        width: 64
-        height: 64
+        x: 576
+        y: 384
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -254,7 +263,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ff99088bb9c93194685916723f465cbc
+      spriteID: 132967f90d7910449bbeb82e87a35eee
       vertices: []
       indices: 
       edges: []
@@ -263,10 +272,10 @@ TextureImporter:
       name: HeroPlatformer_7
       rect:
         serializedVersion: 2
-        x: 128
-        y: 192
-        width: 64
-        height: 64
+        x: 0
+        y: 288
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -274,7 +283,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dd7322e6731793d46acc7a4f2b1b1845
+      spriteID: d7dbea450c23ee44898dff78c7d76922
       vertices: []
       indices: 
       edges: []
@@ -283,10 +292,10 @@ TextureImporter:
       name: HeroPlatformer_8
       rect:
         serializedVersion: 2
-        x: 192
-        y: 192
-        width: 64
-        height: 64
+        x: 96
+        y: 288
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -294,7 +303,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 49d52351e21ca564dbd39978e35affd0
+      spriteID: 76d48020b7b9f724bbde560fcae880fb
       vertices: []
       indices: 
       edges: []
@@ -303,10 +312,10 @@ TextureImporter:
       name: HeroPlatformer_9
       rect:
         serializedVersion: 2
-        x: 256
-        y: 192
-        width: 64
-        height: 64
+        x: 192
+        y: 288
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -314,7 +323,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1fbdeee1ad0c465498b281c3ea3e7cef
+      spriteID: d1853fac88617834681e97f08b1443ad
       vertices: []
       indices: 
       edges: []
@@ -323,10 +332,10 @@ TextureImporter:
       name: HeroPlatformer_10
       rect:
         serializedVersion: 2
-        x: 0
-        y: 128
-        width: 64
-        height: 64
+        x: 288
+        y: 288
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -334,7 +343,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 408a20ce972f09a408f97635fe119ff0
+      spriteID: 87e260134c83801448a79e327ec3946e
       vertices: []
       indices: 
       edges: []
@@ -343,10 +352,10 @@ TextureImporter:
       name: HeroPlatformer_11
       rect:
         serializedVersion: 2
-        x: 64
-        y: 128
-        width: 64
-        height: 64
+        x: 384
+        y: 288
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -354,7 +363,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cb625d1636f28c04b98af93f9ee5b697
+      spriteID: 30d7fa16815384149862acab963e614b
       vertices: []
       indices: 
       edges: []
@@ -363,10 +372,10 @@ TextureImporter:
       name: HeroPlatformer_12
       rect:
         serializedVersion: 2
-        x: 128
-        y: 128
-        width: 64
-        height: 64
+        x: 480
+        y: 288
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -374,7 +383,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1d4c2f2ce553aef45a14f30a88a248dd
+      spriteID: e280a3af5dc202e449a4b434a945228b
       vertices: []
       indices: 
       edges: []
@@ -383,10 +392,10 @@ TextureImporter:
       name: HeroPlatformer_13
       rect:
         serializedVersion: 2
-        x: 192
-        y: 128
-        width: 64
-        height: 64
+        x: 576
+        y: 288
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -394,7 +403,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4f0335351cfe31a4daf39b9ae5bcdbd1
+      spriteID: 317b07a6099c90e47a391de413ad2aa4
       vertices: []
       indices: 
       edges: []
@@ -403,10 +412,10 @@ TextureImporter:
       name: HeroPlatformer_14
       rect:
         serializedVersion: 2
-        x: 256
-        y: 128
-        width: 64
-        height: 64
+        x: 0
+        y: 192
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -414,7 +423,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 96a397110a6dcbc43a0b5fa05f2d2512
+      spriteID: a888ceecef72ad4418214133b9731b85
       vertices: []
       indices: 
       edges: []
@@ -423,10 +432,10 @@ TextureImporter:
       name: HeroPlatformer_15
       rect:
         serializedVersion: 2
-        x: 0
-        y: 64
-        width: 64
-        height: 64
+        x: 96
+        y: 192
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -434,7 +443,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e04bd0d65a0db6b469b8f38fd7a959d3
+      spriteID: f744cab21bf056e4d9ef80fca711e7f7
       vertices: []
       indices: 
       edges: []
@@ -443,10 +452,10 @@ TextureImporter:
       name: HeroPlatformer_16
       rect:
         serializedVersion: 2
-        x: 64
-        y: 64
-        width: 64
-        height: 64
+        x: 192
+        y: 192
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -454,7 +463,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 69b031a7d12aa5042b837a4284f758fa
+      spriteID: 3bfb5d99295aa2142b749c3777f05249
       vertices: []
       indices: 
       edges: []
@@ -463,10 +472,10 @@ TextureImporter:
       name: HeroPlatformer_17
       rect:
         serializedVersion: 2
-        x: 128
-        y: 64
-        width: 64
-        height: 64
+        x: 288
+        y: 192
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -474,7 +483,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a7a1fba682d6681469afcf77a975f5bc
+      spriteID: 6823af32321dc89419374400e924169f
       vertices: []
       indices: 
       edges: []
@@ -483,10 +492,10 @@ TextureImporter:
       name: HeroPlatformer_18
       rect:
         serializedVersion: 2
-        x: 192
-        y: 64
-        width: 64
-        height: 64
+        x: 384
+        y: 192
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -494,7 +503,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a4a987c5d670ecc429abec867b4899fa
+      spriteID: b1d8297f82aea3c4f95160beef2fe463
       vertices: []
       indices: 
       edges: []
@@ -503,10 +512,10 @@ TextureImporter:
       name: HeroPlatformer_19
       rect:
         serializedVersion: 2
-        x: 256
-        y: 64
-        width: 64
-        height: 64
+        x: 480
+        y: 192
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -514,7 +523,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f23b50b7d83411849bf25bf2e7031d04
+      spriteID: e79381cf6c2209845a849752b696898b
       vertices: []
       indices: 
       edges: []
@@ -523,10 +532,10 @@ TextureImporter:
       name: HeroPlatformer_20
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 64
-        height: 64
+        x: 576
+        y: 192
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -534,7 +543,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3c971060f45f90e4e9dafe8f682f6068
+      spriteID: ee8133a1925cd914f9735c6c133e364e
       vertices: []
       indices: 
       edges: []
@@ -543,10 +552,10 @@ TextureImporter:
       name: HeroPlatformer_21
       rect:
         serializedVersion: 2
-        x: 64
-        y: 0
-        width: 64
-        height: 64
+        x: 0
+        y: 96
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -554,7 +563,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 83c7ab3af060c9844b82de0da05d83a1
+      spriteID: f5b7164d2d1a6b34cba5ccd7b3d5530b
       vertices: []
       indices: 
       edges: []
@@ -563,10 +572,10 @@ TextureImporter:
       name: HeroPlatformer_22
       rect:
         serializedVersion: 2
-        x: 128
-        y: 0
-        width: 64
-        height: 64
+        x: 96
+        y: 96
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -574,7 +583,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 444c5181e6a2186419c16804ae0d0d67
+      spriteID: 401cb7aeafa1fe141a2c3144b7b7c46a
       vertices: []
       indices: 
       edges: []
@@ -584,9 +593,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 192
-        y: 0
-        width: 64
-        height: 64
+        y: 96
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -594,7 +603,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8de7c8df363c68a4aa933d43f9286921
+      spriteID: b6f1fc2816e020d429a82f9aa7f5da5a
       vertices: []
       indices: 
       edges: []
@@ -603,10 +612,10 @@ TextureImporter:
       name: HeroPlatformer_24
       rect:
         serializedVersion: 2
-        x: 256
-        y: 0
-        width: 64
-        height: 64
+        x: 288
+        y: 96
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -614,7 +623,187 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 76c5ca4d1651e9f49af385846a69ce6a
+      spriteID: 05d188bb00ead344f99e6cb629ea58b0
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_25
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 96
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c400fd428284ad4488a13dfdb2dfea65
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_26
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 96
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e0d71f35c823b446b1f794a0c818c7c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_27
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 96
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95bf1d75b40cc4b4783be61d05938f02
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe553c0484d296444b9bde78341cf177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_29
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a96d76e63f50ef4f896b4a69cbc3961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_30
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3a85d0ae6b67df4a8ce271c6d540b3c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_31
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6296214bfde7fee42a56dd974ae724a1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_32
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb484dfb98cedec4da181dd249c91433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeroPlatformer_33
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb3a08cf823b6d9418531cdf9d97d5d2
       vertices: []
       indices: 
       edges: []
@@ -622,7 +811,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 548864bd28f8ebc4bb536f9e7fbdca88
+    spriteID: 5973027f45e404b4e9750bfbbd25660a
     vertices: []
     indices: 
     edges: []

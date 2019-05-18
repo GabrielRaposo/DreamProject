@@ -302,7 +302,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
         damageFX.enabled = true;
         Time.timeScale = 0;
         damageFX.GetComponent<AudioSource>().Play();
-        yield return new WaitForSecondsRealtime(.32f);
+        yield return new WaitForSecondsRealtime(.2f);
         Time.timeScale = 1;
         damageFX.enabled = false;
         if (shootCicle != null) StopCoroutine(shootCicle);

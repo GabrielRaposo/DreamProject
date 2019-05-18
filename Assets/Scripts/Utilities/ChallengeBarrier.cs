@@ -17,6 +17,8 @@ public class ChallengeBarrier : MonoBehaviour
             e.challengeBarrier = this;
         }
         count = enemies.Length;
+    
+        CameraPriorityManager.instance.SetSpecialFocus(transform);
     }
 
     public void NotifyDeath() 
@@ -24,6 +26,7 @@ public class ChallengeBarrier : MonoBehaviour
         count--;
         if(count < 1)
         {
+            CameraPriorityManager.instance.ReturnToPreviousFocus();
             gameObject.SetActive(false);
         }
     }

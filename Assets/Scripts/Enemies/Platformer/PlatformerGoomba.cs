@@ -37,14 +37,13 @@ public class PlatformerGoomba : PlatformerCreature
 
         base.OnStompEvent(player);
 
-        float knockback = 8;
-
         player.SetEnemyJump();
-        //stompFX.Play();
-
         if (attackCoroutine != null) StopCoroutine(attackCoroutine);
         if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-        stunCoroutine = StartCoroutine(StunState(knockback, (int)(stunTime * 60), player.facingRight));
+        stunCoroutine 
+            = StartCoroutine(StunState (5 * new Vector2((!player.facingRight ? -1 : 1), .6f),
+                                       (int)(stunTime * 60), 
+                                       player.facingRight));
     }
 
     public override void OnTouchEvent(PlayerPlatformer player)
@@ -63,13 +62,19 @@ public class PlatformerGoomba : PlatformerCreature
     public override bool OnHitboxEvent(Hitbox hitbox)
     {
         base.OnHitboxEvent(hitbox);
-        if (!stunned)
-        {
-            if (stunCoroutine != null) StopCoroutine(stunCoroutine);
-            if(gameObject.activeSelf) stunCoroutine = StartCoroutine(StunState(8, (int)(stunTime * 60), hitbox.direction.x > 0 ? true : false));
-            return true;
+        if (stunned) return false;
+        
+        if (stunCoroutine != null) StopCoroutine(stunCoroutine);
+        if(gameObject.activeSelf) {
+
+            bool goRight = hitbox.direction.x > 0;
+
+            stunCoroutine 
+                = StartCoroutine(StunState (6 * new Vector2((!goRight ? -1 : 1), 1),
+                                           (int)(stunTime * 60), 
+                                           goRight));
         }
-        return false;
+        return true;
     }
 
     private IEnumerator AttackState()
@@ -85,26 +90,32 @@ public class PlatformerGoomba : PlatformerCreature
         m_animator.SetBool("Attack", false);
     }
 
-    private IEnumerator StunState(float pushForce, int time, bool goRight)
+    private IEnumerator StunState(Vector2 launchDirection, int time, bool goRight)
     {
         stunned = true;
         m_animator.SetTrigger("Reset");
         m_animator.SetBool("Stunned", true);
+        m_collider.enabled = false;
 
+        m_rigidbody.gravityScale = .5f;
         patroller.SetFacingSide(!goRight);
         if (m_rigidbody)
         {
-            m_rigidbody.velocity = pushForce * (!goRight ? Vector2.left : Vector2.right);
+            m_rigidbody.velocity = launchDirection;
         }
 
         patroller.enabled = false;
         rollingMovement.enabled = false;
 
         Vector2 startingVelocity = m_rigidbody.velocity;
+        Color blinkColor = new Color(255f/255, 150f/255, 150f/255);
+        int j = 0;
         for (int i = 0; i < time; i++)
         {
             yield return new WaitForFixedUpdate();
             m_rigidbody.velocity -= (startingVelocity / (time + 1));
+            if (i % 3 == 0) j++;
+            m_renderer.color = (j % 2 == 0) ? blinkColor : Color.white;
         }
 
         controller.Die();

@@ -17,15 +17,20 @@ public class TwirlHitbox : MonoBehaviour
         transform.parent = null;
     }
 
-    public void SetDirection(Vector2 direction)
+    public void SetDirection(Vector2 direction, bool onGround)
     {
         hitbox.direction = direction;
+        if(onGround)
+            transform.rotation = Quaternion.Euler(Vector3.forward * 0);
+        else
+            transform.rotation = Quaternion.Euler(Vector3.forward * 9 * (direction.x < 0 ? -1 : 1));
+
     }
 
     public void SetTarget(Transform target)
     {
         this.target = target;
-        transform.position = target.position;
+        transform.position = target.position + (Vector3.up * .15f);
         gameObject.SetActive(true);
         animator.SetTrigger("Reset");
     }

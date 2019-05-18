@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
 {
     [SerializeField] protected float mininumTopY;
-
+    [SerializeField] protected ParticleSystem twirlHitFX;
     protected bool interactable = true;
 
     protected Animator m_animator;
@@ -59,7 +59,7 @@ public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
             foreach (ContactPoint2D cp in collision.contacts)
             {
                 Vector2 point = cp.point - (Vector2)transform.position;
-                if (point.y > -.4f)
+                if (point.y > -.3f)
                 {
                     OnHitWall(collision, point);
                     return;
@@ -108,11 +108,21 @@ public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
         }
     }
 
+    protected virtual void OnTwirlEvent(Hitbox hitbox) 
+    { 
+        if(gameObject.activeSelf) StartCoroutine(InteractionDelay(30));
+        
+        if (twirlHitFX != null) 
+        {
+            //twirlHitFX.transform.position = (transform.position + hitbox.transform.position)/2;
+            twirlHitFX.Play();
+        }
+    }  
+    public virtual bool OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); return false; }
+
     protected virtual void OnHitWall(Collision2D collision, Vector2 point) { }
     protected virtual void OnHitGround(Collision2D collision) { }
 
-    protected virtual void OnTwirlEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(30)); }  
-    public virtual bool OnHitboxEvent(Hitbox hitbox) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); return false; }
 
     public float GetYStompRange() { return mininumTopY; }
     public virtual void OnStompEvent(PlayerPlatformer player) { if(gameObject.activeSelf) StartCoroutine(InteractionDelay(3)); }

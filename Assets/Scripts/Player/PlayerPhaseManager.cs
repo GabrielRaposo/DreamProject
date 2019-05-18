@@ -5,7 +5,6 @@ using Cinemachine;
 
 public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 {
-    [SerializeField] private Transform followTarget;
     [SerializeField] private GameObject transitionEffect;
 
     [Header("Phases")]
@@ -18,9 +17,13 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     [Header("Effects")]
     [SerializeField] private ParticleSystem deathFX;
+    [SerializeField] private float screenShakeVelocity;
 
     private bool switchLock;
     private Transform targetTransform;
+
+    private CameraPriorityManager cameraPriorityManager;
+    private CinemachineImpulseSource cinemachineImpulseSource;
 
     public static GameManager gameManager;
     public static PlayerPhaseManager instance;
@@ -44,6 +47,9 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private void Start()
     {
+        cinemachineImpulseSource = GetComponent<CinemachineImpulseSource>();
+        cameraPriorityManager = CameraPriorityManager.instance;
+
         if (healthDisplay)
         {
             healthDisplay.Init(maxHealth);
@@ -53,14 +59,8 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
         shooterPhase.gameObject.SetActive(false);
         platformerPhase.gameObject.SetActive(true);
-    }
 
-    private void FixedUpdate()
-    {
-        if (targetTransform != null)
-        {
-            followTarget.position = targetTransform.position;
-        }
+        cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
     }
 
     public Transform GetTarget()
@@ -106,6 +106,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         {
             platformerPhase.gameObject.SetActive(true);
             targetTransform = platformerPhase.transform;
+            cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
 
 
             platformerPhase.SwitchIn (
@@ -148,6 +149,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         {
             shooterPhase.gameObject.SetActive(true);
             targetTransform = shooterPhase.transform;
+            cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.Shooter);
 
             shooterPhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
         }
@@ -195,6 +197,8 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     public void TakeDamage(int damage)
     {
+        cinemachineImpulseSource.GenerateImpulse(Vector2.right * screenShakeVelocity);
+
         if (healthDisplay)
         {
             healthDisplay.ChangeValue(-damage);

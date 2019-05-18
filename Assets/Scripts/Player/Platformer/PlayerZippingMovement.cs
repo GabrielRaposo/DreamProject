@@ -28,15 +28,16 @@ public class PlayerZippingMovement : MonoBehaviour
         mainModule.startColor = zipline.GetComponent<SpriteRenderer>().color;
         slideFX.Play();
 
+        m_animator.SetTrigger("Reset");
         m_animator.SetBool("Airborne", true);
     }
 
     private void FixedUpdate()
     {
-        if (Mathf.Abs(horizontalInput) > 0.9f)
-        {
-            controller.UpdateFacingDirection(horizontalInput > 0 ? true : false);
-        }
+        //if (Mathf.Abs(horizontalInput) > 0.9f)
+        //{
+        //    controller.UpdateFacingDirection(horizontalInput > 0 ? true : false);
+        //}
 
         if (zipline)
         {

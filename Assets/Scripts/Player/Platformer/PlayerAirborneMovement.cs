@@ -90,7 +90,7 @@ public class PlayerAirborneMovement : MonoBehaviour
             velocity.x = targetHorizontalSpeed;
         }
 
-        if (Mathf.Abs(horizontalInput) > 0.9f)
+        if (!attacking && Mathf.Abs(horizontalInput) > 0.9f)
         { 
             controller.UpdateFacingDirection(horizontalInput > 0 ? true : false);
         }
@@ -115,7 +115,7 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     public void SetAttack(Vector2 direction)
     {
-        attackHitbox.SetDirection(controller.facingRight ? Vector2.right : Vector2.left);
+        attackHitbox.SetDirection(controller.facingRight ? Vector2.right : Vector2.left, false);
         StartCoroutine(AttackAction(direction));
     }
 
@@ -141,6 +141,7 @@ public class PlayerAirborneMovement : MonoBehaviour
 
     private void OnDisable()
     {
+        attacking = false;
         targetHorizontalSpeed = horizontalInput = 0;
         attackHitbox.gameObject.SetActive(false);
         controller.EndAttack();
