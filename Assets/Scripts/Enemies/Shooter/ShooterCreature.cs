@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHitboxEvent
 {
+    [SerializeField] protected AudioSource hitSFX;
+
     protected Animator m_animator;
     protected SpriteRenderer m_renderer;
     protected Rigidbody2D m_rigidbody;

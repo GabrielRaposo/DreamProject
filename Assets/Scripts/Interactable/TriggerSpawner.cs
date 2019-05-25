@@ -4,9 +4,28 @@ using UnityEngine;
 
 public class TriggerSpawner : MonoBehaviour
 {
+    [SerializeField] private GameObject challengeBarrier;
     [SerializeField] private GameObject[] spawnList;
     [Space(10)]
-    [SerializeField] private ParticleSystem spawnEffect;
+    [SerializeField] private GameObject spawnPrefab;
+
+    private List<GameObject> spawnFXs;
+
+    private void Start() 
+    {
+        spawnFXs = new List<GameObject>();
+
+        foreach(GameObject spawn in spawnList)
+        {
+            GameObject spawnFX = Instantiate(spawnPrefab, spawn.transform.position, Quaternion.identity); 
+            spawnFX.SetActive(false);
+            
+            EnemySpawnEffect enemySpawnEffect = spawnFX.GetComponent<EnemySpawnEffect>();
+            enemySpawnEffect.Set(spawn);
+
+            spawnFXs.Add(spawnFX);
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,11 +38,16 @@ public class TriggerSpawner : MonoBehaviour
 
     private IEnumerator SpawnCicle()
     {
-        foreach(GameObject spawn in spawnList)
+        if(challengeBarrier != null)
         {
-            spawn.SetActive(true);
+            challengeBarrier.SetActive(true);
+        }
+
+        foreach(GameObject spawnFX in spawnFXs)
+        {
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
+            spawnFX.SetActive(true);
         }
     }
 

@@ -7,6 +7,7 @@ public class TwirlHitbox : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Hitbox hitbox;
     [SerializeField] private Collider2D coll;
+    [SerializeField] private AudioSource whooshSFX;
     
     private Transform target;
     
@@ -33,6 +34,7 @@ public class TwirlHitbox : MonoBehaviour
         transform.position = target.position + (Vector3.up * .15f);
         gameObject.SetActive(true);
         animator.SetTrigger("Reset");
+        whooshSFX.Play();
     }
 
     public void Dettach()

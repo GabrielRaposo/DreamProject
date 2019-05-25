@@ -30,6 +30,8 @@ public class FadeOutEffect : MonoBehaviour
 
     private void Update() 
     {
+        if(Time.timeScale == 0) return;
+
         if (fade) 
         {
             Color color = spriteRenderer.color;

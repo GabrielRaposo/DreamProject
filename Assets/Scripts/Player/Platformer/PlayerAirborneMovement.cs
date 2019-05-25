@@ -143,7 +143,7 @@ public class PlayerAirborneMovement : MonoBehaviour
     {
         attacking = false;
         targetHorizontalSpeed = horizontalInput = 0;
-        attackHitbox.gameObject.SetActive(false);
+        if(attackHitbox) attackHitbox.gameObject.SetActive(false);
         controller.EndAttack();
     }
 }

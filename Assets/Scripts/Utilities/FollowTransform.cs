@@ -25,7 +25,7 @@ public class FollowTransform : MonoBehaviour
         this.target = target;
     }
 
-    void Update()
+    private void FixedUpdate()
     {
         if (target != null)
         {

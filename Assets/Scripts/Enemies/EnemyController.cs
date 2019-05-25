@@ -6,6 +6,9 @@ public class EnemyController : MonoBehaviour, IPhaseManager
 {
     [SerializeField] protected int health;
 
+    [Header("Region Spawn")]
+    [SerializeField] private GameObject regionSpawner;
+
     [Header("Phases")]
     [SerializeField] protected PlatformerCreature platformerPhase;
     [SerializeField] protected ShooterCreature shooterPhase;
@@ -26,6 +29,13 @@ public class EnemyController : MonoBehaviour, IPhaseManager
         shooterPhase.Init(this);
 
         currentPhase = platformerPhase.transform;
+
+        regionSpawner = Instantiate(regionSpawner, transform.position, Quaternion.identity);
+        regionSpawner.transform.position = transform.position;
+        regionSpawner.SetActive(true);
+        regionSpawner.GetComponent<ActionRegionSpawner>().Setup(gameObject);
+
+        gameObject.SetActive(false);
     }
     
     public int Health()

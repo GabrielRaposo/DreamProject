@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 1241321846534602438}
   - component: {fileID: 2177390027910413220}
   m_Layer: 0
-  m_Name: Collectable
+  m_Name: Gem
   m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 2656281666905815078}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -2, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -74,8 +74,8 @@ SpriteRenderer:
   m_SortingLayerID: 556565967
   m_SortingLayer: 3
   m_SortingOrder: 100
-  m_Sprite: {fileID: 21300000, guid: 041cd9819f08db9408490e6febb28c6e, type: 3}
-  m_Color: {r: 0.9843138, g: 0.95294124, b: 0.32941177, a: 1}
+  m_Sprite: {fileID: 21300000, guid: b341f29ff0881e14887d11a2581ec439, type: 3}
+  m_Color: {r: 0.9811321, g: 0.9469364, b: 0.36561054, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -196,7 +196,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.3
+      scalar: 0.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -4848,10 +4848,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 243715749032684370, guid: c08c0cff78593c349b52be640b349bf0,
     type: 2}
-  m_audioClip: {fileID: 8300000, guid: 0fece7ee0f1009a45a12042428421c0a, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 1a2c21d3d85186d4c98316af71ccb044, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
-  m_Pitch: 2
+  m_Volume: 0.3
+  m_Pitch: 1
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -4859,7 +4859,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 15
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0

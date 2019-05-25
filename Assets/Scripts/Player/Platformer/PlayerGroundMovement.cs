@@ -15,6 +15,8 @@ public class PlayerGroundMovement : MonoBehaviour
     [SerializeField] private float crouchSpeedModifier;
 
     [Header("Effects")]
+    [SerializeField] private AudioSource walkSFX;
+    [SerializeField] private AudioSource landSFX;
     [SerializeField] private GameObject landingSmokeFX;
     [SerializeField] private ParticleSystem smokeTrailFX;
 
@@ -40,6 +42,7 @@ public class PlayerGroundMovement : MonoBehaviour
     private void OnEnable()
     {
         m_animator.SetBool("Airborne", false);
+        landSFX.Play();
         Instantiate(landingSmokeFX, transform.position, Quaternion.identity);
     }
 
@@ -48,10 +51,19 @@ public class PlayerGroundMovement : MonoBehaviour
         float absHorMove = Mathf.Abs(targetHorizontalSpeed);
         m_animator.SetFloat("HorizontalSpeed", absHorMove);
         
-        if(absHorMove > 0) {
-            if(!smokeTrailFX.isPlaying) smokeTrailFX.Play();
+        if(absHorMove > 0) 
+        {
+            if(!smokeTrailFX.isPlaying) 
+            {
+                smokeTrailFX.Play();
+                walkSFX.Play();
+            }
         }
-        else smokeTrailFX.Stop();
+        else 
+        {
+            smokeTrailFX.Stop();
+            walkSFX.Stop();
+        }
 
         CheckCrouch();
         m_animator.SetBool("Crouching", crouching);
@@ -126,6 +138,7 @@ public class PlayerGroundMovement : MonoBehaviour
     public IEnumerator AttackAction(Vector2 direction)
     {
         attacking = true;
+        walkSFX.Stop();
         m_rigidbody.velocity = direction * horizontalSpeed;
         //m_rigidbody.velocity = Vector2.zero;
         m_animator.SetTrigger("Attack");
@@ -149,6 +162,7 @@ public class PlayerGroundMovement : MonoBehaviour
         targetHorizontalSpeed = 0;
         StopAllCoroutines();
         smokeTrailFX.Stop();
+        walkSFX.Stop();
         horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;

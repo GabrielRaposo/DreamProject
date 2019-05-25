@@ -6,24 +6,29 @@ using Cinemachine;
 public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 {
     [SerializeField] private GameObject transitionEffect;
+    [SerializeField] private Transform actionRegion;
 
     [Header("Phases")]
     [SerializeField] PlayerPlatformer platformerPhase;
     [SerializeField] PlayerShooter shooterPhase;
 
     [Header("Health")]
-    [SerializeField] private HealthDisplay healthDisplay;
+    [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private int maxHealth;
 
     [Header("Effects")]
     [SerializeField] private ParticleSystem deathFX;
+    [SerializeField] private AudioSource deathSFX;
     [SerializeField] private float screenShakeVelocity;
+
+    private bool paused;
 
     private bool switchLock;
     private Transform targetTransform;
 
     private CameraPriorityManager cameraPriorityManager;
     private CinemachineImpulseSource cinemachineImpulseSource;
+    private PauseScreen pauseScreen;
 
     public static GameManager gameManager;
     public static PlayerPhaseManager instance;
@@ -47,12 +52,13 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private void Start()
     {
+        pauseScreen = PauseScreen.instance;
         cinemachineImpulseSource = GetComponent<CinemachineImpulseSource>();
         cameraPriorityManager = CameraPriorityManager.instance;
 
-        if (healthDisplay)
+        if (playerHealth)
         {
-            healthDisplay.Init(maxHealth);
+            playerHealth.Init(maxHealth);
         }
 
         platformerPhase.transform.position = shooterPhase.transform.position;
@@ -61,6 +67,16 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         platformerPhase.gameObject.SetActive(true);
 
         cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
+    }
+
+    private void Update() 
+    {
+        actionRegion.position = targetTransform.position;
+
+        if(Input.GetButtonDown("Start"))
+        {
+            paused = pauseScreen.ToggleState();
+        }
     }
 
     public Transform GetTarget()
@@ -197,17 +213,25 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     public void TakeDamage(int damage)
     {
-        cinemachineImpulseSource.GenerateImpulse(Vector2.right * screenShakeVelocity);
+        //cinemachineImpulseSource.GenerateImpulse(Vector2.right * screenShakeVelocity);
 
-        if (healthDisplay)
+        if (playerHealth)
         {
-            healthDisplay.ChangeValue(-damage);
+            playerHealth.ChangeHealth(-damage);
+        }
+    }
+
+    public void Heal(int value)
+    {
+        if (playerHealth)
+        {
+            playerHealth.ChangeHealth(value);
         }
     }
 
     public int GetHealth()
     {
-        return healthDisplay.value;
+        return playerHealth.value;
     }
 
     public void SetHealth(int value)
@@ -217,10 +241,11 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     public void Die()
     {
-        if (deathFX) 
+        if (deathFX && deathSFX) 
         { 
             deathFX.transform.position = targetTransform.position;
             deathFX.Play();
+            deathSFX.Play();
         }
         platformerPhase.gameObject.SetActive(false);
         shooterPhase.gameObject.SetActive(false);

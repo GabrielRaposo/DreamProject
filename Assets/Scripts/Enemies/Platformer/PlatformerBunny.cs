@@ -67,6 +67,7 @@ public class PlatformerBunny : PlatformerCreature
         m_animator.SetTrigger("Reset");
         m_animator.SetBool("Stunned", true);
         m_collider.enabled = false;
+        stompSFX.Play();
 
         m_rigidbody.gravityScale = .5f;
         leaper.SetFacingSide(!goRight);
@@ -104,6 +105,7 @@ public class PlatformerBunny : PlatformerCreature
 
     public void SetRollingState(Vector2 movement)
     {      
+        stompSFX.Play();   
         m_animator.SetTrigger("Spin");
         leaper.enabled = false;
         m_rigidbody.velocity = Vector2.zero;

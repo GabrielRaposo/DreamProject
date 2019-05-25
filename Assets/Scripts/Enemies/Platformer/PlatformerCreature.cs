@@ -6,6 +6,8 @@ public class PlatformerCreature : MonoBehaviour, IStompable, IChildHitboxEvent
 {
     [SerializeField] protected float mininumTopY;
     [SerializeField] protected ParticleSystem twirlHitFX;
+    [SerializeField] protected AudioSource stompSFX;
+
     protected bool interactable = true;
 
     protected Animator m_animator;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerShooter : MonoBehaviour, ICanTarget
+public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
 {
     [Header("Movement")]
     [SerializeField] private float movementSpeed = 5;
@@ -21,8 +21,9 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
     [SerializeField] private Transform aimStar;
     [SerializeField] private GameObject autoAimPrefab;
 
-    [Space(10)]
+    [Header("Effects")]
     [SerializeField] private SpriteRenderer damageFX;
+    [SerializeField] private AudioSource dashSFX;
 
     private Vector2 movement;
     private BulletPool bulletPool;
@@ -104,7 +105,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
 
     private void Update()
     {
-        if (locked) return;
+        if (Time.timeScale == 0 || locked) return;
         
         switch(PlayerState)
         {
@@ -117,7 +118,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
                     shootCicle = StartCoroutine(ShootAction());
                     shooting = true;
                 }
-                else if (Input.GetButtonUp("Attack"))
+                else if (shooting && !Input.GetButton("Attack"))
                 {
                     if (shootCicle != null) StopCoroutine(shootCicle);
                     shooting = false;
@@ -203,6 +204,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
         PlayerState = State.Dashing;
         invincible = true;
         afterImageTrailEffect.StartCoroutine(afterImageTrailEffect.Call());
+        dashSFX.Play();
 
         m_rigidbody.velocity = startingMovement.normalized * dashSpeed; 
 
@@ -360,5 +362,10 @@ public class PlayerShooter : MonoBehaviour, ICanTarget
     {
         if(this.target == target)
             this.target = null;
+    }
+
+    public void Heal(int value) 
+    {
+        controller.Heal(value);    
     }
 }

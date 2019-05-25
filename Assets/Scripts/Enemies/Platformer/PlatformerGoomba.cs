@@ -96,6 +96,7 @@ public class PlatformerGoomba : PlatformerCreature
         m_animator.SetTrigger("Reset");
         m_animator.SetBool("Stunned", true);
         m_collider.enabled = false;
+        stompSFX.Play();
 
         m_rigidbody.gravityScale = .5f;
         patroller.SetFacingSide(!goRight);
@@ -150,6 +151,8 @@ public class PlatformerGoomba : PlatformerCreature
 
     public void SetRollingState(Vector2 movement)
     {
+        stompSFX.Play();    
+
         if (attackCoroutine != null)
         {
             StopCoroutine(attackCoroutine);

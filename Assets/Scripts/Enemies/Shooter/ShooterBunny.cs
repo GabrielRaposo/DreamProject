@@ -73,6 +73,7 @@ public class ShooterBunny : ShooterCreature
         if (bullet)
         {
             bullet.Vanish();
+            hitSFX.Play();
         }
 
         if (gameObject.activeSelf) StartCoroutine(BlinkAnimation());

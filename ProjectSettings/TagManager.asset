@@ -17,6 +17,7 @@ TagManager:
   - NightmatrixBorder
   - Twirl
   - Explosion
+  - ActionRegion
   layers:
   - Default
   - TransparentFX
@@ -35,7 +36,7 @@ TagManager:
   - Ghost
   - Nightmatrix
   - Twirl
-  - 
+  - ActionRegion
   - 
   - 
   - 

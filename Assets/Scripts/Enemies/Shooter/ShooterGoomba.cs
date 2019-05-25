@@ -9,6 +9,7 @@ public class ShooterGoomba : ShooterCreature
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int bloatedHealth;
     [SerializeField] private LaunchMovement launchMovement;
+    [SerializeField] private AudioSource shootSFX;
 
     public enum State { Idle, Bloated, Launched }
     public State state; 
@@ -78,6 +79,7 @@ public class ShooterGoomba : ShooterCreature
         if (bullet)
         {
             bullet.Vanish();
+            hitSFX.Play();
         }
 
         if (gameObject.activeSelf) StartCoroutine(BlinkAnimation());
@@ -190,6 +192,7 @@ public class ShooterGoomba : ShooterCreature
                 bulletObject.transform.position = transform.position;
 
                 m_animator.SetTrigger("Attack");
+                shootSFX.Play();
             }
 
             yield return new WaitForSeconds(1);

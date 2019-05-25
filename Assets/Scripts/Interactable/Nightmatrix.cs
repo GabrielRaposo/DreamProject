@@ -5,6 +5,7 @@ using UnityEngine;
 public class Nightmatrix : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D borderCollider;
+    [SerializeField] private AudioSource transitionSFX;
     
     public bool active { get; private set; }
     public Vector2 size { get; private set; }
@@ -35,6 +36,7 @@ public class Nightmatrix : MonoBehaviour
     public void Activate()
     {
         active = true;
+        transitionSFX.Play();
 
         foreach (IObserver observer in observers)
         {

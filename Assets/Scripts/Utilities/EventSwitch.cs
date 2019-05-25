@@ -9,6 +9,7 @@ public class EventSwitch : MonoBehaviour
 
     private Animator m_animator;
     private ParticleSystem clickFX;
+    private AudioSource clickSFX;
 
     private bool pressed;
     private int pressLock;
@@ -17,6 +18,7 @@ public class EventSwitch : MonoBehaviour
     {
         m_animator = GetComponent<Animator>();
         clickFX = GetComponent<ParticleSystem>();
+        clickSFX = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision) 
@@ -34,6 +36,7 @@ public class EventSwitch : MonoBehaviour
                     m_animator.SetTrigger("Press");
                 }
                 clickFX.Play();
+                clickSFX.Play();
             }
             pressed = true;
         }

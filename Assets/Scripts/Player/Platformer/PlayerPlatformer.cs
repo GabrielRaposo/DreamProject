@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerGroundMovement))]
 [RequireComponent(typeof(PlayerAirborneMovement))]
 [RequireComponent(typeof(PlayerZippingMovement))]
-public class PlayerPlatformer : MonoBehaviour
+public class PlayerPlatformer : MonoBehaviour, IHealable
 {
     private const float MAX_Y = 15;
 
@@ -17,6 +17,7 @@ public class PlayerPlatformer : MonoBehaviour
 
     [Header("Audio Effects")]
     [SerializeField] private AudioSource jumpSFX;
+    [SerializeField] private AudioSource stompSFX;
     [SerializeField] private AudioSource damageSFX;
 
     private Vector3 pushForce;
@@ -35,6 +36,7 @@ public class PlayerPlatformer : MonoBehaviour
     private bool holdingJump;
     private bool maxJumpLock;
     private int coyoteTime;
+    private int firstAirborneFrames;
     private bool invincible;
     private bool inputLock;
     private bool onAttackCooldown;
@@ -148,6 +150,8 @@ public class PlayerPlatformer : MonoBehaviour
         airborneMovement.enabled = true;
         zippingMovement.enabled = false;
 
+        firstAirborneFrames = 3;
+
         //cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
 
         movementState = MovementState.Airborne;
@@ -173,13 +177,15 @@ public class PlayerPlatformer : MonoBehaviour
         //test -----------------------------
         //m_renderer.color = (onAttackCooldown ? Color.gray : Color.white);
         
+        if (Time.timeScale == 0) return;
+
         if (actionState != ActionState.Stunned)
         {
             if(actionState == ActionState.Idle && movementState != MovementState.Zipping)
             {
                 if (onGround)
                 {
-                    if (movementState != MovementState.Ground) 
+                    if (movementState != MovementState.Ground && firstAirborneFrames < 1) 
                     { 
                         SetGroundState();
                     }
@@ -240,11 +246,9 @@ public class PlayerPlatformer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (coyoteTime > 0)
-        {
-            coyoteTime--;
-        }
-
+        if (coyoteTime > 0) coyoteTime--;
+        if (firstAirborneFrames > 0) firstAirborneFrames--; //Para corrigir BUG: player reativa estado de ground assim que sai do chão
+        
         Vector3 velocity = m_rigidbody.velocity;
 
         if (movementState == MovementState.Airborne)
@@ -291,6 +295,7 @@ public class PlayerPlatformer : MonoBehaviour
         {
             if (!groundMovement.crouching)
             {
+                jumpSFX.Play();
                 SetJump();
             }
             else if (transform.parent != null)
@@ -309,8 +314,6 @@ public class PlayerPlatformer : MonoBehaviour
     {
         this.maxJumpLock = maxJumpLock;
 
-        jumpSFX.Play();
-
         SetAirborneState();
         airborneMovement.Jump(customMultiplier);
     }
@@ -319,7 +322,7 @@ public class PlayerPlatformer : MonoBehaviour
     {
         maxJumpLock = holdingJump;
 
-        jumpSFX.Play();
+        //jumpSFX.Play();
 
         SetAirborneState();
         airborneMovement.Jump(customMultiplier);
@@ -329,7 +332,7 @@ public class PlayerPlatformer : MonoBehaviour
     {
         maxJumpLock = holdingJump;
 
-        jumpSFX.Play();
+        stompSFX.Play();
         Instantiate(stompFX, transform.position + Vector3.down, Quaternion.identity);
 
         SetAirborneState();
@@ -554,5 +557,10 @@ public class PlayerPlatformer : MonoBehaviour
         {
             pushForce = force;
         }
+    }
+
+    public void Heal(int value) 
+    {
+        controller.Heal(value);
     }
 }

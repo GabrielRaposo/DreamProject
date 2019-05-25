@@ -10,6 +10,7 @@ public class BreakableBlock : MonoBehaviour, IBreakable
     private SpriteRenderer m_renderer;
     private Animator m_animator;
     private ParticleSystem shakeFX;
+    private AudioSource shakeSFX;
     private Vector3 originalPosition;
 
     private void Awake() 
@@ -17,6 +18,7 @@ public class BreakableBlock : MonoBehaviour, IBreakable
         m_renderer = GetComponent<SpriteRenderer>();
         m_animator = GetComponent<Animator>();
         shakeFX = GetComponent<ParticleSystem>();
+        shakeSFX = GetComponent<AudioSource>();
     }
 
     private void Start() 
@@ -30,6 +32,7 @@ public class BreakableBlock : MonoBehaviour, IBreakable
         health -= damage;
         StartCoroutine(Shake());
         shakeFX.Play();
+        shakeSFX.Play();
 
         if(health < 1)
         {

@@ -10,18 +10,10 @@ public class GameManager : MonoBehaviour
         PlayerPhaseManager.gameManager = this;
     }
 
-    private void Update()
+    public void KillPlayer()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            RestartScene();
-        }
-        else
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            PlaytimeData.finishedStages--;
-            CallNextStage();
-        }
+        PlayerPhaseManager.instance.TakeDamage(99);
+        PlayerPhaseManager.instance.Die();
     }
 
     public void RestartScene()

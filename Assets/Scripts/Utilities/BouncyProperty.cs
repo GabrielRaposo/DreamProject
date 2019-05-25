@@ -10,6 +10,8 @@ public class BouncyProperty : MonoBehaviour
 
     [HideInInspector] public bool super; 
 
+    private AudioSource bounceSFX;
+
 	void Start ()
     {
         if (OnBounceEvent == null)
@@ -21,6 +23,8 @@ public class BouncyProperty : MonoBehaviour
         {
             OnHammerEvent = new UnityEvent();
         }
+
+        bounceSFX = GetComponent<AudioSource>();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -30,6 +34,7 @@ public class BouncyProperty : MonoBehaviour
             PlayerPlatformer player = collision.transform.GetComponent<PlayerPlatformer>();
             if (player)
             {
+                bounceSFX.Play();
                 player.SetBounceJump(1.6f);
                 if (!super)
                 {
@@ -42,6 +47,7 @@ public class BouncyProperty : MonoBehaviour
             PlatformerCreature enemy = collision.transform.GetComponent<PlatformerCreature>();
             if (enemy)
             {
+                bounceSFX.Play();
                 if(collision.transform.position.y > transform.position.y + .1f)
                 {
                     OnBounceEvent.Invoke();

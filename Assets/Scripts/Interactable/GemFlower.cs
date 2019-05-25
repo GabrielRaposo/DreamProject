@@ -9,12 +9,16 @@ public class GemFlower : MonoBehaviour
     private Animator m_animator;
     private Collider2D m_collider;
     private ParticleSystem openFX;
+    private AudioSource openSFX;
+
+    private bool open;
 
     void Start()
     {
         m_animator = GetComponent<Animator>();
         m_collider = GetComponent<Collider2D>();
         openFX = GetComponent<ParticleSystem>();
+        openSFX = GetComponent<AudioSource>();
 
         if(gem) gem.SetActive(false);
     }
@@ -23,7 +27,11 @@ public class GemFlower : MonoBehaviour
     {
         if(collision.CompareTag("Player"))
         {
-            Open();
+            if(!open)
+            {
+                open = true;
+                Open();
+            }
         }
     }
 
@@ -32,8 +40,9 @@ public class GemFlower : MonoBehaviour
         m_animator.SetTrigger("Open");
         m_collider.enabled = false;
         openFX.Play();
+        openSFX.Play();
 
-        if(gem)
+        if (gem)
         {
             StartCoroutine(SpawnAnimation());
         }
@@ -49,8 +58,8 @@ public class GemFlower : MonoBehaviour
 
         while (gem.transform.localPosition.y < 2)
         {
-            yield return new WaitForFixedUpdate();
-            gem.transform.position += Vector3.up * .2f;
+            yield return new WaitForEndOfFrame();
+            gem.transform.position += Vector3.up * .5f;
         }
 
         gemCollider.enabled = true;

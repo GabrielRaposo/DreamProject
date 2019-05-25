@@ -10,6 +10,7 @@ public class ShooterBirdie : ShooterCreature
     [SerializeField] private GameObject explosion;
     [SerializeField] private Hitbox launchHitbox;
     [SerializeField] private ParticleSystem trailFX;
+    [SerializeField] private AudioSource chargeSFX;
 
     private bool locked;
     [HideInInspector] public bool attacking;
@@ -82,12 +83,14 @@ public class ShooterBirdie : ShooterCreature
 
         yield return new WaitForSeconds(.8f);
 
+        targetAim.GetComponent<AudioSource>().Stop();
         followTransform.enabled = false;
 
         m_animator.SetTrigger("PreAttack");
         m_rigidbody.velocity = (facingRight ? Vector2.right : Vector2.left) * .2f;
         yield return new WaitForSeconds(.4f);
 
+        chargeSFX.Play();
         SetAttack();
     }
 
@@ -123,6 +126,7 @@ public class ShooterBirdie : ShooterCreature
     {
         if (targetAim) 
         {
+            targetAim.GetComponent<AudioSource>().Stop();
             if(targetAim.activeSelf) targetAim.GetComponent<Animator>().SetTrigger("Fade");
             Destroy(targetAim, .7f);
         }
@@ -141,6 +145,7 @@ public class ShooterBirdie : ShooterCreature
         {
             bullet.Vanish();
             linearMovement.MoveBack();
+            hitSFX.Play();
         }
 
         StartCoroutine(BlinkAnimation());
@@ -164,6 +169,7 @@ public class ShooterBirdie : ShooterCreature
             Explode();
         else 
             shooterMovement.NotifyGround();
+        
     }
 
     public override void ChildHitboxEnterEvent(Collider2D collision, Hitbox hitbox) 

@@ -15,6 +15,8 @@ public class PlatformerBirdie : PlatformerCreature
     [SerializeField] private LinearFlightCicle flightCicle;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private ParticleSystem flightFX;
+    [SerializeField] private AudioSource diveSFX;
+    [SerializeField] private AudioSource dizzySFX;
     [SerializeField] private float stunTime;
 
     public enum State { Idle, WindingUp, Diving, Attacking, Dizzy }
@@ -123,6 +125,7 @@ public class PlatformerBirdie : PlatformerCreature
 
         m_animator.SetTrigger("Attack");
         flightFX.Play();
+        diveSFX.Play();
 
         //targetRotation = 90 + (15 * directionModifier);
         targetRotation = facingLeft ? 180 : 0;
@@ -201,6 +204,8 @@ public class PlatformerBirdie : PlatformerCreature
         m_animator.SetTrigger("Stunned");
         flightCicle.enabled = false;
         m_collider.enabled = false;
+        stompSFX.Play();
+        dizzySFX.Stop();
 
         m_rigidbody.gravityScale = .5f;
         m_rigidbody.velocity = launchDirection;
@@ -283,12 +288,14 @@ public class PlatformerBirdie : PlatformerCreature
         {
             default:
             case State.Diving:
+                stompSFX.Play();   
                 playerActivated = true;
                 if(direction.x != 0) AttackIntoDirection(direction.x > 0 ? Vector2.left : Vector2.right);
                 else                 AttackIntoDirection(hitbox.direction);
                 break;
 
             case State.Attacking:
+                stompSFX.Play();   
                 playerActivated = true;
                 AttackIntoDirection(-direction);
                 break;
@@ -309,7 +316,11 @@ public class PlatformerBirdie : PlatformerCreature
                 hitbox.GetComponent<Collider2D>().enabled = false;
                 if(gameObject.activeSelf) StartCoroutine(BounceOnHit());
                 m_animator.SetTrigger("Dizzy");
+                
+                stompSFX.Play();
+                dizzySFX.PlayDelayed(.2f);
                 flightFX.Stop();
+
                 transform.rotation = Quaternion.Euler(Vector3.zero);
                 m_renderer.flipY = m_renderer.flipX = false;
 
