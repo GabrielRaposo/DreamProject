@@ -27,7 +27,7 @@ public class EGoomba : EnemyController
     {
         yield return base.TransitionToNightmare(nightmatrix);
 
-        if(platformerGoomba.state == PlatformerGoomba.State.Rolling)
+        if (platformerGoomba.state == PlatformerGoomba.State.Rolling)
         {
             shooterGoomba.SetLaunchedState(-movement.normalized);
         }

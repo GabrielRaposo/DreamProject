@@ -13,6 +13,7 @@ public class PlatformerLeaper : MonoBehaviour
     private bool facingRight;
     private bool onGround;
     private int leapCounter;
+    private bool firstVerification;
 
     private new Rigidbody2D rigidbody;
     private new SpriteRenderer renderer;
@@ -23,6 +24,8 @@ public class PlatformerLeaper : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         renderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
+        firstVerification = true;
     }
 
     void Start()
@@ -54,7 +57,7 @@ public class PlatformerLeaper : MonoBehaviour
 
         bool previous = onGround;
         onGround = Physics2D.OverlapArea(axis - border, axis + border, groundLayer);
-        if(onGround && previous != onGround && rigidbody.velocity.y < 0)
+        if((firstVerification && onGround) || (onGround && previous != onGround && rigidbody.velocity.y < 0))
         {
             Land();
             if(numberOfLeaps > 0)
@@ -68,6 +71,8 @@ public class PlatformerLeaper : MonoBehaviour
                 else StartCoroutine(LeapAction());
             }
             else StartCoroutine(LeapAction());
+
+            firstVerification = false;
         }
     }
 

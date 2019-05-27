@@ -9748,7 +9748,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 10
   MaxDistance: 15
   Pan2D: 0
   rolloffMode: 1
@@ -14647,9 +14647,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c32d7320293f194695a3ad35a8c255f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.1
+  moveSpeed: 1
   animateWalk: 1
   aimAtPlayerOnStart: 0
+  turnAroundOnPit: 1
 --- !u!114 &7488878135606437381
 MonoBehaviour:
   m_ObjectHideFlags: 0

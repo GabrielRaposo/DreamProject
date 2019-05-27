@@ -44,6 +44,7 @@ public class PauseScreen : MonoBehaviour
         firstSelection.Select();
         Time.timeScale = 0;
         active = true;
+        BGMPlayer.instance.LowerVolume();
     }
 
     public void Deactivate()
@@ -58,5 +59,6 @@ public class PauseScreen : MonoBehaviour
         fadedImage.gameObject.SetActive(false);
         Time.timeScale = 1;
         active = false;
+        BGMPlayer.instance.RiseVolume();
     }
 }

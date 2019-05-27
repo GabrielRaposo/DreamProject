@@ -9,10 +9,12 @@ public class TriggerSpawner : MonoBehaviour
     [Space(10)]
     [SerializeField] private GameObject spawnPrefab;
 
+    private AudioSource spawnSFX;
     private List<GameObject> spawnFXs;
 
     private void Start() 
     {
+        spawnSFX = GetComponent<AudioSource>();
         spawnFXs = new List<GameObject>();
 
         foreach(GameObject spawn in spawnList)
@@ -42,6 +44,8 @@ public class TriggerSpawner : MonoBehaviour
         {
             challengeBarrier.SetActive(true);
         }
+
+        spawnSFX.Play();
 
         foreach(GameObject spawnFX in spawnFXs)
         {

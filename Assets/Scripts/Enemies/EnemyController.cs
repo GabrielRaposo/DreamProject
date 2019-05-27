@@ -20,15 +20,25 @@ public class EnemyController : MonoBehaviour, IPhaseManager
     protected Vector3 movement;
     protected Transform currentPhase;
     protected bool switchLock;
+    protected bool isShooterPhase;
 
     [HideInInspector] public ChallengeBarrier challengeBarrier;
+
+    public void ChangePhase()
+    {
+        isShooterPhase = !isShooterPhase;
+
+        platformerPhase.gameObject.SetActive(!isShooterPhase);
+        shooterPhase.gameObject.SetActive(isShooterPhase);
+    }
 
     void Start()
     {
         platformerPhase.Init(this);
         shooterPhase.Init(this);
 
-        currentPhase = platformerPhase.transform;
+        isShooterPhase = shooterPhase.isActiveAndEnabled;
+        currentPhase = isShooterPhase ? shooterPhase.transform : platformerPhase.transform;
 
         regionSpawner = Instantiate(regionSpawner, transform.position, Quaternion.identity);
         regionSpawner.transform.position = transform.position;

@@ -531,7 +531,18 @@ public class PlayerPlatformer : MonoBehaviour, IHealable
         }
         else if (collision.CompareTag("Exit"))
         {
-            PlayerPhaseManager.gameManager.CallNextStage();
+            Window windowScript = collision.GetComponent<Window>();
+            if (windowScript)
+            {
+                groundMovement.enabled = airborneMovement.enabled = zippingMovement.enabled = false;
+                GetComponent<Collider2D>().enabled = false;
+
+                m_animator.SetBool("Airborne", true);
+                m_animator.SetFloat("HorizontalSpeed", 0f);
+                m_animator.SetTrigger("Reset");
+
+                controller.TravelThroughExit(collision.transform.position, windowScript);
+            }
         }
     }
 

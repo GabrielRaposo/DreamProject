@@ -78,6 +78,12 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHi
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (currentNightmatrix == null && collision.CompareTag("Nightmatrix"))
+        {
+            Nightmatrix nightmatrix = collision.GetComponent<Nightmatrix>();
+            if(nightmatrix) SwitchIn(nightmatrix);
+        }
+
         if (collision.CompareTag("Hitbox"))
         {
             Hitbox hitbox = collision.GetComponent<Hitbox>();

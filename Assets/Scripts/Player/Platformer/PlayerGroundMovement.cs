@@ -48,15 +48,21 @@ public class PlayerGroundMovement : MonoBehaviour
 
     private void Update()
     {
+        if(Time.timeScale < 1) 
+        {
+            if (walkSFX.isPlaying) walkSFX.Stop();
+            return;
+        }
+
         float absHorMove = Mathf.Abs(targetHorizontalSpeed);
         m_animator.SetFloat("HorizontalSpeed", absHorMove);
         
         if(absHorMove > 0) 
         {
-            if(!smokeTrailFX.isPlaying) 
+            if(!walkSFX.isPlaying) 
             {
-                smokeTrailFX.Play();
                 walkSFX.Play();
+                smokeTrailFX.Play();
             }
         }
         else 
@@ -122,7 +128,7 @@ public class PlayerGroundMovement : MonoBehaviour
             crouching = true;
             highCollider.enabled = false;
         }
-        else if (!Physics2D.OverlapCircle(transform.position, .25f, 1 << LayerMask.NameToLayer("Ground")))
+        else if (!Physics2D.OverlapCircle(transform.position, .2f, 1 << LayerMask.NameToLayer("Ground")))
         {
             crouching = false;
             highCollider.enabled = true;

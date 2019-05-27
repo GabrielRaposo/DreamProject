@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerZippingMovement : MonoBehaviour
 {
     [SerializeField] private ParticleSystem slideFX;
+    [SerializeField] private AudioSource slideSFX;
 
     private Animator m_animator;
     private Rigidbody2D m_rigidbody;
@@ -27,7 +28,9 @@ public class PlayerZippingMovement : MonoBehaviour
         ParticleSystem.MainModule mainModule = slideFX.main;
         mainModule.startColor = zipline.GetComponent<SpriteRenderer>().color;
         slideFX.Play();
+        slideSFX.Play();
 
+        if(zipline) controller.UpdateFacingDirection(zipline.Movement().x > 0);
         m_animator.SetTrigger("Reset");
         m_animator.SetBool("Airborne", true);
     }
@@ -56,6 +59,7 @@ public class PlayerZippingMovement : MonoBehaviour
         StopAllCoroutines();
 
         slideFX.Stop();
+        slideSFX.Stop();
 
         zipline.Disabled = true;
         zipline = null;

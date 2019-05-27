@@ -19,7 +19,10 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     [Header("Effects")]
     [SerializeField] private ParticleSystem deathFX;
     [SerializeField] private AudioSource deathSFX;
+    [SerializeField] private AudioSource transitionChargeSFX;
     [SerializeField] private float screenShakeVelocity;
+
+    [HideInInspector] public bool onTransition;
 
     private bool paused;
 
@@ -71,6 +74,8 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private void Update() 
     {
+        if(onTransition) return;
+
         actionRegion.position = targetTransform.position;
 
         if(Input.GetButtonDown("Start"))
@@ -249,7 +254,43 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
         platformerPhase.gameObject.SetActive(false);
         shooterPhase.gameObject.SetActive(false);
+        if (gameManager) 
+        {
+            onTransition = true;
+            gameManager.RestartScene();
+        }
+    }
+
+    public void TravelThroughExit(Vector3 exitPosition, Window window)
+    {
+        if(onTransition) return;
+        onTransition = true;
+
+        platformerPhase.enabled = false;
+        StartCoroutine(TravelThroughWindowAnimation(exitPosition, window));
+    }
+
+    private IEnumerator TravelThroughWindowAnimation(Vector3 exitPosition, Window window)
+    {
+        Rigidbody2D playerRB = platformerPhase.GetComponent<Rigidbody2D>();
+        playerRB.bodyType = RigidbodyType2D.Kinematic;
+        playerRB.velocity = ((playerRB.transform.position - exitPosition).normalized * 2f);
+        if (playerRB.velocity.y < .3f)  playerRB.velocity = new Vector2(playerRB.velocity.x, 2f);
+        transitionChargeSFX.Play();
+        yield return new WaitForSecondsRealtime(.5f);
+
+        transitionEffect.transform.position = playerRB.transform.position;
+        transitionEffect.SetActive(true);
+        playerRB.gameObject.SetActive(false);
+        while (Vector3.Distance(transitionEffect.transform.position, exitPosition) > .1f)
+        {
+            yield return new WaitForEndOfFrame();
+            transitionEffect.transform.position += (exitPosition - transitionEffect.transform.position).normalized * .1f;
+        }
+        transitionEffect.SetActive(false);
+        if(window) window.Close();
+
+        //if (gameManager) gameManager.CallNextStage();
         if (gameManager) gameManager.RestartScene();
-        //Destroy(gameObject);
     }
 }

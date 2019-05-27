@@ -35011,7 +35011,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2
-  damage: 2
+  damage: 1
   direction: {x: 0, y: 0}
 --- !u!114 &7822560376903932334
 MonoBehaviour:

@@ -99,7 +99,7 @@ public class PlatformerGoomba : PlatformerCreature
         stompSFX.Play();
 
         m_rigidbody.gravityScale = .5f;
-        patroller.SetFacingSide(!goRight);
+        patroller.SetFacingRight(!goRight);
         if (m_rigidbody)
         {
             m_rigidbody.velocity = launchDirection;
@@ -174,7 +174,7 @@ public class PlatformerGoomba : PlatformerCreature
         switch(state)
         {
             default:
-                if(patroller.enabled) patroller.SetFacingSide(point.x < 0 ? true : false);
+                if(patroller.enabled) patroller.SetFacingRight(point.x < 0 ? true : false);
                 break;
 
             case State.Rolling:
