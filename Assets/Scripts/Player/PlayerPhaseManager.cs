@@ -17,6 +17,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     [SerializeField] private int maxHealth;
 
     [Header("Effects")]
+    [SerializeField] private GameObject spawnWindow;
     [SerializeField] private ParticleSystem deathFX;
     [SerializeField] private AudioSource deathSFX;
     [SerializeField] private AudioSource transitionChargeSFX;
@@ -65,11 +66,23 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
 
         platformerPhase.transform.position = shooterPhase.transform.position;
+        cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
 
         shooterPhase.gameObject.SetActive(false);
-        platformerPhase.gameObject.SetActive(true);
+        platformerPhase.gameObject.SetActive(false);
 
-        cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
+        StartCoroutine(SpawnAnimation());
+    }
+
+    private IEnumerator SpawnAnimation()
+    {
+        yield return new WaitForSeconds(.75f);
+        if(spawnWindow) 
+        {
+            spawnWindow.SetActive(true);
+        }
+        yield return new WaitForSeconds(.1f);
+        platformerPhase.gameObject.SetActive(true);
     }
 
     private void Update() 
@@ -216,7 +229,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         transitionEffect.SetActive(false);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         //cinemachineImpulseSource.GenerateImpulse(Vector2.right * screenShakeVelocity);
 
@@ -234,12 +247,12 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    public int GetHealth()
+    public float GetHealth()
     {
         return playerHealth.value;
     }
 
-    public void SetHealth(int value)
+    public void SetHealth(float value)
     {
         //
     }

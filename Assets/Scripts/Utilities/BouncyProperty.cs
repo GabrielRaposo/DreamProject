@@ -27,7 +27,7 @@ public class BouncyProperty : MonoBehaviour
         bounceSFX = GetComponent<AudioSource>();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.CompareTag("Player"))
         {
@@ -51,22 +51,22 @@ public class BouncyProperty : MonoBehaviour
                 if(collision.transform.position.y > transform.position.y + .1f)
                 {
                     OnBounceEvent.Invoke();
-                    enemy.OnBouncyTopEvent(collision.contacts[0].point, super);
+                    enemy.OnBouncyTopEvent(transform.position, super);
                 }
                 else
                 {
                     OnBounceEvent.Invoke();
-                    enemy.OnBouncySideEvent(collision.contacts[0].point);
+                    enemy.OnBouncySideEvent(transform.position);
                 } 
             }
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Twirl"))
-        {
-            OnHammerEvent.Invoke();
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.CompareTag("Twirl"))
+    //    {
+    //        OnHammerEvent.Invoke();
+    //    }
+    //}
 }

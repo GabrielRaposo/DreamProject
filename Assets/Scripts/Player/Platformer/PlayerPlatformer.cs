@@ -374,7 +374,7 @@ public class PlayerPlatformer : MonoBehaviour, IHealable
         onAttackCooldown = false;
     }
 
-    public void SetDamage(Vector3 contactPoint, int damage)
+    public void SetDamage(Vector3 contactPoint, float damage)
     {
         if (invincible) return;
 

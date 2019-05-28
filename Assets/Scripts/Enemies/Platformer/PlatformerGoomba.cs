@@ -134,10 +134,12 @@ public class PlatformerGoomba : PlatformerCreature
 
         switch(state)
         {
-            case State.Rolling:
+            case State.Idle:
+                patroller.SetFacingRight(transform.position.x > contactPosition.x);
+                break;
 
+            case State.Rolling:
                 SetRollingState((contactPosition.x < transform.position.x ? Vector3.right : Vector3.left));
-                
                 break;
         }
     }
@@ -174,7 +176,7 @@ public class PlatformerGoomba : PlatformerCreature
         switch(state)
         {
             default:
-                if(patroller.enabled) patroller.SetFacingRight(point.x < 0 ? true : false);
+                if(patroller.enabled) patroller.SetFacingRight(point.x < 0);
                 break;
 
             case State.Rolling:

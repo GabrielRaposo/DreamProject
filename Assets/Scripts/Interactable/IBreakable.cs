@@ -1,4 +1,4 @@
 ﻿public interface IBreakable
 {
-    void TakeDamage(int damage);
+    void TakeDamage(float damage);
 }

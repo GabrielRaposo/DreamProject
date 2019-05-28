@@ -136,7 +136,7 @@ public class ShooterBirdie : ShooterCreature
         controller.Die();
     }
 
-    public override void OnHitboxEvent(Hitbox hitbox, int damage)
+    public override void OnHitboxEvent(Hitbox hitbox, float damage)
     {
         base.OnHitboxEvent(hitbox, damage);
 

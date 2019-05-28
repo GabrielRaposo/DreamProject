@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BreakableBlock : MonoBehaviour, IBreakable
 {
-    [SerializeField] private int health;    
+    [SerializeField] private float health;    
     [SerializeField] private GameObject hiddenTreasure;
 
     private SpriteRenderer m_renderer;
@@ -27,7 +27,7 @@ public class BreakableBlock : MonoBehaviour, IBreakable
         if (hiddenTreasure != null) hiddenTreasure.SetActive(false);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         health -= damage;
         StartCoroutine(Shake());

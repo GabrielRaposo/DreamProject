@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private PlayerHealthDisplay UIDisplay;
 
     private int maxHealth;
-    public int value { get; private set; }
+    public float value { get; private set; }
     [HideInInspector] static public int deathCount;
 
     public void Init(int maxHealth)
@@ -20,11 +20,11 @@ public class PlayerHealth : MonoBehaviour
     {
         if (UIDisplay)
         {
-            UIDisplay.ChangeFill((float) value / maxHealth);
+            UIDisplay.ChangeFill(value / maxHealth);
         }
     } 
 
-    public void ChangeHealth(int v)
+    public void ChangeHealth(float v)
     {
         value += v;
         if (value > maxHealth) value = maxHealth;

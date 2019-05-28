@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour, IPhaseManager
 {
-    [SerializeField] protected int health;
+    [SerializeField] protected float health;
 
     [Header("Region Spawn")]
     [SerializeField] private GameObject regionSpawner;
@@ -48,12 +48,12 @@ public class EnemyController : MonoBehaviour, IPhaseManager
         gameObject.SetActive(false);
     }
     
-    public int Health()
+    public float Health()
     {
         return health;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         health -= damage;
     }
@@ -167,12 +167,12 @@ public class EnemyController : MonoBehaviour, IPhaseManager
         switchLock = false;
     }
 
-    public int GetHealth()
+    public float GetHealth()
     {
         return health;
     }
 
-    public void SetHealth(int value)
+    public void SetHealth(float value)
     {
         health = value;
     }

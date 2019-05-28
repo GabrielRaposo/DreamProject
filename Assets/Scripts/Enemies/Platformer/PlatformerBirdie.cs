@@ -187,7 +187,6 @@ public class PlatformerBirdie : PlatformerCreature
     { 
         base.OnTouchEvent(player);
 
-        Debug.Log("aaa");
         player.SetDamage(transform.position, 1);
 
         switch (state)

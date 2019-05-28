@@ -16,17 +16,20 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
     [Header("Shooting")]
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int shotDelay;
-    [SerializeField] private GameObject bulletPoolPrefab;
+    [SerializeField] private BulletPool bulletPool;
+    [SerializeField] private BulletPool miniBulletPool;
     [SerializeField] private AudioSource shotSFX;
     [SerializeField] private Transform aimStar;
     [SerializeField] private GameObject autoAimPrefab;
 
     [Header("Effects")]
+    [SerializeField] private ParticleSystem upgradeGetPS;
     [SerializeField] private SpriteRenderer damageFX;
     [SerializeField] private AudioSource dashSFX;
 
+    private bool spreadShotsUpgrade;
+
     private Vector2 movement;
-    private BulletPool bulletPool;
     private Transform target;
 
     private bool locked;
@@ -68,9 +71,11 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
     {
         PlayerState = State.Idle;
 
-        bulletPoolPrefab = Instantiate(bulletPoolPrefab);
-        bulletPool = bulletPoolPrefab.GetComponent<BulletPool>();
         bulletPool.Init(ID.Player);
+        bulletPool.transform.parent = null;
+
+        miniBulletPool.Init(ID.Player);
+        miniBulletPool.transform.parent = null;
 
         GameObject autoAimObject = Instantiate(autoAimPrefab, transform.position + ((facingRight ? Vector3.right : Vector3.left) * -2), Quaternion.identity); 
         AutoAim autoAim = autoAimObject.GetComponent<AutoAim>();
@@ -166,37 +171,44 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
     {
         while (true)
         {
-            Shoot();
-            yield return ShotDelay();
+            BulletLine bullet = bulletPool.Get().GetComponent<BulletLine>();
+            if (bullet) Shoot(bullet);
+            
+            if (spreadShotsUpgrade)
+            {
+                float offsetAngle = 25;
+                bullet = miniBulletPool.Get().GetComponent<BulletLine>();
+                if (bullet) Shoot(bullet, offsetAngle);
+                
+                bullet = miniBulletPool.Get().GetComponent<BulletLine>();
+                if (bullet) Shoot(bullet, -offsetAngle);
+            }
+
+            for (int i = 0; i < shotDelay; i++) yield return new WaitForFixedUpdate();
         }
     }
 
-    private IEnumerator ShotDelay()
+    private void Shoot(BulletLine bullet, float offsetAngle = 0)
     {
-        for (int i = 0; i < shotDelay; i++) yield return new WaitForFixedUpdate();
-    }
-
-    private void Shoot()
-    {
-        GameObject bulletObject = bulletPool.Get();
-        BulletLine bullet = bulletObject.GetComponent<BulletLine>();
-        if (bullet)
+        GameObject bulletObject = bullet.gameObject;
+        
+        bulletObject.SetActive(true);
+        Vector2 direction;
+        if (target == null)
         {
-            bulletObject.SetActive(true);
-            Vector2 direction;
-            if (target == null)
-            {
-                direction = (facingRight ? Vector2.right : Vector2.left) * bulletSpeed;
-            }
-            else 
-            {
-                direction = (target.position - transform.position).normalized * bulletSpeed;
-            }
-            bullet.Launch(direction);
-            bulletObject.transform.position = aimStar.position;
-
-            shotSFX.Play();
+            direction = (facingRight ? Vector2.right : Vector2.left) * bulletSpeed;
         }
+        else 
+        {
+            direction = (target.position - transform.position).normalized * bulletSpeed;
+        }
+
+        direction = RaposUtil.RotateVector(direction, offsetAngle);
+
+        bullet.Launch(direction);
+        bulletObject.transform.position = aimStar.position;
+
+        if(offsetAngle == 0) shotSFX.Play();
     }
 
     private IEnumerator DashAction(Vector2 startingMovement)
@@ -286,7 +298,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
         }
     }
 
-    public void SetDamage(int damage)
+    public void SetDamage(float damage)
     {
         if (invincible) return;
         controller.TakeDamage(damage);
@@ -367,5 +379,18 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
     public void Heal(int value) 
     {
         controller.Heal(value);    
+    }
+
+    public void UnlockUpgrade(UpgradeType upgradeType)
+    {
+        upgradeGetPS.Play();
+        upgradeGetPS.GetComponent<AudioSource>().Play();
+
+        switch(upgradeType)
+        {
+            case UpgradeType.SpreadBullets:
+                spreadShotsUpgrade = true;
+                break;
+        }
     }
 }

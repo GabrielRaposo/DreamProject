@@ -29,13 +29,13 @@ public class Collectable : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             collected = true;
-            CollectableDisplay.instance.AddScore(1);
+            CollectableDisplay.instance.AddScore(50);
             followTransform.enabled = true;
             followTransform.Follow(collision.transform);
         }
     }
 
-    //acessado pelo outro script
+    //acessado pelo script de eventos
     public void DisableComponents()
     {
         if (collectFX) collectFX.Play();

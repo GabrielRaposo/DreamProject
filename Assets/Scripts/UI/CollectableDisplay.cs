@@ -8,8 +8,15 @@ public class CollectableDisplay : MonoBehaviour
     [SerializeField] private RectTransform tabAnchor;
     [SerializeField] private TextMeshProUGUI display;
 
-    private const int HIDDEN_X  = -150;
+    [Header("Effects")]
+    [SerializeField] private AudioSource coinGetSFX;
+    [SerializeField] private AudioSource coinLoseSFX;
+ 
+    private const int HIDDEN_X  = -200;
     private const int HIGHLIGHT_X  = 40;
+
+    private Coroutine showAndHideCoroutine;
+    private bool onDecreaseAnimation;
 
     public static int savedScore = 0;
 
@@ -44,6 +51,13 @@ public class CollectableDisplay : MonoBehaviour
         tabAnchor.anchoredPosition = Vector2.right * HIDDEN_X;
     }
 
+    private IEnumerator ShowAndHide()
+    {
+        yield return Show();
+        yield return new WaitForSeconds(3);
+        yield return Hide();
+    }
+
     private IEnumerator Show()
     {
         while (tabAnchor.anchoredPosition.x < HIGHLIGHT_X)
@@ -52,9 +66,6 @@ public class CollectableDisplay : MonoBehaviour
             tabAnchor.anchoredPosition += Vector2.right * 20f;
         }
         tabAnchor.anchoredPosition = Vector2.right * HIGHLIGHT_X;
-        yield return new WaitForSeconds(3);    
-
-        StartCoroutine(Hide());
     }
 
     private IEnumerator Hide()
@@ -74,18 +85,53 @@ public class CollectableDisplay : MonoBehaviour
             display.text = Score.ToString();
         }
 
-        StopAllCoroutines();
-        StartCoroutine(Show());
+        if (showAndHideCoroutine != null) StopCoroutine(showAndHideCoroutine);
+        if (!onDecreaseAnimation) showAndHideCoroutine = StartCoroutine(ShowAndHide());
     }
 
     public void AddScore(int quant)
     {
         Score += quant;
+        coinGetSFX.Play();
     }
 
     public void SaveScore()
     {
         savedScore = score;
         PlaytimeData.starsCount = score;
+    }
+
+    public bool BuyAt (int price)
+    {
+        if (price > score) 
+            return false;
+        else 
+        {
+            StopAllCoroutines();
+            StartCoroutine(DecreaseValue(price));
+            return true;
+        }
+    }
+
+    private IEnumerator DecreaseValue(int price)
+    {
+        yield return Show();    
+
+        coinLoseSFX.Play();
+        onDecreaseAnimation = true;
+        for (int i = 0; i < price; i++)
+        {
+            if (display)
+            {
+                display.text = (Score - i).ToString();
+            }
+            yield return new WaitForEndOfFrame();
+        }
+        Score -= price;
+        onDecreaseAnimation = false;
+        coinLoseSFX.Stop();
+
+        yield return new WaitForSecondsRealtime(2);
+        yield return Hide();
     }
 }

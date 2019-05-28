@@ -40,7 +40,7 @@ public class HealthCollectable : MonoBehaviour
         }
     }
 
-    //acessado pelo outro script
+    //acessado pelo script de eventos
     public void DisableComponents()
     {
         if (collectFX) collectFX.Play();

@@ -120,7 +120,7 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHi
 
     public virtual void OnNotify() {}
 
-    public virtual void OnHitboxEvent(Hitbox hitbox, int damage) { }
+    public virtual void OnHitboxEvent(Hitbox hitbox, float damage) { }
     public virtual void OnTouchEvent(PlayerShooter player) { }
     protected virtual void OnWallEvent(Collision2D collision) { }
 

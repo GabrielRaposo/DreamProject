@@ -65,7 +65,7 @@ public class ShooterBunny : ShooterCreature
         }
     }
 
-    public override void OnHitboxEvent(Hitbox hitbox, int damage)
+    public override void OnHitboxEvent(Hitbox hitbox, float damage)
     {
         base.OnHitboxEvent(hitbox, damage);
 
