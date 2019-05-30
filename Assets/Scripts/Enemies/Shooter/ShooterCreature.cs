@@ -10,6 +10,7 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHi
     protected SpriteRenderer m_renderer;
     protected Rigidbody2D m_rigidbody;
 
+    protected Color originalColor;
     protected bool facingRight;
     protected ID id;
     protected Nightmatrix currentNightmatrix;
@@ -29,12 +30,13 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHi
         m_rigidbody = GetComponent<Rigidbody2D>();
         shooterMovement = GetComponent<ShooterMovement>();
 
+        originalColor = m_renderer.color;
         id = ID.Enemy;
     }
 
     public virtual void SwitchIn(Nightmatrix nightmatrix)
     {
-        m_renderer.color = Color.white;
+        m_renderer.color = originalColor;
 
         currentNightmatrix = nightmatrix;
         currentNightmatrix.AddObserver(this);
@@ -133,7 +135,7 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHi
     {
         m_renderer.color = Color.red;
         for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
-        m_renderer.color = Color.white;
+        m_renderer.color = originalColor;
     }
 
 }

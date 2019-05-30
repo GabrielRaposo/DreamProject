@@ -45,7 +45,7 @@ public class CameraPriorityManager : MonoBehaviour
         this.gameState = gameState;
     }
 
-    public void SetSpecialFocus (Transform t)
+    public void SetSpecialFocus (Transform t, float orthographicSize)
     {
         int j = (int)GameState.Special;
         for (int i = 0; i < virtualCameras.Length; i++)
@@ -57,6 +57,7 @@ public class CameraPriorityManager : MonoBehaviour
         }
         virtualCameras[j].transform.position = virtualCameras[(int)this.gameState].transform.position;
         virtualCameras[j].Follow = t;
+        virtualCameras[j].m_Lens.OrthographicSize = orthographicSize;
         virtualCameras[j].Priority = 1;
 
         previousGameState = gameState;

@@ -59,7 +59,7 @@ public class PlayerGroundMovement : MonoBehaviour
         
         if(absHorMove > 0) 
         {
-            if(!walkSFX.isPlaying) 
+            if(!walkSFX.isPlaying && !attacking) 
             {
                 walkSFX.Play();
                 smokeTrailFX.Play();
@@ -168,7 +168,7 @@ public class PlayerGroundMovement : MonoBehaviour
         targetHorizontalSpeed = 0;
         StopAllCoroutines();
         smokeTrailFX.Stop();
-        walkSFX.Stop();
+        if (walkSFX) walkSFX.Stop();
         horizontalInput = verticalInput = 0;
         m_animator.SetBool("Crouching", crouching = false);
         highCollider.enabled = true;

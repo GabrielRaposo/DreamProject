@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour, IPhaseManager
+public class EnemyController : MonoBehaviour, IPhaseManager, IRespawnable
 {
     [SerializeField] protected float health;
 
@@ -21,6 +21,8 @@ public class EnemyController : MonoBehaviour, IPhaseManager
     protected Transform currentPhase;
     protected bool switchLock;
     protected bool isShooterPhase;
+
+    private EnemyRespawner respawner;
 
     [HideInInspector] public ChallengeBarrier challengeBarrier;
 
@@ -60,6 +62,11 @@ public class EnemyController : MonoBehaviour, IPhaseManager
 
     public void Die()
     { 
+        if (respawner != null)
+        {
+            respawner.Spawn();
+        }
+
         if (destructionFX != null)
         {
             Instantiate(destructionFX, currentPhase.transform.position, Quaternion.identity);
@@ -175,5 +182,10 @@ public class EnemyController : MonoBehaviour, IPhaseManager
     public void SetHealth(float value)
     {
         health = value;
+    }
+
+    public void SetRespawner(EnemyRespawner respawner) 
+    {
+        this.respawner = respawner;
     }
 }

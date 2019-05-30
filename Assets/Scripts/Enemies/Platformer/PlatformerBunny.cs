@@ -125,8 +125,8 @@ public class PlatformerBunny : PlatformerCreature
                 break;
 
             case State.Rolling:
-                BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
-                if(breakableBlock)
+                IBreakable breakableBlock = collision.gameObject.GetComponent<IBreakable>();
+                if(breakableBlock != null)
                 {
                     breakableBlock.TakeDamage(999);
                     controller.Die();
@@ -140,8 +140,8 @@ public class PlatformerBunny : PlatformerCreature
     {
         if (state == State.Rolling)
         { 
-            BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
-            if(breakableBlock)
+            IBreakable breakableBlock = collision.gameObject.GetComponent<IBreakable>();
+            if(breakableBlock != null)
             {
                 breakableBlock.TakeDamage(999);
                 controller.Die();

@@ -125,7 +125,9 @@ public class PlatformerGoomba : PlatformerCreature
 
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
     {
-        m_rigidbody.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+        Vector2 velocity = Vector2.right * m_rigidbody.velocity.x;
+        velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+        m_rigidbody.velocity = velocity;
     }
 
     public override void OnBouncySideEvent(Vector2 contactPosition) 
@@ -164,7 +166,7 @@ public class PlatformerGoomba : PlatformerCreature
         m_animator.SetTrigger("Spin");
         patroller.enabled = false;
         rollingMovement.enabled = true;
-        rollingMovement.Launch(this, movement * 6); 
+        rollingMovement.Launch(this, movement * 5); 
         spinFX.Play();
         state = State.Rolling;
     }
@@ -182,7 +184,7 @@ public class PlatformerGoomba : PlatformerCreature
             case State.Rolling:
                 if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
                 {
-                    BreakableBlock breakableBlock = collision.transform.GetComponent<BreakableBlock>();
+                    IBreakable breakableBlock = collision.transform.GetComponent<IBreakable>();
                     if(breakableBlock != null)
                     {
                         breakableBlock.TakeDamage(999);

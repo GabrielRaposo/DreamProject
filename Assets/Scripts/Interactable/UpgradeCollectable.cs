@@ -12,7 +12,6 @@ public class UpgradeCollectable : MonoBehaviour
 
     private Collider2D m_collider;
     private SpriteRenderer m_renderer;
-    private ParticleSystem collectFX;
     private AudioSource collectSFX;
     private FollowTransform followTransform;
 
@@ -22,7 +21,6 @@ public class UpgradeCollectable : MonoBehaviour
     {
         m_collider = GetComponent<Collider2D>();
         m_renderer = GetComponent<SpriteRenderer>();
-        collectFX = GetComponent<ParticleSystem>();
         collectSFX = GetComponent<AudioSource>();
         followTransform = GetComponent<FollowTransform>();
     }
@@ -48,7 +46,6 @@ public class UpgradeCollectable : MonoBehaviour
     //acessado pelo script de eventos
     public void DisableComponents()
     {
-        if (collectFX) collectFX.Play();
         if (collectSFX) collectSFX.Play();
 
         if (m_collider) m_collider.enabled = false;

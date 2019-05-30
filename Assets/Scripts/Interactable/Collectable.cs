@@ -8,7 +8,6 @@ public class Collectable : MonoBehaviour
     private Collider2D m_collider;
     private SpriteRenderer m_renderer;
     private ParticleSystem collectFX;
-    private AudioSource collectSFX;
     private FollowTransform followTransform;
 
     private bool collected;
@@ -18,7 +17,6 @@ public class Collectable : MonoBehaviour
         m_collider = GetComponent<Collider2D>();
         m_renderer = GetComponent<SpriteRenderer>();
         collectFX = GetComponent<ParticleSystem>();
-        collectSFX = GetComponent<AudioSource>();
         followTransform = GetComponent<FollowTransform>();
     }
 
@@ -29,7 +27,7 @@ public class Collectable : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             collected = true;
-            CollectableDisplay.instance.AddScore(50);
+            CollectableDisplay.instance.AddScore(1);
             followTransform.enabled = true;
             followTransform.Follow(collision.transform);
         }
@@ -39,7 +37,6 @@ public class Collectable : MonoBehaviour
     public void DisableComponents()
     {
         if (collectFX) collectFX.Play();
-        if (collectSFX) collectSFX.Play();
 
         if (m_collider) m_collider.enabled = false;
         if (m_renderer) m_renderer.enabled = false;

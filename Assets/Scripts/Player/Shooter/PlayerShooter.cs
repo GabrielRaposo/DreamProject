@@ -77,13 +77,13 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
         miniBulletPool.Init(ID.Player);
         miniBulletPool.transform.parent = null;
 
-        GameObject autoAimObject = Instantiate(autoAimPrefab, transform.position + ((facingRight ? Vector3.right : Vector3.left) * -2), Quaternion.identity); 
-        AutoAim autoAim = autoAimObject.GetComponent<AutoAim>();
-        if(autoAim)
-        {
-            autoAim.Init(this);
-            autoAim.GetComponent<InheritAnchorMovement>().Set(transform);
-        }
+        //GameObject autoAimObject = Instantiate(autoAimPrefab, transform.position + ((facingRight ? Vector3.right : Vector3.left) * -2), Quaternion.identity); 
+        //AutoAim autoAim = autoAimObject.GetComponent<AutoAim>();
+        //if(autoAim)
+        //{
+        //    autoAim.Init(this);
+        //    autoAim.GetComponent<InheritAnchorMovement>().Set(transform);
+        //}
 
         facingRight = true;
     }

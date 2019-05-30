@@ -301,9 +301,18 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
             transitionEffect.transform.position += (exitPosition - transitionEffect.transform.position).normalized * .1f;
         }
         transitionEffect.SetActive(false);
-        if(window) window.Close();
-
-        //if (gameManager) gameManager.CallNextStage();
-        if (gameManager) gameManager.RestartScene();
+        if(window) 
+        {
+            window.Close();
+            if(window.isFinal())
+            {
+                gameManager.ReturnToStageSelect();
+            }
+            else 
+            {
+                gameManager.CallNextStage();
+            }
+        }
+        else if (gameManager) gameManager.CallNextStage();
     }
 }

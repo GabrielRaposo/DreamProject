@@ -6,6 +6,8 @@ public class ShooterGoomba : ShooterCreature
 {
     [Header("Goomba")]
     [SerializeField] private bool bloatOnDeath;
+    [SerializeField] private float startingDelay;
+    [SerializeField] private float shotsDelay = 1;
     [SerializeField] private float bulletSpeed;
     [SerializeField] private int bloatedHealth;
     [SerializeField] private LaunchMovement launchMovement;
@@ -169,7 +171,7 @@ public class ShooterGoomba : ShooterCreature
 
     protected override IEnumerator AttackCicle()
     {
-        yield return new WaitForSeconds(.8f);
+        yield return new WaitForSeconds(startingDelay + .8f);
 
         while (true)
         {
@@ -195,7 +197,7 @@ public class ShooterGoomba : ShooterCreature
                 shootSFX.Play();
             }
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(shotsDelay);
         }
     }
 
@@ -223,7 +225,7 @@ public class ShooterGoomba : ShooterCreature
                 break;
 
             case State.Launched:
-                BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
+                IBreakable breakableBlock = collision.gameObject.GetComponent<IBreakable>();
                 if(breakableBlock != null)
                 {
                     breakableBlock.TakeDamage(999);

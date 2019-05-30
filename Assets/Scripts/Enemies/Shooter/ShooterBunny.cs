@@ -187,7 +187,7 @@ public class ShooterBunny : ShooterCreature
                 break;
             
             case State.Launched:
-                BreakableBlock breakableBlock = collision.gameObject.GetComponent<BreakableBlock>();
+                IBreakable breakableBlock = collision.gameObject.GetComponent<IBreakable>();
                 if(breakableBlock != null)
                 {
                     breakableBlock.TakeDamage(999);

@@ -58,6 +58,16 @@ public class CollectableDisplay : MonoBehaviour
         yield return Hide();
     }
 
+    public void ToggleVisible(bool value)
+    {
+        if (showAndHideCoroutine != null) StopCoroutine(showAndHideCoroutine);
+
+        if(value)
+            StartCoroutine(Show());
+        else 
+            StartCoroutine(Hide());
+    }
+
     private IEnumerator Show()
     {
         while (tabAnchor.anchoredPosition.x < HIGHLIGHT_X)

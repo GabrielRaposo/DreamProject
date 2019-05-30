@@ -11,6 +11,9 @@ public class PauseScreen : MonoBehaviour
 
     public bool active { get; private set; }
 
+    private CollectableDisplay collectableDisplay;
+    private BonusCollectableDisplay bonusCollectableDisplay;
+
     public static PauseScreen instance;
 
     private void Awake() 
@@ -25,6 +28,12 @@ public class PauseScreen : MonoBehaviour
         }
 
         fadedImage.gameObject.SetActive(false);
+    }
+
+    private void Start() 
+    {
+        collectableDisplay = CollectableDisplay.instance;
+        bonusCollectableDisplay = BonusCollectableDisplay.instance;
     }
 
     public bool ToggleState ()
@@ -45,6 +54,11 @@ public class PauseScreen : MonoBehaviour
         Time.timeScale = 0;
         active = true;
         BGMPlayer.instance.LowerVolume();
+
+        if(collectableDisplay) 
+            collectableDisplay.ToggleVisible(true);
+        if(bonusCollectableDisplay) 
+            bonusCollectableDisplay.ToggleVisible(true);
     }
 
     public void Deactivate()
@@ -60,5 +74,10 @@ public class PauseScreen : MonoBehaviour
         Time.timeScale = 1;
         active = false;
         BGMPlayer.instance.RiseVolume();
+
+        if(collectableDisplay) 
+            collectableDisplay.ToggleVisible(false);
+        if(bonusCollectableDisplay) 
+            bonusCollectableDisplay.ToggleVisible(false);
     }
 }

@@ -7,6 +7,7 @@ public class FollowTrail : MonoBehaviour
     [SerializeField] private Transform anchors;
     [SerializeField] private float moveSpeed = 1;
     [SerializeField] private bool loop = true;
+    [SerializeField] private bool stopOnReachEnd;
 
     Vector3[] global_reachmarks;
 
@@ -19,7 +20,6 @@ public class FollowTrail : MonoBehaviour
     {
         if ((marks_quantity = anchors.childCount) == 0)
             this.enabled = false;
-
 
         global_reachmarks = new Vector3[marks_quantity + 1];
         global_reachmarks[0] = transform.position;
@@ -51,10 +51,15 @@ public class FollowTrail : MonoBehaviour
             else
             {
                 current_aim += aim_modifier;
+
                 if (current_aim + 1 > marks_quantity || current_aim < 0)
                 {
-                    aim_modifier *= -1;
-                    current_aim += aim_modifier;
+                    if(!stopOnReachEnd)
+                    {
+                        aim_modifier *= -1;
+                        current_aim += aim_modifier;
+                    }
+                    else enabled = false; 
                 }
             }
         }

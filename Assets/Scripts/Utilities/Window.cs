@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Window : MonoBehaviour
 {
+    [SerializeField] private bool final;    
+
+    [Header("References")]
     [SerializeField] private AudioSource openSFX;
     [SerializeField] private AudioSource closeSFX;
 
@@ -30,4 +33,6 @@ public class Window : MonoBehaviour
         closeSFX.Play();
         ps.Play();
     }
+
+    public bool isFinal(){ return final; } 
 }

@@ -19689,7 +19689,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.4
 --- !u!114 &6080723119331191148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19772,6 +19772,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitSFX: {fileID: 7605243023472978355}
   bloatOnDeath: 0
+  startingDelay: 0
+  shotsDelay: 1
   bulletSpeed: 4
   bloatedHealth: 6
   launchMovement: {fileID: 2989318872651202993}

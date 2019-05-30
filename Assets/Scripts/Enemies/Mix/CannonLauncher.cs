@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CannonLauncher : MonoBehaviour
 {
+    [SerializeField] private float startingDelay;
     [SerializeField] private float bulletSpeed = 2f;
     [SerializeField] private float shotDelay = 2f;
     [SerializeField] private ParticleSystem shotFX;
@@ -32,6 +33,8 @@ public class CannonLauncher : MonoBehaviour
 
     private IEnumerator AttackLoop()
     {
+        if(startingDelay > 0) yield return new WaitForSeconds(startingDelay);
+
         while (true) 
         {
             yield return new WaitForSeconds(shotDelay);
