@@ -16,6 +16,10 @@ public class GameManager : MonoBehaviour
         {
             ReturnToStageSelect();
         }
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            CallNextStage();
+        }
     }
 
     public void KillPlayer()

@@ -93,7 +93,9 @@ public class PlatformerBunny : PlatformerCreature
 
     public override void OnBouncyTopEvent(Vector2 contactPosition, bool super)
     {
-        m_rigidbody.velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+        Vector2 velocity = Vector2.right * m_rigidbody.velocity.x;
+        velocity += Vector2.up * jumpForce * (super ? 2 : 1);
+        m_rigidbody.velocity = velocity;
     }
 
     protected override void OnTwirlEvent(Hitbox hitbox) 

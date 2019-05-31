@@ -317,6 +317,15 @@ public class PlatformerBirdie : PlatformerCreature
                 if(gameObject.activeSelf) StartCoroutine(BounceOnHit());
                 m_animator.SetTrigger("Dizzy");
                 
+                if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                {
+                    IBreakable breakableBlock = collision.transform.GetComponent<IBreakable>();
+                    if(breakableBlock != null)
+                    {
+                        breakableBlock.TakeDamage(999);
+                    }
+                }
+
                 stompSFX.Play();
                 dizzySFX.PlayDelayed(.2f);
                 flightFX.Stop();
