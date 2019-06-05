@@ -6,14 +6,21 @@ public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private PlayerHealthDisplay UIDisplay;
 
-    private int maxHealth;
-    public float value { get; private set; }
-    [HideInInspector] static public int deathCount;
+    private static int maxHealth = 3;
+    public static float value { get; private set; }
+    public static float savedHealth;
+    
+    public static int deathCount;
 
-    public void Init(int maxHealth)
+    public void Init(int mHealth)
     {
-        value = this.maxHealth = maxHealth;
-        UpdateDisplay();
+        value = savedHealth;
+        maxHealth = mHealth;
+
+        if (UIDisplay)
+        {
+            UIDisplay.ChangeFill(value / maxHealth, true);
+        }
     }
 
     private void UpdateDisplay()
@@ -31,6 +38,16 @@ public class PlayerHealth : MonoBehaviour
         if (value < 1) value = 0;
         
         UpdateDisplay();
+    }
+
+    public static void SaveHealth()
+    {
+        savedHealth = value;
+    }
+
+    public static void ResetSavedHealth()
+    {
+        savedHealth = maxHealth;
     }
 }
 

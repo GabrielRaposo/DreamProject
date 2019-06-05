@@ -13,6 +13,7 @@ public class PlayerZippingMovement : MonoBehaviour
 
     [HideInInspector] public float horizontalInput;
     [HideInInspector] public Zipline zipline;
+    [HideInInspector] public bool jumpLock;
 
     private void Awake()
     {
@@ -33,6 +34,15 @@ public class PlayerZippingMovement : MonoBehaviour
         if(zipline) controller.UpdateFacingDirection(zipline.Movement().x > 0);
         m_animator.SetTrigger("Reset");
         m_animator.SetBool("Airborne", true);
+
+        StartCoroutine(JumpLock());
+    }
+
+    private IEnumerator JumpLock()
+    {
+        jumpLock = true;
+        for(int i = 0; i < 15; i++) yield return new WaitForFixedUpdate();
+        jumpLock = false;
     }
 
     private void FixedUpdate()
@@ -61,6 +71,7 @@ public class PlayerZippingMovement : MonoBehaviour
         slideFX.Stop();
         slideSFX.Stop();
 
+        jumpLock = false;
         zipline.Disabled = true;
         zipline = null;
     }

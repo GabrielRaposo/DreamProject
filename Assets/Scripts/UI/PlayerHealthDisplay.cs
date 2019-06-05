@@ -23,20 +23,27 @@ public class PlayerHealthDisplay : MonoBehaviour
         delayedHeart.fillAmount = 1;
     }
 
-    public void ChangeFill(float amount)
+    public void ChangeFill(float amount, bool instant = false)
     {
         StopAllCoroutines();
 
-        if(heart.fillAmount > amount)
+        if(!instant)
         {
-            delayedHeart.fillAmount = heart.fillAmount;
-            StartCoroutine(HorizontalTremble());
-            StartCoroutine(DelayedDecrease(amount));
+            if(heart.fillAmount > amount)
+            {
+                delayedHeart.fillAmount = heart.fillAmount;
+                StartCoroutine(HorizontalTremble());
+                StartCoroutine(DelayedDecrease(amount));
+            }
+            else if (heart.fillAmount < amount)
+            {
+                delayedHeart.fillAmount = amount;
+                StartCoroutine(PumpScale());
+            }
         }
-        else if (heart.fillAmount < amount)
+        else
         {
-            delayedHeart.fillAmount = amount;
-            StartCoroutine(PumpScale());
+            heart.fillAmount = delayedHeart.fillAmount = amount;
         }
     }
 

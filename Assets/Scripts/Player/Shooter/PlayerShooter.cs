@@ -176,7 +176,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
             
             if (spreadShotsUpgrade)
             {
-                float offsetAngle = 25;
+                float offsetAngle = 15;
                 bullet = miniBulletPool.Get().GetComponent<BulletLine>();
                 if (bullet) Shoot(bullet, offsetAngle);
                 

@@ -71,7 +71,7 @@ public class PlayerGroundMovement : MonoBehaviour
             walkSFX.Stop();
         }
 
-        CheckCrouch();
+        //CheckCrouch();
         m_animator.SetBool("Crouching", crouching);
     }
 

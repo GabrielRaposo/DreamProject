@@ -205,7 +205,9 @@ public class PlatformerGoomba : PlatformerCreature
             if(platformerCreature != null)
             {
                 if(platformerCreature.OnHitboxEvent(hitbox)) 
-                    StartCoroutine(HitStop());
+                {
+                    //StartCoroutine(HitStop());
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ public class Nightmatrix : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D borderCollider;
     [SerializeField] private AudioSource transitionSFX;
+    [SerializeField] private SpriteRenderer directionArrows;
     
     public bool active { get; private set; }
     public Vector2 size { get; private set; }
@@ -20,7 +21,7 @@ public class Nightmatrix : MonoBehaviour
 
         if(spriteRenderer && boxCollider2D && particleSystem)
         {
-            size = boxCollider2D.size = borderCollider.size = new Vector2(spriteRenderer.size.x - 1, spriteRenderer.size.y - 1);
+            size = boxCollider2D.size = borderCollider.size = directionArrows.size = new Vector2(spriteRenderer.size.x - 1, spriteRenderer.size.y - 1);
 
             ParticleSystem.ShapeModule shape = particleSystem.shape;
             shape.scale = size;

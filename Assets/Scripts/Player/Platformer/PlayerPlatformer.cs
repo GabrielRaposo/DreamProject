@@ -291,7 +291,7 @@ public class PlayerPlatformer : MonoBehaviour, IHealable
         if (inputLock) return;
 
         //if(movementState != MovementState.Airborne || coyoteTime > 0)
-        if(onGround || coyoteTime > 0 || movementState == MovementState.Zipping)
+        if(onGround || coyoteTime > 0 || (movementState == MovementState.Zipping && !zippingMovement.jumpLock))
         {
             if (!groundMovement.crouching)
             {

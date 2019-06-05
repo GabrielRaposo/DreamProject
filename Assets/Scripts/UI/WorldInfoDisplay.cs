@@ -43,5 +43,6 @@ public class WorldInfoDisplay : MonoBehaviour
         }
 
         GameplayData.currentWorld = worldID;
+        PlayerHealth.ResetSavedHealth();
     }
 }

@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public void RestartScene()
     {
         PlaytimeData.numberOfDeaths++;
+        PlayerHealth.ResetSavedHealth();
 
         ScreenTransition screenTransition = ScreenTransition.instance;
         string sceneName = SceneManager.GetActiveScene().path;
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateData()
     {
+        PlayerHealth.SaveHealth();
         PlaytimeData.finishedStages++;
         CollectableDisplay.instance.SaveScore();
         BonusCollectableDisplay.instance.SaveScore();

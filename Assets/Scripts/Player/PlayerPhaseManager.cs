@@ -249,7 +249,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     public float GetHealth()
     {
-        return playerHealth.value;
+        return PlayerHealth.value;
     }
 
     public void SetHealth(float value)

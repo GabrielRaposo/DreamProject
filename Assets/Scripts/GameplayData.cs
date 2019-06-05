@@ -9,7 +9,7 @@ public class GameplayData
     public static int world1CollectCount;
     public static int world1DeathCount;
 
-    public static int world2MoonMax = 3;
+    public static int world2MoonMax = 4;
     public static int world2MoonCount;
     public static int world2CollectCount;
     public static int world2DeathCount;
