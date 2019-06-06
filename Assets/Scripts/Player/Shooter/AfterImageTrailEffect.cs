@@ -25,13 +25,13 @@ public class AfterImageTrailEffect : MonoBehaviour
         afterImagePrefab.SetActive(false);
     }
 
-    public IEnumerator Call()
+    public IEnumerator Call(bool facingRight)
     {
         while(true)
         {
             afterImages[count].transform.position = transform.position;
             afterImages[count].enabled = true;
-            afterImages[count].FadeOut();
+            afterImages[count].CallFadeOut(facingRight);
 
             count = (count + 1) % afterImages.Length;
 

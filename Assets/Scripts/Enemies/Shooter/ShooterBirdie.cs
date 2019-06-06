@@ -26,6 +26,8 @@ public class ShooterBirdie : ShooterCreature
     {
         base.SwitchIn(nightmatrix);
 
+        facingRight = m_renderer.flipX = (transform.position.x < nightmatrix.transform.position.x);
+
         if(attacking)
         {
             if (shooterMovement != null) 
@@ -103,7 +105,7 @@ public class ShooterBirdie : ShooterCreature
         linearMovement.enabled = true;
         Vector2 direction = Vector2.left;
         direction = (targetAim.transform.position - transform.position).normalized;
-        transform.rotation = Quaternion.Euler(Vector2.SignedAngle(Vector2.left, direction) * Vector3.forward);
+        transform.rotation = Quaternion.Euler((Vector2.SignedAngle(Vector2.left, direction)  + (facingRight ? 180 : 0)) * Vector3.forward);
         
         linearMovement.SetDirection(direction, targetAim.transform);
     }

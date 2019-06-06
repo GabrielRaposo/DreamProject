@@ -6,11 +6,16 @@ public class Nightmatrix : MonoBehaviour
 {
     [SerializeField] private BoxCollider2D borderCollider;
     [SerializeField] private AudioSource transitionSFX;
+    [Header("Direction")]
     [SerializeField] private SpriteRenderer directionArrows;
+    [SerializeField] private Color rightColor;
+    [SerializeField] private Color leftColor;
     
     public bool active { get; private set; }
     public Vector2 size { get; private set; }
+    public bool invertedDirection {get; private set;}
 
+    private PlayerShooter player;
     private List<IObserver> observers = new List<IObserver>();
 
     private void OnEnable() 
@@ -22,6 +27,9 @@ public class Nightmatrix : MonoBehaviour
         if(spriteRenderer && boxCollider2D && particleSystem)
         {
             size = boxCollider2D.size = borderCollider.size = directionArrows.size = new Vector2(spriteRenderer.size.x - 1, spriteRenderer.size.y - 1);
+            directionArrows.color = invertedDirection ? leftColor : rightColor;
+
+            invertedDirection = directionArrows.flipX;
 
             ParticleSystem.ShapeModule shape = particleSystem.shape;
             shape.scale = size;
@@ -34,8 +42,9 @@ public class Nightmatrix : MonoBehaviour
         else size = Vector2.zero;
     }
 
-    public void Activate()
+    public void Activate(PlayerShooter player)
     {
+        this.player = player;
         active = true;
         transitionSFX.Play();
 
@@ -47,6 +56,7 @@ public class Nightmatrix : MonoBehaviour
 
     public void Deactivate()
     {
+        player = null;
         active = false;
 
         foreach (IObserver observer in observers)
@@ -63,5 +73,13 @@ public class Nightmatrix : MonoBehaviour
     public void RemoveObserver(IObserver observer)
     {
         observers.Remove(observer);
+    }
+
+    public void InvertDirection()
+    {
+        directionArrows.flipX = invertedDirection = !directionArrows.flipX;
+        directionArrows.color = invertedDirection ? leftColor : rightColor;
+
+        if (player != null) player.UpdateFacingRight(!invertedDirection);
     }
 }

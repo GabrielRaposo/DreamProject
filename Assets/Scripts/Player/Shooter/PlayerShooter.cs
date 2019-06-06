@@ -84,8 +84,6 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
         //    autoAim.Init(this);
         //    autoAim.GetComponent<InheritAnchorMovement>().Set(transform);
         //}
-
-        facingRight = true;
     }
 
     private void HardReset()
@@ -105,7 +103,14 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Platform"), false);
 
         currentNightmatrix = nightmatrix;
-        currentNightmatrix.Activate();
+        currentNightmatrix.Activate(this);
+        UpdateFacingRight(!nightmatrix.invertedDirection);
+    }
+
+    public void UpdateFacingRight (bool facingRight)
+    {
+        this.facingRight = facingRight;
+        m_renderer.flipX = !facingRight;
     }
 
     private void Update()
@@ -153,7 +158,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
         switch (PlayerState)
         {
             case State.Idle:
-                m_animator.SetFloat("HorizontalMovement", movement.x);
+                m_animator.SetFloat("HorizontalMovement", movement.x * (facingRight ? 1 : -1));
 
                 float animationSpeed = 1f; 
                 if (movement.y > 0) animationSpeed = 1.5f; else 
@@ -215,7 +220,7 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
     {
         PlayerState = State.Dashing;
         invincible = true;
-        afterImageTrailEffect.StartCoroutine(afterImageTrailEffect.Call());
+        afterImageTrailEffect.StartCoroutine(afterImageTrailEffect.Call(facingRight));
         dashSFX.Play();
 
         m_rigidbody.velocity = startingMovement.normalized * dashSpeed; 

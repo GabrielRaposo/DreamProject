@@ -27,6 +27,8 @@ public class ShooterBunny : ShooterCreature
     {
         base.SwitchIn(nightmatrix);
 
+        facingRight = m_renderer.flipX = (transform.position.x < nightmatrix.transform.position.x);
+
         if (nightmatrix.active)
         {
             SetAttackCicle();
@@ -119,7 +121,7 @@ public class ShooterBunny : ShooterCreature
                 if (bullet)
                 {
                     bulletObject.SetActive(true);
-                    Vector2 direction = RaposUtil.RotateVector(Vector3.up, i * (360/bulletsPerCicle) + (offsetCicle ? (180/bulletsPerCicle) : 0));
+                    Vector2 direction = RaposUtil.RotateVector (Vector3.up, i * (360/bulletsPerCicle) + (offsetCicle ? (180/bulletsPerCicle) : 0));
 
                     bulletObject.transform.rotation = Quaternion.Euler(Vector3.forward * (Vector2.SignedAngle(Vector2.up, direction) + 90));
                     bulletObject.transform.position = transform.position;

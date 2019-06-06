@@ -31,6 +31,8 @@ public class ShooterGoomba : ShooterCreature
     {
         base.SwitchIn(nightmatrix);
 
+        facingRight = m_renderer.flipX = (transform.position.x < nightmatrix.transform.position.x);
+
         if (state == State.Bloated) SetBloatedState(); 
 
         if (nightmatrix.active)

@@ -11,7 +11,7 @@ public class ShooterCreature : MonoBehaviour, IObserver, IShooterTouch, IChildHi
     protected Rigidbody2D m_rigidbody;
 
     protected Color originalColor;
-    protected bool facingRight;
+    protected bool facingRight; 
     protected ID id;
     protected Nightmatrix currentNightmatrix;
 

@@ -21,10 +21,11 @@ public class FadeOutEffect : MonoBehaviour
         spriteRenderer.color = color;
     }
 
-    public void FadeOut()
+    public void CallFadeOut(bool facingRight)
     {
         originalColor.a = 1;
         spriteRenderer.color = originalColor;
+        spriteRenderer.flipX = !facingRight;
         fade = true;
     }
 
