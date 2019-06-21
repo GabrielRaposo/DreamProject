@@ -4,32 +4,39 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
-    public SpriteRenderer flag;
-    private CircleCollider2D coll;
+    [SerializeField] private Vector3 spawnOffset;
 
-    private void OnEnable()
+    private void OnDrawGizmos() 
     {
-        coll = GetComponent<CircleCollider2D>();
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position + spawnOffset, .2f);
     }
 
-    public void Activate()
+    void Start()
     {
-        flag.color = Color.red;
-        coll.enabled = false;
-    }
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if(spriteRenderer) spriteRenderer.enabled = false;
 
-    public void Deactivate()
-    {
-        flag.color = Color.white;
-        coll.enabled = true;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
+        Collider2D collider2D = GetComponent<Collider2D>();
+        if(collider2D)
         {
-            CheckpointSystem.SetCheckpoint(this);
-            Activate();
+            collider2D.enabled = !(CheckpointSystem.spawnPosition == (Vector2)(transform.position + spawnOffset));           
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) 
+    {
+        if(collision.CompareTag("Player"))
+        {
+            Debug.Log("checkpoint caught at " + collision.transform.position);
+            
+            Collider2D collider2D = GetComponent<Collider2D>();
+            if(collider2D) collider2D.enabled = false;
+
+            CheckpointSystem.SetSpawnPosition(transform.position + spawnOffset);
+
+            CollectableDisplay.instance.SaveScore();
+            BonusCollectableManager.SaveCollectedStates();
         }
     }
 }

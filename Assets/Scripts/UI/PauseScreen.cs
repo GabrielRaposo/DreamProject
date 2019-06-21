@@ -38,7 +38,9 @@ public class PauseScreen : MonoBehaviour
 
     public bool ToggleState ()
     {
-        if (active = !active) 
+        active = !active;
+
+        if (active) 
             Activate();
         else                  
             Deactivate();
@@ -48,6 +50,7 @@ public class PauseScreen : MonoBehaviour
 
     public void Activate()
     {
+        Debug.Log("activate");
         fadedImage.gameObject.SetActive(true);
         EventSystem.current.SetSelectedGameObject(null);
         firstSelection.Select();
@@ -63,13 +66,14 @@ public class PauseScreen : MonoBehaviour
 
     public void Deactivate()
     {
-        StartCoroutine(WaitForAFrame());
+        StartCoroutine(WaitBeforeDeactivate());   
     }
 
-    private IEnumerator WaitForAFrame()
+    public IEnumerator WaitBeforeDeactivate()
     {
         yield return new WaitForEndOfFrame();
 
+        Debug.Log("deactivate");
         fadedImage.gameObject.SetActive(false);
         Time.timeScale = 1;
         active = false;

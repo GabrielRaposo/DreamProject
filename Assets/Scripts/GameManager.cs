@@ -5,9 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private PlayerPhaseManager playerPhaseManager;
+
     void Start()
     {
-        PlayerPhaseManager.gameManager = this;
+        playerPhaseManager = PlayerPhaseManager.instance;
+        if (playerPhaseManager)
+        {
+            playerPhaseManager.gameManager = this;
+
+            Vector2 spawnPosition = CheckpointSystem.GetSpawnPosition();
+            if(spawnPosition == Vector2.zero)
+            {
+                CheckpointSystem.SetSpawnPosition(playerPhaseManager.transform.position);
+            }
+            else 
+            {
+                playerPhaseManager.transform.position = spawnPosition;
+            }
+            playerPhaseManager.StartCoroutine(playerPhaseManager.Spawn());
+        }
     }
 
     private void Update() 
@@ -44,18 +61,10 @@ public class GameManager : MonoBehaviour
         PlayerHealth.SaveHealth();
         PlaytimeData.finishedStages++;
         CollectableDisplay.instance.SaveScore();
-        BonusCollectableDisplay.instance.SaveScore();
-           
-        if(GameplayData.currentWorld == 1)
-        {
-            GameplayData.world1MoonCount = BonusCollectableDisplay.instance.Score;
-            GameplayData.world1CollectCount = CollectableDisplay.instance.Score;
-        }
-        else 
-        {
-            GameplayData.world2MoonCount = BonusCollectableDisplay.instance.Score;
-            GameplayData.world2CollectCount = CollectableDisplay.instance.Score;
-        }
+        BonusCollectableManager.SaveCollectedStates();
+        
+        WorldData worldData = GameplayData.GetWorldData();
+        worldData.collectCount = CollectableDisplay.instance.Score;
     }
 
     public void CallNextStage()

@@ -9,39 +9,20 @@ public class WorldInfoDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI moonCountDisplay;
     [SerializeField] private TextMeshProUGUI collectableCountDisplay;
 
-    private void Start() 
+    public void Setup() 
     {
-        if(worldID == 1)
-        {
-            moonCountDisplay.text 
-                = GameplayData.world1MoonCount.ToString() + "/" + GameplayData.world1MoonMax.ToString();
+        WorldData worldData = GameplayData.GetWorldData(worldID);
 
-            collectableCountDisplay.text
-                = "x" + GameplayData.world1CollectCount;
-        }
-        else 
-        {
-            moonCountDisplay.text 
-                = GameplayData.world2MoonCount.ToString() + "/" + GameplayData.world2MoonMax.ToString();
+        int bonusCount = BonusCollectableList.GetWorldCollectedCount(worldID);
+        moonCountDisplay.text = bonusCount.ToString() + "/" + worldData.moonMax.ToString();
 
-            collectableCountDisplay.text
-                = "x" + GameplayData.world2CollectCount;
-        }
+        collectableCountDisplay.text = "x" + worldData.collectCount;
     }
 
     public void SetupWorldData()
     {
-        BonusCollectableDisplay.savedScore = CollectableDisplay.savedScore = 0;
-
-        if(worldID == 1)
-        {
-            GameplayData.world1CollectCount = GameplayData.world1MoonCount = 0;
-        }
-        else 
-        {
-            GameplayData.world2CollectCount = GameplayData.world2MoonCount = 0;
-        }
-
+        CheckpointSystem.SetSpawnPosition(Vector2.zero);
+        CollectableDisplay.savedScore = 0;
         GameplayData.currentWorld = worldID;
         PlayerHealth.ResetSavedHealth();
     }

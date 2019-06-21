@@ -15,22 +15,7 @@ public class BonusCollectableDisplay : MonoBehaviour
     private const int HIDDEN_X  = -200;
     private const int HIGHLIGHT_X  = 40;
 
-    public static int savedScore = 0;
-
-    private int score;
-    public int Score
-    {
-        get
-        {
-            return score;
-        }
-
-        private set
-        {
-            score = value;
-            UpdateDisplay();
-        }
-    }
+    public int score { get; private set; }
 
     public static BonusCollectableDisplay instance;
 
@@ -40,12 +25,13 @@ public class BonusCollectableDisplay : MonoBehaviour
         {
             instance = this;
         }
-        Score = savedScore;
     }
 
     private void Start() 
     {
         tabAnchor.anchoredPosition = Vector2.right * HIDDEN_X;
+        score = BonusCollectableList.GetWorldCollectedCount(GameplayData.currentWorld);
+        UpdateDisplay();
     }
 
     private IEnumerator ShowAndHide()
@@ -85,24 +71,25 @@ public class BonusCollectableDisplay : MonoBehaviour
         tabAnchor.anchoredPosition = Vector2.right * HIDDEN_X;
     }
 
-    private void UpdateDisplay()
+    public void AddValue(int value)
+    {
+        score += value;
+        UpdateDisplay(value == 0);
+    }
+
+    public void UpdateDisplay(bool toneDownAnimation = false)
     {
         if (display)
         {
-            int maxScore = GameplayData.currentWorld == 1 ? GameplayData.world1MoonMax : GameplayData.world2MoonMax;
-            display.text = Score.ToString() + "/" + maxScore.ToString();
-            if (Score > maxScore - 1) display.color = completeColor;
+            int maxScore = GameplayData.currentWorld == 1 ? GameplayData.world1Data.moonMax : GameplayData.world2Data.moonMax;
+
+            display.text = score.ToString() + "/" + maxScore.ToString();
+            if (score > maxScore - 1) display.color = completeColor;
         }
 
-        StartCoroutine(ShowAndHide());
-    }
-
-    public void AddScore(int quant)
-    {
-        Score += quant;
-
         collectSFX.PlayDelayed(.1f);
-        StartCoroutine(BGMVolumeDelay());
+        if(toneDownAnimation) StartCoroutine(BGMVolumeDelay());
+        StartCoroutine(ShowAndHide());
     }
 
     private IEnumerator BGMVolumeDelay()
@@ -114,11 +101,5 @@ public class BonusCollectableDisplay : MonoBehaviour
             yield return new WaitForSeconds(2);
             BGMPlayer.instance.RiseVolume();
         }
-    }
-
-    public void SaveScore()
-    {
-        savedScore = score;
-        PlaytimeData.starsCount = score;
     }
 }

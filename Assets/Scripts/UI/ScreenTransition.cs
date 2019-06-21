@@ -45,14 +45,15 @@ public class ScreenTransition : MonoBehaviour
 
     public void Call(string scene)
     {
-        Time.timeScale = 1;
         StopAllCoroutines();
-
         StartCoroutine(TransitionToScene(scene));
     }
 
     private IEnumerator TransitionToScene(string scene)
     {
+        yield return new WaitForEndOfFrame(); // temporário para impedir que player pule quando volta pro menu pela pausa 
+        Time.timeScale = 1;
+
         yield return TransitionIn();
 
         yield return new WaitForEndOfFrame();

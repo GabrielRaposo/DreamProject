@@ -26,6 +26,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     [HideInInspector] public bool onTransition;
 
     private bool paused;
+    private bool dead;
 
     private bool switchLock;
     private Transform targetTransform;
@@ -34,7 +35,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
     private CinemachineImpulseSource cinemachineImpulseSource;
     private PauseScreen pauseScreen;
 
-    public static GameManager gameManager;
+    public GameManager gameManager;
     public static PlayerPhaseManager instance;
 
     private void Awake()
@@ -70,11 +71,10 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
         shooterPhase.gameObject.SetActive(false);
         platformerPhase.gameObject.SetActive(false);
-
-        StartCoroutine(SpawnAnimation());
     }
 
-    private IEnumerator SpawnAnimation()
+    //Chamado no GameManager.cs
+    public IEnumerator Spawn()
     {
         yield return new WaitForSeconds(.75f);
         if(spawnWindow) 
@@ -87,7 +87,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     private void Update() 
     {
-        if(onTransition) return;
+        if(onTransition || dead) return;
 
         actionRegion.position = targetTransform.position;
 
@@ -259,6 +259,8 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 
     public void Die()
     {
+        dead = true;
+
         if (deathFX && deathSFX) 
         { 
             deathFX.transform.position = targetTransform.position;

@@ -14,6 +14,13 @@ public class CollectableBonus : MonoBehaviour
 
     private bool collected;
 
+    private BonusCollectableManager manager;
+
+    public void Init (BonusCollectableManager manager)
+    {
+        this.manager = manager;
+    }
+        
     private void OnEnable()
     {
         m_rigidbody2D = GetComponent<Rigidbody2D>();
@@ -27,12 +34,11 @@ public class CollectableBonus : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collected) return;
+        if (collected) return;
 
         if (collision.CompareTag("Player"))
         {
             collected = true;
-            BonusCollectableDisplay.instance.AddScore(1);
             backPS.Stop();
             if (m_rigidbody2D) 
             {
@@ -40,6 +46,8 @@ public class CollectableBonus : MonoBehaviour
                 m_rigidbody2D.velocity = Vector2.up * 6;
             }
             if (m_animator) m_animator.SetTrigger("Collect");
+
+            manager.SetCollect(this);
         }
     }
 
@@ -50,5 +58,16 @@ public class CollectableBonus : MonoBehaviour
         if (m_renderer) m_renderer.enabled = false;
 
         Destroy(gameObject, 2f);
+    }
+
+    public void FadeOutSprite()
+    {
+        SpriteRenderer m_renderer = GetComponent<SpriteRenderer>();
+
+        Color color = m_renderer.color;
+        color.a = .4f;
+        m_renderer.color = color;
+
+        backPS.Stop();
     }
 }

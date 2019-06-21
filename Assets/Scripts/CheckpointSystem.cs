@@ -1,22 +1,29 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CheckpointSystem : MonoBehaviour
-{
-    public static Checkpoint currentCheckpoint { get; private set; }
-    private static Checkpoint previousCheckpoint;
+{   
+    private static string scene = string.Empty;    
+    public static Vector2 spawnPosition { get; private set; }
 
-    void Awake()
+    public static Vector2 GetSpawnPosition ()
     {
-        if(currentCheckpoint != null)
+        string currentScene = SceneManager.GetActiveScene().path;
+
+        if(scene != currentScene)
         {
-            currentCheckpoint.Activate();
+            scene = currentScene;
+            return Vector2.zero;
+        }
+        else 
+        {
+            return spawnPosition;
         }
     }
 
-    public static void SetCheckpoint(Checkpoint cp)
+    public static void SetSpawnPosition (Vector2 position)
     {
-        if (previousCheckpoint != null) previousCheckpoint.Deactivate();
-        currentCheckpoint = cp;
-        previousCheckpoint = currentCheckpoint;
+        scene = SceneManager.GetActiveScene().path;
+        spawnPosition = position;
     }
 }
