@@ -4,10 +4,10 @@ using UnityEngine;
 
 public struct WorldData
 {
-    public WorldData(int id)
+    public WorldData(int id, int moonMax)
     {
         this.id = id;
-        moonMax = 7; // temp
+        this.moonMax = moonMax;
         collectCount = deathCount = 0;
     }
 
@@ -20,8 +20,8 @@ public struct WorldData
 public class GameplayData
 {
     public static WorldData 
-        world1Data = new WorldData(1),
-        world2Data = new WorldData(2);
+        world1Data = new WorldData(1, 4),
+        world2Data = new WorldData(2, 4);
 
     public static int currentWorld = 1;
 

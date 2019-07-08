@@ -14,4 +14,15 @@ public class WorldSelectManager : MonoBehaviour
         world1InfoDisplay.Setup();
         world2InfoDisplay.Setup();
     }
+
+    private void Update() 
+    {
+        if(Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            string sceneName = "DevScene";
+            ScreenTransition screenTransition = ScreenTransition.instance;
+            if(screenTransition) screenTransition.Call(sceneName);
+            else                 ScreenTransition.LoadScene(sceneName);
+        }
+    }
 }

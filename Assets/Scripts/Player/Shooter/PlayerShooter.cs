@@ -176,24 +176,28 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
     {
         while (true)
         {
-            BulletLine bullet = bulletPool.Get().GetComponent<BulletLine>();
-            if (bullet) Shoot(bullet);
+            BulletLine bullet;
             
-            if (spreadShotsUpgrade)
+            if (!spreadShotsUpgrade)
             {
-                float offsetAngle = 15;
-                bullet = miniBulletPool.Get().GetComponent<BulletLine>();
-                if (bullet) Shoot(bullet, offsetAngle);
+                bullet = bulletPool.Get().GetComponent<BulletLine>();
+                if (bullet) Shoot(bullet);
+            }
+            else 
+            {
+                float offsetY = .2f;
+                bullet = bulletPool.Get().GetComponent<BulletLine>();
+                if (bullet) Shoot(bullet, offsetY);
                 
-                bullet = miniBulletPool.Get().GetComponent<BulletLine>();
-                if (bullet) Shoot(bullet, -offsetAngle);
+                bullet = bulletPool.Get().GetComponent<BulletLine>();
+                if (bullet) Shoot(bullet, -offsetY);
             }
 
             for (int i = 0; i < shotDelay; i++) yield return new WaitForFixedUpdate();
         }
     }
 
-    private void Shoot(BulletLine bullet, float offsetAngle = 0)
+    private void Shoot(BulletLine bullet, float offsetY = 0)
     {
         GameObject bulletObject = bullet.gameObject;
         
@@ -208,12 +212,10 @@ public class PlayerShooter : MonoBehaviour, ICanTarget, IHealable
             direction = (target.position - transform.position).normalized * bulletSpeed;
         }
 
-        direction = RaposUtil.RotateVector(direction, offsetAngle);
-
         bullet.Launch(direction);
-        bulletObject.transform.position = aimStar.position;
+        bulletObject.transform.position = aimStar.position + (Vector3.up * offsetY);
 
-        if(offsetAngle == 0) shotSFX.Play();
+        if(offsetY >= 0) shotSFX.Play();
     }
 
     private IEnumerator DashAction(Vector2 startingMovement)
