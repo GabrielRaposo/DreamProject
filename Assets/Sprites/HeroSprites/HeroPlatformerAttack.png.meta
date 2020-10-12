@@ -1,14 +1,24 @@
 fileFormatVersion: 2
 guid: 4fffe204642e1574d83f5666dc07ad29
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: HeroPlatformerAttack_0
-    21300002: HeroPlatformerAttack_1
-    21300004: HeroPlatformerAttack_2
-    21300006: HeroPlatformerAttack_3
-    21300008: HeroPlatformerAttack_4
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: HeroPlatformerAttack_0
+  - first:
+      213: 21300002
+    second: HeroPlatformerAttack_1
+  - first:
+      213: 21300004
+    second: HeroPlatformerAttack_2
+  - first:
+      213: 21300006
+    second: HeroPlatformerAttack_3
+  - first:
+      213: 21300008
+    second: HeroPlatformerAttack_4
   externalObjects: {}
-  serializedVersion: 9
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -28,6 +38,7 @@ TextureImporter:
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -62,8 +73,10 @@ TextureImporter:
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
   platformSettings:
-  - serializedVersion: 2
+  - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 1
@@ -74,7 +87,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 1
@@ -85,7 +99,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - serializedVersion: 2
+    forceMaximumCompressionQuality_BC6H_BC7: 1
+  - serializedVersion: 3
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 1
@@ -96,6 +111,7 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -115,6 +131,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: b7918ac778858ec4aa4d83da5e7d0c06
+      internalID: 21300000
       vertices: []
       indices: 
       edges: []
@@ -135,6 +152,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: d14e982c99f606440bbd21bdede89004
+      internalID: 21300002
       vertices: []
       indices: 
       edges: []
@@ -155,6 +173,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 20a14c90eedd5ba44af3a48a75990de5
+      internalID: 21300004
       vertices: []
       indices: 
       edges: []
@@ -175,6 +194,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: d421952cc75219a4992cef6fc5b3d397
+      internalID: 21300006
       vertices: []
       indices: 
       edges: []
@@ -195,6 +215,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 183678ebf8a10cf47ad99984899a205d
+      internalID: 21300008
       vertices: []
       indices: 
       edges: []
@@ -203,10 +224,12 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 2bb6e5394434ccc44b9220dbafd62283
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
