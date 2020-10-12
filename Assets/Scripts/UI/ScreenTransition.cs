@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class ScreenTransition : MonoBehaviour
 {
-    [SerializeField] private Image screenfade;
+    private const int _X = 8, _Y = 5;
+
+    [SerializeField] private Transform tilesAnchor; 
+
+    private RectTransform[,] tiles; 
 
     public static ScreenTransition instance;
 
@@ -21,6 +26,16 @@ public class ScreenTransition : MonoBehaviour
         {
             Destroy(transform.parent.gameObject);
         }
+    
+        tiles = new RectTransform[_X, _Y];
+        int x, y;
+        for(int i = x = y = 0; i < tilesAnchor.childCount; i++)
+        {
+            x = i % _X;
+            y = (i / _X) % _Y;
+            //Debug.Log("x: " + x + ", y: " + y);
+            tiles[x,y] = tilesAnchor.GetChild(i).gameObject.GetComponent<RectTransform>();
+        }
     }
 
     public static void LoadScene(string scene)
@@ -30,14 +45,15 @@ public class ScreenTransition : MonoBehaviour
 
     public void Call(string scene)
     {
-        Time.timeScale = 1;
         StopAllCoroutines();
-
         StartCoroutine(TransitionToScene(scene));
     }
 
     private IEnumerator TransitionToScene(string scene)
     {
+        yield return new WaitForEndOfFrame(); // temporário para impedir que player pule quando volta pro menu pela pausa 
+        Time.timeScale = 1;
+
         yield return TransitionIn();
 
         yield return new WaitForEndOfFrame();
@@ -57,29 +73,58 @@ public class ScreenTransition : MonoBehaviour
 
     private IEnumerator TransitionIn()
     {
-        float time = .2f;
-        yield return new WaitForSecondsRealtime(time);
-        while (screenfade.color.a < 1)
+        yield return new WaitForSecondsRealtime(.2f);
+        float time = .04f;
+
+        int diagonal = 0;
+        while(true)
         {
-            yield return new WaitForEndOfFrame();
-            Color color = screenfade.color;
-            color.a += .05f;
-            screenfade.color = color;
+            int x = diagonal, y = 0;
+            while(true)
+            {  
+                if(x < _X) tiles[x,y].DORotate(Vector3.zero, time);
+                x--; 
+                y++;
+                
+                if(x < 0 || y + 1  > _Y)
+                {
+                    yield return new WaitForSecondsRealtime(time);
+                    break;
+                }
+                
+            }
+            diagonal++;
+            if(diagonal + 1 > _X + _Y) break;
         }
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSecondsRealtime(.2f);
     }
 
     private IEnumerator TransitionOut()
     {
-        float time = .2f;
-        yield return new WaitForSecondsRealtime(time);
-        while (screenfade.color.a > 0)
+        yield return new WaitForSecondsRealtime(.2f);
+        float time = .04f;
+
+        int diagonal = 0;
+        while(true)
         {
-            yield return new WaitForEndOfFrame();
-            Color color = screenfade.color;
-            color.a -= .05f;
-            screenfade.color = color;
+            int x = diagonal, y = 0;
+            while(true)
+            {  
+                if(x < _X) tiles[x,y].DORotate(new Vector3(90,90), time);
+                x--; 
+                y++;
+                
+                if(x < 0 || y + 1  > _Y)
+                {
+                    yield return new WaitForSecondsRealtime(time);
+                    break;
+                }
+                
+            }
+            diagonal++;
+            if(diagonal + 1 > _X + _Y) break;
         }
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSecondsRealtime(.2f);
     }
 }
+

@@ -33,7 +33,7 @@ public class BulletPoolIndexer : MonoBehaviour
 
     public BulletPool GetPool(string name)
     {
-        BulletPool pool = new BulletPool();
+        BulletPool pool = null;
         foreach(Pool p in pools)
         {
             if(p.name == name)

@@ -3,7 +3,14 @@ guid: 33dfc1d69962f1948acf4ec1d7869026
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - regionSpawner: {fileID: 726369482766186738, guid: c179bc609b1d8a34c9ab9d1319f0917e,
+      type: 3}
+  - platformerPhase: {instanceID: 0}
+  - shooterPhase: {instanceID: 0}
+  - transitionEffect: {instanceID: 0}
+  - destructionFX: {instanceID: 0}
+  - challengeBarrier: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

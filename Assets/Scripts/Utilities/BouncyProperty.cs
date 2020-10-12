@@ -10,6 +10,8 @@ public class BouncyProperty : MonoBehaviour
 
     [HideInInspector] public bool super; 
 
+    private AudioSource bounceSFX;
+
 	void Start ()
     {
         if (OnBounceEvent == null)
@@ -21,16 +23,19 @@ public class BouncyProperty : MonoBehaviour
         {
             OnHammerEvent = new UnityEvent();
         }
+
+        bounceSFX = GetComponent<AudioSource>();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.CompareTag("Player"))
         {
-            PlayerDreamPhase player = collision.transform.GetComponent<PlayerDreamPhase>();
+            PlayerPlatformer player = collision.transform.GetComponent<PlayerPlatformer>();
             if (player)
             {
-                player.SetJump(super);
+                bounceSFX.Play();
+                player.SetBounceJump(1.6f);
                 if (!super)
                 {
                     OnBounceEvent.Invoke();
@@ -39,23 +44,29 @@ public class BouncyProperty : MonoBehaviour
         } 
         else if (collision.transform.CompareTag("Enemy"))
         {
-            Yume enemy = collision.transform.GetComponent<Yume>();
+            PlatformerCreature enemy = collision.transform.GetComponent<PlatformerCreature>();
             if (enemy)
             {
+                bounceSFX.Play();
                 if(collision.transform.position.y > transform.position.y + .1f)
                 {
                     OnBounceEvent.Invoke();
-                    enemy.OnBouncyTopEvent(collision.contacts[0].point, super);
+                    enemy.OnBouncyTopEvent(transform.position, super);
                 }
+                else
+                {
+                    OnBounceEvent.Invoke();
+                    enemy.OnBouncySideEvent(transform.position);
+                } 
             }
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Hammer"))
-        {
-            OnHammerEvent.Invoke();
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.CompareTag("Twirl"))
+    //    {
+    //        OnHammerEvent.Invoke();
+    //    }
+    //}
 }

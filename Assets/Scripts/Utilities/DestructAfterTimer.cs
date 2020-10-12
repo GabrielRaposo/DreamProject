@@ -16,4 +16,9 @@ public class DestructAfterTimer : MonoBehaviour
         yield return new WaitForSeconds(time);
         Destroy(gameObject);
     }
+    
+    public void SelfDestruct()
+    {
+        Destroy(gameObject);
+    }
 }

@@ -10,12 +10,14 @@ TagManager:
   - Blastzone
   - Enemy
   - OneWay
-  - Hammer
   - Zipline
   - Damage
   - Exit
   - Nightmatrix
   - NightmatrixBorder
+  - Twirl
+  - Explosion
+  - ActionRegion
   layers:
   - Default
   - TransparentFX
@@ -33,8 +35,8 @@ TagManager:
   - Raycast
   - Ghost
   - Nightmatrix
-  - 
-  - 
+  - Twirl
+  - ActionRegion
   - 
   - 
   - 

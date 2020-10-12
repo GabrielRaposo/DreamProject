@@ -7,6 +7,7 @@ public class FollowTrail : MonoBehaviour
     [SerializeField] private Transform anchors;
     [SerializeField] private float moveSpeed = 1;
     [SerializeField] private bool loop = true;
+    [SerializeField] private bool stopOnReachEnd;
 
     Vector3[] global_reachmarks;
 
@@ -28,6 +29,14 @@ public class FollowTrail : MonoBehaviour
             anchors.GetChild(i).position = transform.position;
         }
         marks_quantity++;
+
+        LineRenderer lineRenderer = anchors.GetComponent<LineRenderer>();
+        if(lineRenderer) 
+        { 
+            lineRenderer.positionCount = global_reachmarks.Length;
+            lineRenderer.SetPositions(global_reachmarks); 
+            lineRenderer.loop = loop;
+        }
     }
 
     private void FixedUpdate()
@@ -42,10 +51,15 @@ public class FollowTrail : MonoBehaviour
             else
             {
                 current_aim += aim_modifier;
+
                 if (current_aim + 1 > marks_quantity || current_aim < 0)
                 {
-                    aim_modifier *= -1;
-                    current_aim += aim_modifier;
+                    if(!stopOnReachEnd)
+                    {
+                        aim_modifier *= -1;
+                        current_aim += aim_modifier;
+                    }
+                    else enabled = false; 
                 }
             }
         }

@@ -16,7 +16,7 @@ public class PlaytimeData
 
     public static string GetPlayTime()
     {
-        if(startingTime == null) startingTime = DateTime.Now;
+        /*if(startingTime == null) */ startingTime = DateTime.Now;
         TimeSpan totalTime = DateTime.Now - startingTime;
         string s = totalTime.Minutes.ToString("00") + ":" + totalTime.Seconds.ToString("00") + ":" + totalTime.Milliseconds.ToString("000");
 

@@ -5,21 +5,37 @@ using Cinemachine;
 
 public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
 {
-    [SerializeField] private Transform followTarget;
     [SerializeField] private GameObject transitionEffect;
+    [SerializeField] private Transform actionRegion;
 
     [Header("Phases")]
-    [SerializeField] PlayerDreamPhase dreamPhase;
-    [SerializeField] PlayerNightmarePhase nightmarePhase;
+    [SerializeField] PlayerPlatformer platformerPhase;
+    [SerializeField] PlayerShooter shooterPhase;
 
     [Header("Health")]
-    [SerializeField] private HealthDisplay healthDisplay;
+    [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private int maxHealth;
+
+    [Header("Effects")]
+    [SerializeField] private GameObject spawnWindow;
+    [SerializeField] private ParticleSystem deathFX;
+    [SerializeField] private AudioSource deathSFX;
+    [SerializeField] private AudioSource transitionChargeSFX;
+    [SerializeField] private float screenShakeVelocity;
+
+    [HideInInspector] public bool onTransition;
+
+    private bool paused;
+    private bool dead;
 
     private bool switchLock;
     private Transform targetTransform;
 
-    public static GameManager gameManager;
+    private CameraPriorityManager cameraPriorityManager;
+    private CinemachineImpulseSource cinemachineImpulseSource;
+    private PauseScreen pauseScreen;
+
+    public GameManager gameManager;
     public static PlayerPhaseManager instance;
 
     private void Awake()
@@ -29,40 +45,55 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
             instance = this;
         }
 
-        targetTransform = dreamPhase.transform;
+        targetTransform = platformerPhase.transform;
         transitionEffect.SetActive(false);
     }
 
     private void OnEnable()
     {
-        dreamPhase.Init(this);
-        nightmarePhase.Init(this);
+        platformerPhase.Init(this);
+        shooterPhase.Init(this);
     }
 
     private void Start()
     {
-        if (healthDisplay)
+        pauseScreen = PauseScreen.instance;
+        cinemachineImpulseSource = GetComponent<CinemachineImpulseSource>();
+        cameraPriorityManager = CameraPriorityManager.instance;
+
+        if (playerHealth)
         {
-            healthDisplay.Init(maxHealth);
+            playerHealth.Init(maxHealth);
         }
 
-        dreamPhase.transform.position = nightmarePhase.transform.position;
+        platformerPhase.transform.position = shooterPhase.transform.position;
+        cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
 
-        nightmarePhase.gameObject.SetActive(false);
-        dreamPhase.gameObject.SetActive(true);
+        shooterPhase.gameObject.SetActive(false);
+        platformerPhase.gameObject.SetActive(false);
     }
 
-    private void FixedUpdate()
+    //Chamado no GameManager.cs
+    public IEnumerator Spawn()
     {
-        if (targetTransform != null)
+        yield return new WaitForSeconds(.75f);
+        if(spawnWindow) 
         {
-            followTarget.position = targetTransform.position;
+            spawnWindow.SetActive(true);
         }
+        yield return new WaitForSeconds(.1f);
+        platformerPhase.gameObject.SetActive(true);
+    }
 
-        if (Input.GetKeyDown(KeyCode.F))
+    private void Update() 
+    {
+        if(onTransition || dead) return;
+
+        actionRegion.position = targetTransform.position;
+
+        if(Input.GetButtonDown("Start"))
         {
-            Debug.Log("targetTransform.pos: " + targetTransform.position);
-            Debug.Log("followTarget.pos: " + followTarget.position);
+            paused = pauseScreen.ToggleState();
         }
     }
 
@@ -72,7 +103,6 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         {
             return targetTransform;
         }
-        Debug.Log("out");
         return transform;
     }
 
@@ -83,7 +113,7 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         switchLock = false;
     }
 
-    public void SetDreamPhase(GameObject nightmatrix)
+    public void SetDreamPhase(Nightmatrix nightmatrix)
     {
         if (!switchLock)
         {
@@ -92,29 +122,37 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToDream(GameObject nightmatrix, float multiplier = 1f)
+    private IEnumerator TransitionToDream(Nightmatrix nightmatrix, float multiplier = 1f)
     {
-        nightmarePhase.gameObject.SetActive(false);
+        Vector2 shooterMovement = shooterPhase.GetComponent<Rigidbody2D>().velocity;
+        shooterPhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(nightmarePhase.transform.position, nightmatrix.transform);
+        Vector3 movement = GetMovement(shooterPhase.transform.position, nightmatrix);
 
-        yield return MoveTransitionEffect(nightmarePhase.transform, movement * multiplier, true, nightmatrix.transform);
+        yield return MoveTransitionEffect(shooterPhase.transform, movement * multiplier, true, nightmatrix.transform);
 
-        dreamPhase.transform.position = transitionEffect.transform.position;
+        platformerPhase.transform.position = transitionEffect.transform.position;
         if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground"))) 
         {
             StartCoroutine(TransitionToNightmare(nightmatrix, 1.5f));
         }
         else
         {
-            dreamPhase.gameObject.SetActive(true);
-            targetTransform = dreamPhase.transform;
+            platformerPhase.gameObject.SetActive(true);
+            targetTransform = platformerPhase.transform;
+            cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.PlatformAirborne);
 
-            dreamPhase.SwitchIn(nightmatrix.transform.position, movement.y > -.1f);
+
+            platformerPhase.SwitchIn (
+                nightmatrix.transform.position, 
+                movement, 
+                shooterPhase.PlayerState == PlayerShooter.State.Dashing ? true : false,
+                shooterMovement
+            );
         }
     }
 
-    public void SetNightmarePhase(GameObject nightmatrix)
+    public void SetNightmarePhase(Nightmatrix nightmatrix)
     {
         if (!switchLock)
         {
@@ -123,48 +161,54 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         }
     }
 
-    private IEnumerator TransitionToNightmare(GameObject nightmatrix, float multiplier = 1f)
+    private IEnumerator TransitionToNightmare(Nightmatrix nightmatrix, float multiplier = 1f)
     {
-        dreamPhase.gameObject.SetActive(false);
+        platformerPhase.gameObject.SetActive(false);
 
-        Vector3 movement = GetMovement(dreamPhase.transform.position, nightmatrix.transform);
+        Vector3 movement = GetMovement(platformerPhase.transform.position, nightmatrix);
+        yield return MoveTransitionEffect(platformerPhase.transform, movement * multiplier, false, nightmatrix.transform);
 
-        yield return MoveTransitionEffect(dreamPhase.transform, movement * multiplier, false, nightmatrix.transform);
-
-        nightmarePhase.transform.position = transitionEffect.transform.position;
+        shooterPhase.transform.position = transitionEffect.transform.position;
         if (Physics2D.CircleCast(transitionEffect.transform.position, .1f, Vector2.one, .1f, 1 << LayerMask.NameToLayer("Ground")))
         {
-            StartCoroutine(TransitionToDream(nightmatrix, 1.5f));
+            if(movement != Vector3.zero) {
+                StartCoroutine(TransitionToDream(nightmatrix, 1.5f));
+            }
+            else {
+                shooterPhase.gameObject.SetActive(true);
+                Die();
+            }
         }
         else
         {
-            nightmarePhase.gameObject.SetActive(true);
-            targetTransform = nightmarePhase.transform;
+            shooterPhase.gameObject.SetActive(true);
+            targetTransform = shooterPhase.transform;
+            cameraPriorityManager.SetFocus(CameraPriorityManager.GameState.Shooter);
 
-            nightmarePhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
+            shooterPhase.SwitchIn(nightmatrix.transform.position, nightmatrix.GetComponent<Nightmatrix>());
         }
     }
 
-    private Vector3 GetMovement(Vector3 body, Transform matrix)
+    private Vector3 GetMovement(Vector3 body, Nightmatrix matrix)
     {
         Vector3 direction = Vector3.zero;
         float extraOffset = .5f;
 
-        if (body.y > matrix.position.y + (matrix.localScale.y / 2) - extraOffset)
+        if (body.y > matrix.transform.position.y + (matrix.size.y / 2) - extraOffset)
             direction += Vector3.up;
-        else if (body.y < matrix.position.y - (matrix.localScale.y / 2) + extraOffset)
+        else if (body.y < matrix.transform.position.y - (matrix.size.y / 2) + extraOffset)
             direction += Vector3.down;
         
-        if (body.x > matrix.position.x + (matrix.localScale.x / 2) - extraOffset)
+        if (body.x > matrix.transform.position.x + (matrix.size.x / 2) - extraOffset)
             direction += Vector3.right;
-        else if (body.x < matrix.position.x - (matrix.localScale.x / 2) + extraOffset)
+        else if (body.x < matrix.transform.position.x - (matrix.size.x / 2) + extraOffset)
             direction += Vector3.left;
 
         return direction * .8f;
     }
 
     private IEnumerator MoveTransitionEffect(Transform startingPosition, Vector3 movement, bool moveIn, Transform matrix)
-    {
+    {        
         transitionEffect.transform.position = startingPosition.position;
         transitionEffect.SetActive(true);
         targetTransform = transitionEffect.transform;
@@ -185,27 +229,92 @@ public class PlayerPhaseManager : MonoBehaviour, IPhaseManager
         transitionEffect.SetActive(false);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
-        if (healthDisplay)
+        //cinemachineImpulseSource.GenerateImpulse(Vector2.right * screenShakeVelocity);
+
+        if (playerHealth)
         {
-            healthDisplay.ChangeValue(-damage);
+            playerHealth.ChangeHealth(-damage);
         }
     }
 
-    public int GetHealth()
+    public void Heal(int value)
     {
-        return healthDisplay.value;
+        if (playerHealth)
+        {
+            playerHealth.ChangeHealth(value);
+        }
     }
 
-    public void SetHealth(int value)
+    public float GetHealth()
+    {
+        return PlayerHealth.value;
+    }
+
+    public void SetHealth(float value)
     {
         //
     }
 
     public void Die()
     {
-        if (gameManager) gameManager.RestartScene();
-        Destroy(gameObject);
+        dead = true;
+
+        if (deathFX && deathSFX) 
+        { 
+            deathFX.transform.position = targetTransform.position;
+            deathFX.Play();
+            deathSFX.Play();
+        }
+        platformerPhase.gameObject.SetActive(false);
+        shooterPhase.gameObject.SetActive(false);
+        if (gameManager) 
+        {
+            onTransition = true;
+            gameManager.RestartScene();
+        }
+    }
+
+    public void TravelThroughExit(Vector3 exitPosition, Window window)
+    {
+        if(onTransition) return;
+        onTransition = true;
+
+        platformerPhase.enabled = false;
+        StartCoroutine(TravelThroughWindowAnimation(exitPosition, window));
+    }
+
+    private IEnumerator TravelThroughWindowAnimation(Vector3 exitPosition, Window window)
+    {
+        Rigidbody2D playerRB = platformerPhase.GetComponent<Rigidbody2D>();
+        playerRB.bodyType = RigidbodyType2D.Kinematic;
+        playerRB.velocity = ((playerRB.transform.position - exitPosition).normalized * 2f);
+        if (playerRB.velocity.y < .3f)  playerRB.velocity = new Vector2(playerRB.velocity.x, 2f);
+        transitionChargeSFX.Play();
+        yield return new WaitForSecondsRealtime(.5f);
+
+        transitionEffect.transform.position = playerRB.transform.position;
+        transitionEffect.SetActive(true);
+        playerRB.gameObject.SetActive(false);
+        while (Vector3.Distance(transitionEffect.transform.position, exitPosition) > .1f)
+        {
+            yield return new WaitForEndOfFrame();
+            transitionEffect.transform.position += (exitPosition - transitionEffect.transform.position).normalized * .1f;
+        }
+        transitionEffect.SetActive(false);
+        if(window) 
+        {
+            window.Close();
+            if(window.isFinal())
+            {
+                gameManager.ReturnToStageSelect();
+            }
+            else 
+            {
+                gameManager.CallNextStage();
+            }
+        }
+        else if (gameManager) gameManager.CallNextStage();
     }
 }

@@ -12,7 +12,6 @@ public class BalanceBlock : MonoBehaviour, IPlatformEvent
     private Vector2 max;
     private Vector2 min;
 
-    private BoxCollider2D coll;
     private float speedMultiplier;
     private int hammerPush;
 
@@ -33,8 +32,7 @@ public class BalanceBlock : MonoBehaviour, IPlatformEvent
             max = target.position;
             min = originalPosition; 
         }
-
-        coll = GetComponent<BoxCollider2D>();
+         
         moveSpeed *= .01f;
 
         movement = Movement.None;
